@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.priority = 100
-        self.max_hp = 15
+        self.max_hp = 150
         self.hp = self.max_hp
 
     def spawn(self):
