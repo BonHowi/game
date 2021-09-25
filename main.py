@@ -15,9 +15,6 @@ from particles import Particle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-particles = []
-
-
 class Game:
     def __init__(self):
         self.FPS = 144
