@@ -44,12 +44,21 @@ class Player(pygame.sprite.Sprite):
         # blit_objects.append(self)
 
         # Player Attacking
+        self.direction = ''
+
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
 
     def attack(self):
         if self.attacking:
-            self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
+            if self.direction == 'RIGHT':
+                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
+            elif self.direction == 'LEFT':
+                self.attack_range = pygame.Rect(self.rect.x - self.rect.width, self.rect.y, 30, self.rect.height)
+            elif self.direction == 'UP':
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.rect.height, 30, self.rect.height)
+            elif self.direction == 'DOWN':
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, 30, self.rect.height)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
 
@@ -60,7 +69,7 @@ class Player(pygame.sprite.Sprite):
     def render(self, display):
         # pygame.draw.rect(display, (255, 0, 0), self.rect)
         pygame.draw.rect(display, (0, 255, 0), self.attack_range)
-        display.blit(self.image, self.rect)
+        #display.blit(self.image, self.rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -131,12 +140,16 @@ while running:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
+                player.direction = 'UP'
                 player.velocity[1] = -200 * dt
             elif event.key == pygame.K_s:
+                player.direction = 'DOWN'
                 player.velocity[1] = 200 * dt
             elif event.key == pygame.K_a:
+                player.direction = 'LEFT'
                 player.velocity[0] = -200 * dt
             elif event.key == pygame.K_d:
+                player.direction = 'RIGHT'
                 player.velocity[0] = 200 * dt
             elif event.key == pygame.K_SPACE:
                 player.attacking = True
