@@ -189,7 +189,7 @@ class Game:
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
 
-            
+
 
             pygame.display.update()
 
