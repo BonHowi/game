@@ -15,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, *groups):
         super().__init__(*groups)
         self.game = game
-        self.image = pygame.Surface((2, 2))
+        self.image = pygame.Surface((10, 15))
         self.image.fill(self.game.BLUE)
         self.rect = self.image.get_rect()
         self.spawn()

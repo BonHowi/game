@@ -8,6 +8,7 @@ from environment import Wall, FPSCounter
 from player import Player
 from utils import PlayerInfo
 from weapon import Weapon
+from bullet import Bullet
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -44,8 +45,10 @@ class Game:
             self.wall_list.append(Wall(self, self.all_sprites))
 
         self.enemy_list = []
-        for _ in range(1000):
+        for _ in range(10):
             self.enemy_list.append(Enemy(self, self.all_sprites))
+
+        self.bullet_list = pygame.sprite.Group()
 
     def run_game(self):
         running = True
@@ -79,6 +82,13 @@ class Game:
                     elif event.key == pygame.K_SPACE:
                         self.player.image.fill(self.RED)
                         self.player.attacking = True
+                elif event.type == pygame.MOUSEBUTTONDOWN:#strzelanie nabojami
+                    bullet = Bullet()
+                    bullet.rect.x = self.player.rect.x
+                    bullet.rect.y = self.player.rect.y
+                    bullet.direction = self.player.direction # kierunek strzału
+                    self.all_sprites.add(bullet)
+                    self.bullet_list.add(bullet)
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
@@ -96,9 +106,14 @@ class Game:
             coordinates = self.myfont.render('SCORE: ' + str(self.player.score), False, (255, 0, 0))
 
             self.player.attacked = False
+
+
+
             for enemy in self.enemy_list:
                 enemy.move(dt)
                 self.player.attack(enemy)
+                for bullet in self.bullet_list:
+                    bullet.collision(enemy)
 
                 enemy.rect.clamp_ip(screen_rect)
                 if enemy.hp > 0:
@@ -117,12 +132,13 @@ class Game:
                     self.player.velocity = velocity
                     self.player.update()
                     self.player.velocity = [0, 0]
-                for enemy in self.enemy_list:
-                    if collide_rect(enemy, block):
-                        velocity_en = [i * (-1) for i in enemy.old_velocity]
-                        enemy.velocity = velocity_en
-                        enemy.update()
-                        enemy.velocity = [0, 0]
+            for enemy in self.enemy_list:
+                if collide_rect(enemy, block):
+                    velocity_en = [i * (-1) for i in enemy.old_velocity]
+                    enemy.velocity = velocity_en
+                    enemy.update()
+                    enemy.velocity = [0, 0]
+
 
             self.player.render(screen)
 
@@ -135,7 +151,6 @@ class Game:
 
             self.all_sprites.draw(screen)
             pygame.display.update()
-
         print("Exited the game loop. Game will quit...")
         quit()
 
