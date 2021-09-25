@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.attack_range = pygame.Rect(0, 0, 0, 0)
 
     def attack(self):
-        if self.attacking == True:
+        if self.attacking:
             self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
