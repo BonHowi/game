@@ -5,11 +5,9 @@ import pygame
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-screen = pygame.display.set_mode((720, 720))
-clock = pygame.time.Clock()
-screen_rect = screen.get_rect()
 FPS = 120
 blit_objects = []  # table of objects to blit
+SIZE = (720, 720)
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -22,14 +20,28 @@ BROWN = (185, 100, 0)
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
 
+class Screen(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface(SIZE)
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
+        self.priority = 0
+        blit_objects.append(self)
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill(BROWN)
+        self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
+        self.rect.x = SIZE[0]/2
+        self.rect.y = SIZE[1]/2
         self.velocity = [0, 0]
-        blit_objects.append([self.image, self.rect])
+        self.priority = 1000
+        blit_objects.append(self)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -43,7 +55,8 @@ class Enemy(pygame.sprite.Sprite):
         self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
         self.velocity = [0, 0]
-        blit_objects.append([self.image, self.rect])
+        self.priority = 100
+        blit_objects.append(self)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -56,29 +69,34 @@ class Enemy(pygame.sprite.Sprite):
     def collision(self, collided):
         if self.rect.colliderect(collided):
             self.image.fill(RED)
-            self.velocity[0] = -self.velocity[0]
-            self.velocity[0] = -self.velocity[1]
+            self.priority = -10
         else:
             self.image.fill(BLUE)
 
 
+screen = Screen()
 player = Player()
 enemy = Enemy()
 
 
-def blit_all(objects):
-    for object in objects:
-        screen.blit(object[0], object[1])
+def blit_all(blit_objects_list):
+    blit_objects_list.sort(key=lambda x: x.priority, reverse=False)
+    for blit_object in blit_objects_list:
+        screen.blit(blit_object.image, blit_object.rect)
 
 
 running = True
 while running:
+    screen = pygame.display.set_mode(SIZE)
+    clock = pygame.time.Clock()
+    screen_rect = screen.get_rect()
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 player.velocity[1] = -200 * dt
