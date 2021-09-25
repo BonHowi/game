@@ -39,10 +39,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
         self.priority = 1000
-
+        self.score = 0
         # Player Attacking
         self.direction = ''
-
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
 
@@ -52,13 +51,13 @@ class Player(pygame.sprite.Sprite):
                 self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - self.rect.width, self.rect.y, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x - 30, self.rect.y, 30, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.rect.height, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - 30,  self.rect.height, 30)
                 self.collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,30)
                 self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
@@ -67,6 +66,7 @@ class Player(pygame.sprite.Sprite):
         if self.attack_range.colliderect(collision_obj):
             self.image.fill(RED)
             collision_obj.kill()
+            self.score += 1
         else:
             self.image.fill(BROWN)
 
@@ -76,7 +76,7 @@ class Player(pygame.sprite.Sprite):
     def render(self, display):
         # pygame.draw.rect(display, (255, 0, 0), self.rect)
         pygame.draw.rect(display, (0, 255, 0), self.attack_range)
-        #display.blit(self.image, self.rect)
+        display.blit(self.image, self.rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -168,7 +168,7 @@ while running:
 
     player.rect.clamp_ip(screen_rect)
 
-    coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (255, 0, 0))
+    coordinates = myfont.render('SCORE: ' + str(player.score), False, (255, 0, 0))
 
     for enemy in enemy_list:
         enemy.move(dt)
