@@ -30,7 +30,6 @@ class Game:
 
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
-
         self.all_enemy = None
         self.all_environment = None
         self.all_player = None
@@ -40,11 +39,9 @@ class Game:
         self.sword = None
         self.katana = None
         self.kij = None
-
         self.screen = None
         self.clock = None
         self.screen_rect = None
-
         self.fps_counter = None
         self.player_info = None
         self.wall_list = []
