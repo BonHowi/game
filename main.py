@@ -19,7 +19,15 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BROWN = (185, 100, 0)
 
+walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'), pygame.image.load('R3.png'),
+             pygame.image.load('R4.png'), pygame.image.load('R5.png'), pygame.image.load('R6.png'),
+             pygame.image.load('R7.png'), pygame.image.load('R8.png'), pygame.image.load('R9.png')]
 
+walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.image.load('L3.png'),
+            pygame.image.load('L4.png'), pygame.image.load('L5.png'), pygame.image.load('L6.png'),
+            pygame.image.load('L7.png'), pygame.image.load('L8.png'), pygame.image.load('L9.png')]
+char = pygame.image.load('standing.png')
+walkCount = 0
 
 
 # pygame.font.init()
@@ -29,6 +37,7 @@ myfont = pygame.font.SysFont('Comic Sans MS', 15)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        self.images = [pygame.image.load(img) for img in glob.glob("sprites\\*.png")]
         self.image = pygame.Surface((20, 20))
         self.image.fill(BROWN)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
@@ -76,7 +85,7 @@ def blit_all(objects):
 
 running = True
 while running:
-    dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
+    dt = clock.tick(FPS) / 500  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
 
     for event in pygame.event.get():
