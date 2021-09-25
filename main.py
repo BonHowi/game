@@ -9,8 +9,7 @@ screen = pygame.display.set_mode((720, 720))
 clock = pygame.time.Clock()
 screen_rect = screen.get_rect()
 FPS = 120
-blit_objects = [] #table of objects to blit
-
+blit_objects = []  # table of objects to blit
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -18,9 +17,6 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BROWN = (185, 100, 0)
-
-
-
 
 # pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
@@ -33,8 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.image.fill(BROWN)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
         self.velocity = [0, 0]
-        blit_objects.append([self.image,self.rect])
-
+        blit_objects.append([self.image, self.rect])
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -48,7 +43,7 @@ class Enemy(pygame.sprite.Sprite):
         self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
         self.velocity = [0, 0]
-        blit_objects.append([self.image,self.rect])
+        blit_objects.append([self.image, self.rect])
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -70,9 +65,11 @@ class Enemy(pygame.sprite.Sprite):
 player = Player()
 enemy = Enemy()
 
+
 def blit_all(objects):
     for object in objects:
         screen.blit(object[0], object[1])
+
 
 running = True
 while running:
@@ -110,8 +107,8 @@ while running:
     enemy.rect.clamp_ip(screen_rect)
     enemy.update()
 
-    #screen.blit(player.image, player.rect)
-    #screen.blit(enemy.image, enemy.rect)
+    # screen.blit(player.image, player.rect)
+    # screen.blit(enemy.image, enemy.rect)
     blit_all(blit_objects)
     screen.blit(coordinates, (0, 0))
 
