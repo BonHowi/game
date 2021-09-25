@@ -12,8 +12,10 @@ from weapon import Weapon
 from bullet import Bullet
 from particle_test import ParticleTest
 from particles import Particle
+
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
+
 
 class Game:
     def __init__(self):
@@ -57,8 +59,8 @@ class Game:
         self.all_player = pygame.sprite.Group()
         self.player = Player(self, self.all_player)
         # assigning weapon
-        wp_spawn_x = self.SIZE[0]/2
-        wp_spawn_y = self.SIZE[1]/2 + 40
+        wp_spawn_x = self.SIZE[0] / 2
+        wp_spawn_y = self.SIZE[1] / 2 + 40
         self.sword = Weapon(15, 'Sword', 15, self.RED, wp_spawn_x, wp_spawn_y,
                             self.all_environment)
         self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, wp_spawn_x + 50, wp_spawn_y,
@@ -175,8 +177,7 @@ class Game:
                 for bullet in self.bullet_list:  ##shooting wall, bullet disapers
                     if collide_rect(block, bullet):
                         bullet.kill()
-                        #particle animation
-
+                        # particle animation
 
             for enemy in self.enemy_list:
                 if collide_rect(enemy, block):
@@ -184,7 +185,6 @@ class Game:
                     enemy.velocity = velocity_en
                     enemy.update()
                     enemy.velocity = [0, 0]
-
 
             self.player.render(self.screen)
             self.fps_counter.update()
@@ -195,8 +195,6 @@ class Game:
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
-
-
 
             pygame.display.update()
 
