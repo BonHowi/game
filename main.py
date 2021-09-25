@@ -20,6 +20,10 @@ skull = pygame.transform.scale(skull,(720, 480))
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+#pygame.font.init()
+myfont = pygame.font.SysFont('Comic Sans MS', 15)
+
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -82,7 +86,7 @@ while running:
     player.rect.clamp_ip(screen_rect)
     player.update()
 
-
+    coordinates = myfont.render(str(player.rect.x) + ', ' +  str(player.rect.y), False, (0, 0, 0))
 
     enemy.move(dt)
     enemy.rect.clamp_ip(screen_rect)
@@ -91,6 +95,8 @@ while running:
     screen.blit(skull, (0,0))
     screen.blit(player.image, player.rect)
     screen.blit(enemy.image, enemy.rect)
+    screen.blit(coordinates, (0, 0))
+
     pygame.display.update()  # Or pygame.display.flip()
 
 print("Exited the game loop. Game will quit...")
