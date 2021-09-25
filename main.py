@@ -85,7 +85,6 @@ class Player(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
-            print(collision_obj)
             if collision_obj in all_sprites:
                 self.score += 1
                 self.image.fill(RED)
