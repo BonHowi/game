@@ -10,9 +10,12 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
-
+from particle_test import ParticleTest
+from particles import Particle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
+
+particles = []
 
 
 class Game:
@@ -124,12 +127,9 @@ class Game:
                         self.game_over()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
-                    # mouse_x, mouse_y = pygame.mouse.get_pos()
-
                     bullet = Bullet(self)
                     bullet.rect.x = self.player.rect.x
                     bullet.rect.y = self.player.rect.y
-
                     bullet.direction = self.player.direction  # kierunek strzału
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
@@ -144,7 +144,6 @@ class Game:
                         self.player.attacking = False
 
             self.player.attacked = False
-
             for enemy in self.enemy_list:
                 enemy.move(dt)
                 self.player.attack(enemy)
@@ -168,6 +167,7 @@ class Game:
             self.all_enemy.update()
             self.all_player.update()
             block = None
+
             for block in self.wall_list:
                 if collide_rect(self.player, block):
                     velocity = [i * (-1) for i in self.player.old_velocity]
@@ -178,6 +178,8 @@ class Game:
                 for bullet in self.bullet_list:  ##shooting wall, bullet disapers
                     if collide_rect(block, bullet):
                         bullet.kill()
+                        #particle animation
+
 
             for enemy in self.enemy_list:
                 if collide_rect(enemy, block):
@@ -185,6 +187,7 @@ class Game:
                     enemy.velocity = velocity_en
                     enemy.update()
                     enemy.velocity = [0, 0]
+
 
             self.player.render(self.screen)
             self.fps_counter.update()
@@ -195,7 +198,11 @@ class Game:
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
+
+
+
             pygame.display.update()
+
         print("Exited the game loop. Game will quit...")
         quit()
 
