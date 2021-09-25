@@ -16,17 +16,6 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BROWN = (185, 100, 0)
 
-walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'), pygame.image.load('R3.png'),
-             pygame.image.load('R4.png'), pygame.image.load('R5.png'), pygame.image.load('R6.png'),
-             pygame.image.load('R7.png'), pygame.image.load('R8.png'), pygame.image.load('R9.png')]
-
-walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.image.load('L3.png'),
-            pygame.image.load('L4.png'), pygame.image.load('L5.png'), pygame.image.load('L6.png'),
-            pygame.image.load('L7.png'), pygame.image.load('L8.png'), pygame.image.load('L9.png')]
-char = pygame.image.load('standing.png')
-walkCount = 0
-
-
 # pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
@@ -44,19 +33,34 @@ class Screen(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.images = [pygame.image.load(img) for img in glob.glob("sprites\\*.png")]
         self.image = pygame.Surface((20, 20))
         self.image.fill(BROWN)
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
-        self.rect.x = SIZE[0]/2
-        self.rect.y = SIZE[1]/2
+        self.rect.x = SIZE[0] / 2
+        self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
         self.priority = 1000
-        blit_objects.append(self)
+        #blit_objects.append(self)
+
+        # Player Attacking
+        self.attacking = False
+        self.attack_range = pygame.Rect(0, 0, 0, 0)
+
+    def attack(self):
+        if self.attacking == True:
+            self.attack_range = pygame.Rect(self.rect.x + self.rect.width,self.rect.y, 30, self.rect.height)
+        else:
+            self.attack_range = pygame.Rect(0, 0, 0, 0)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
+        self.attack()
+
+    def render(self, display):
+        #pygame.draw.rect(display, (255, 0, 0), self.rect)
+        pygame.draw.rect(display, (0, 255, 0), self.attack_range)
+        display.blit(self.image, self.rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -119,7 +123,7 @@ while running:
             elif event.key == pygame.K_d:
                 player.velocity[0] = 200 * dt
             elif event.key == pygame.K_SPACE:
-                player.image.fill(RED)
+                player.attacking = True
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w or event.key == pygame.K_s:
@@ -127,7 +131,8 @@ while running:
             elif event.key == pygame.K_a or event.key == pygame.K_d:
                 player.velocity[0] = 0
             elif event.key == pygame.K_SPACE:
-                player.image.fill(BROWN)
+                player.attacking = False
+
     player.rect.clamp_ip(screen_rect)
     player.update()
 
@@ -137,10 +142,8 @@ while running:
     enemy.rect.clamp_ip(screen_rect)
     enemy.update()
 
-    # screen.blit(player.image, player.rect)
-    # screen.blit(enemy.image, enemy.rect)
-
     blit_all(blit_objects)
+    player.render(screen)
     screen.blit(coordinates, (0, 0))
 
     pygame.display.update()  # Or pygame.display.flip()
