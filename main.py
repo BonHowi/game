@@ -45,13 +45,7 @@ class Weapon(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            if collision_obj.weapon.name != self.name:
-                weapon = Weapon(collision_obj.weapon.damage, collision_obj.weapon.name, collision_obj.weapon.width,
-                                collision_obj.weapon.color, collision_obj.weapon.rect.x, collision_obj.weapon.rect.y,
-                                all_sprites)
-
             collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
-            self.kill()
 
 
 class Player(pygame.sprite.Sprite):
@@ -71,7 +65,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
         self.hasWeapon = False
-        self.weapon = Weapon(1, 'Gole piesci', 2, RED, 350, 50, all_sprites)
+        self.weapon = Weapon(0, 'Gole piesci', 2, RED, 35000, 50000, all_sprites)
         self.hp = 100
 
     def attack(self, collision_obj):
@@ -98,7 +92,7 @@ class Player(pygame.sprite.Sprite):
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
             if collision_obj.hp > 0:
-                collision_obj.hp -= 5
+                collision_obj.hp -= self.weapon.damage
             else:
                 if collision_obj in all_sprites:
                     self.score += 1
@@ -208,9 +202,8 @@ class PlayerInfo:
 
     def update(self):
         text = "Weapon: " + str(player.weapon.name)
-        #self.weapon_text = self.font.render(text, False, self.color)
-        #self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
-
+        # self.weapon_text = self.font.render(text, False, self.color)
+        # self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
@@ -229,7 +222,6 @@ player = Player(all_sprites)
 sword = Weapon(15, 'Sword', 15, RED, 200, 50, all_sprites)
 katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50, all_sprites)
 kij = Weapon(1, 'Kij', 5, BLUE, 300, 50, all_sprites)
-piesci = Weapon(1, 'Gole piesci', 2, RED, 350, 50, all_sprites)
 
 # player.assign_weapon(sword)
 
@@ -295,7 +287,6 @@ while running:
     katana.collision(player)
     kij.collision(player)
 
-
     all_sprites.update()
     for block in wall_list:
         if collide_rect(player, block):
@@ -307,7 +298,7 @@ while running:
 
     fps_counter.update()
     fps_counter.render()
-    #player_info.update() i think, niepotrzebne
+    # player_info.update() i think, niepotrzebne
     player_info.render()
 
     screen.blit(coordinates, (0, 0))
