@@ -2,6 +2,7 @@ import random
 
 import pygame
 from pygame.sprite import collide_rect
+import copy
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -15,7 +16,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BROWN = (185, 100, 0)
-KATANA_COLOR = (169,169,169)
+KATANA_COLOR = (169, 169, 169)
 
 # pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
@@ -30,8 +31,9 @@ myfont = pygame.font.SysFont('Comic Sans MS', 15)
 #         self.priority = 0
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, damage, name, width, color,x, y,*groups):
+    def __init__(self, damage, name, width, color, x, y, *groups):
         super().__init__(*groups)
+        self.width = width
         self.damage = damage
         self.name = name
         self.blade_length = int(width)
@@ -44,7 +46,17 @@ class Weapon(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            collision_obj.assign_weapon(self) # if collided, assigning weapon to player
+            if collision_obj.weapon.name != self.name:
+                print(collision_obj.weapon.name)
+                print(self.name)
+                # weapon = collision_obj.weapon
+                weapon = Weapon(collision_obj.weapon.damage, collision_obj.weapon.name, collision_obj.weapon.width,
+                                collision_obj.weapon.color, collision_obj.weapon.rect.x, collision_obj.weapon.rect.y,
+                                all_sprites)
+
+            collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
+            self.kill()
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -64,23 +76,26 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
         self.hasWeapon = False
-
+        self.weapon = Weapon(1, 'Gole piesci', 2, RED, 200, 50, all_sprites)
         self.hp = 100
 
     def attack(self, collision_obj):
-        if self.attacking and self.hasWeapon :
+        if self.attacking and self.hasWeapon:
             if self.direction == 'RIGHT':
-                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y ,
+                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
                                                 self.weapon.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - self.weapon.blade_length, self.rect.y, self.weapon.blade_length, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x - self.weapon.blade_length, self.rect.y,
+                                                self.weapon.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.weapon.blade_length,  self.rect.height, self.weapon.blade_length)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.weapon.blade_length, self.rect.height,
+                                                self.weapon.blade_length)
                 self.collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,self.weapon.blade_length)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,
+                                                self.weapon.blade_length)
                 self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
@@ -107,6 +122,7 @@ class Player(pygame.sprite.Sprite):
     def assign_weapon(self, weapon: Weapon):
         self.weapon = weapon
         self.hasWeapon = True
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, *groups):
@@ -186,11 +202,11 @@ all_sprites = pygame.sprite.Group()
 # screen = Screen(all_sprites)
 player = Player(all_sprites)
 ######assigning weapon
-sword = Weapon(15, 'Sword', 15, RED, 200, 50,all_sprites)
-katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50,all_sprites)
-kij = Weapon(1, 'Kij', 5, BROWN,300, 50, all_sprites)
+sword = Weapon(15, 'Sword', 15, RED, 200, 50, all_sprites)
+katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50, all_sprites)
+kij = Weapon(1, 'Kij', 5, BLUE, 300, 50, all_sprites)
 
-#player.assign_weapon(sword)
+# player.assign_weapon(sword)
 
 wall_list = []
 for _ in range(5):
