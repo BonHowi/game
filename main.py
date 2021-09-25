@@ -69,6 +69,7 @@ class Player(pygame.sprite.Sprite):
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
+        self.attack_token = True
 
     def attack(self, collision_obj):
         if self.attacking and self.hasWeapon:
@@ -77,6 +78,7 @@ class Player(pygame.sprite.Sprite):
                 self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
                                                 self.weapon.blade_length, self.rect.height)
                 self.collision(collision_obj)
+
             elif self.direction == 'LEFT':
                 self.attack_range = pygame.Rect(self.rect.x - self.weapon.blade_length, self.rect.y,
                                                 self.weapon.blade_length, self.rect.height)
@@ -284,12 +286,11 @@ while running:
 
 
 
-    coordinates = myfont.render('SCORE: ' + str(player.score), False, (255, 0, 0))
+    score = myfont.render('SCORE: ' + str(player.score), False, (255, 0, 0))
 
     for enemy in enemy_list:
         enemy.move(dt)
         player.attack(enemy)
-
         enemy.rect.clamp_ip(screen_rect)
         if enemy.hp > 0:
             enemy.draw_health(screen)
@@ -305,14 +306,13 @@ while running:
             player.velocity = velocity
             player.update()
             player.velocity = [0, 0]
-    player.render(screen)
+
+    player.render(screen) # render broni gracza
 
     fps_counter.update()
     fps_counter.render()
-    # player_info.update() i think, niepotrzebne
     player_info.render()
-
-    screen.blit(coordinates, (0, 0))
+    screen.blit(score, (0, 0))
 
     all_sprites.draw(screen)
     pygame.display.update()
