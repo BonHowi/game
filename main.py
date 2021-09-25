@@ -4,10 +4,10 @@ import time
 import pygame
 from pygame.sprite import collide_rect
 
-from enemy import Enemy
-from environment import Wall, FPSCounter
+from enemy import Enemy, EnemySlow
+from environment import Wall
 from player import Player
-from utils import PlayerInfo
+from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 
@@ -17,7 +17,7 @@ print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 class Game:
     def __init__(self):
-        self.FPS = 60
+        self.FPS = 144
         self.SIZE = (1200, 600)
 
         self.BLACK = (0, 0, 0)
@@ -57,9 +57,14 @@ class Game:
         self.all_player = pygame.sprite.Group()
         self.player = Player(self, self.all_player)
         # assigning weapon
-        self.sword = Weapon(15, 'Sword', 15, self.RED, 200, 50, self.all_environment)
-        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, 250, 50, self.all_environment)
-        self.kij = Weapon(1, 'Kij', 5, self.BLUE, 300, 50, self.all_environment)
+        wp_spawn_x = self.SIZE[0]/2
+        wp_spawn_y = self.SIZE[1]/2 + 40
+        self.sword = Weapon(15, 'Sword', 15, self.RED, wp_spawn_x, wp_spawn_y,
+                            self.all_environment)
+        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, wp_spawn_x + 50, wp_spawn_y,
+                             self.all_environment)
+        self.kij = Weapon(1, 'Kij', 5, self.BLUE, wp_spawn_x - 50, wp_spawn_y,
+                          self.all_environment)
 
         self.screen = pygame.display.set_mode(self.SIZE)
         self.clock = pygame.time.Clock()
@@ -74,7 +79,11 @@ class Game:
 
         self.enemy_list = []
         for _ in range(10):
-            self.enemy_list.append(Enemy(self, 200, 150, self.all_enemy))
+            self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
+        for _ in range(10):
+            self.enemy_list.append(Enemy(self, 400, 50, self.RED, "Zbigniew", self.all_enemy))
+        for _ in range(5):
+            self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Zbigniew", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
 
@@ -158,6 +167,7 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
+            block = None
             for block in self.wall_list:
                 if collide_rect(self.player, block):
                     velocity = [i * (-1) for i in self.player.old_velocity]

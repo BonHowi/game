@@ -9,7 +9,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill(self.game.WHITE)
         self.rect = self.image.get_rect()
         self.direction = ''
-        self.damage = 10
+        self.damage = 10 + self.game.player.score * 5
         self.speed = 3
 
     def update(self):
@@ -25,3 +25,4 @@ class Bullet(pygame.sprite.Sprite):
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
             self.game.player.calculate_collison(collision_obj, self.damage)
+            self.kill()

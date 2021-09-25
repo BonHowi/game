@@ -1,3 +1,6 @@
+import pygame
+
+
 class PlayerInfo:
     def __init__(self, game, pos):
         self.game = game
@@ -43,3 +46,23 @@ class PlayerInfo:
         self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
         self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 3 * self.space_between))
         self.time_text_rect = self.time_text.get_rect(center=(self.pos[0], self.pos[1] + 4 * self.space_between))
+
+
+class FPSCounter:
+    def __init__(self, game, surface, font, cock, color, pos):
+        self.game = game
+        self.surface = surface
+        self.font = font
+        self.clock = cock
+        self.pos = pos
+        self.color = color
+        self.fps_text = self.font.render(str(self.game.clock.get_fps()) + "FPS", False, self.color)
+        self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
+
+    def render(self):
+        self.surface.blit(self.fps_text, self.fps_text_rect)
+
+    def update(self):
+        text = f"{self.game.clock.get_fps():2.0f} FPS"
+        self.fps_text = self.font.render(text, False, self.color)
+        self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
