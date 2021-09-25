@@ -12,18 +12,18 @@ def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, *groups):
+    def __init__(self, game, speed, max_hp, *groups):
         super().__init__(*groups)
         self.game = game
-        self.image = pygame.Surface((10, 15))
+        self.image = pygame.Surface((15, 10))
         self.image.fill(self.game.BLUE)
         self.rect = self.image.get_rect()
         self.spawn()
-        self.speed = 150
+        self.speed = speed
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.priority = 100
-        self.max_hp = 150
+        self.max_hp = max_hp
         self.hp = self.max_hp
 
     def spawn(self):
@@ -46,7 +46,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def draw_health(self, surf):
         if self.hp < self.max_hp:
-            health_rect = pygame.Rect(0, 0, 15, self.image.get_width() + 1)
+            health_rect = pygame.Rect(0, 0, self.image.get_width() + 5, 5)
             health_rect.midbottom = self.rect.centerx, self.rect.top
             draw_health_bar(surf, health_rect.topleft, health_rect.size,
                             (0, 0, 0), (255, 0, 0), (0, 255, 0), self.hp / self.max_hp)

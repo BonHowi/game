@@ -7,9 +7,9 @@ class Wall(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.game = game
         if random.randint(1, 2) % 2:
-            wall = (random.randint(40, 100), random.randint(1, 10))
+            wall = (random.randint(40, 100), random.randint(5, 15))
         else:
-            wall = (random.randint(1, 10), random.randint(40, 200))
+            wall = (random.randint(5, 15), random.randint(40, 200))
         self.image = pygame.Surface(wall)
         self.image.fill(game.WHITE)
         self.rect = self.image.get_rect()
