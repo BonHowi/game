@@ -16,7 +16,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BROWN = (185, 100, 0)
 KATANA_COLOR = (169, 169, 169)
-
+YELLOW = (240,230,140)
 # pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
@@ -46,6 +46,24 @@ class Weapon(pygame.sprite.Sprite):
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
             collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((10, 20))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+        self.speed = -10
+        self.direction = 'LEFT'
+
+    def update(self):
+        self.rect.y += self.speed
+        # kill if it moves off the top of the screen
+        if self.rect.x < 0 or self.rect.x > SIZE[0]:
+            self.kill()
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -129,7 +147,7 @@ class Enemy(pygame.sprite.Sprite):
         self.old_velocity = [0, 0]
         self.priority = 100
 
-        self.max_hp = 15
+        self.max_hp = 150
         self.hp = self.max_hp
 
     def update(self):
@@ -235,8 +253,6 @@ sword = Weapon(15, 'Sword', 15, RED, 200, 50, all_sprites)
 katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50, all_sprites)
 kij = Weapon(1, 'Kij', 5, BLUE, 300, 50, all_sprites)
 
-# player.assign_weapon(sword)
-
 wall_list = []
 for _ in range(random.randint(10, 30)):
     wall_list.append(Wall(all_sprites))
@@ -256,6 +272,7 @@ while running:
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
     player.old_velocity = player.velocity
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -284,6 +301,7 @@ while running:
             elif event.key == pygame.K_SPACE:
                 player.image.fill(BROWN)
                 player.attacking = False
+
 
     player.rect.clamp_ip(screen_rect)
     if player.current_stamina < player.max_stamina:
@@ -314,20 +332,17 @@ while running:
             player.velocity = [0, 0]
 
     player.render(screen) # render broni gracza
-        for enemy in enemy_list:
-            if collide_rect(enemy, block):
-                velocity_en = [i * (-1) for i in enemy.old_velocity]
-                enemy.velocity = velocity_en
-                enemy.update()
-                enemy.velocity = [0, 0]
-
-    player.render(screen)
+    for enemy in enemy_list:
+        if collide_rect(enemy, block):
+            velocity_en = [i * (-1) for i in enemy.old_velocity]
+            enemy.velocity = velocity_en
+            enemy.update()
+            enemy.velocity = [0, 0]
 
     fps_counter.update()
     fps_counter.render()
     player_info.render()
     screen.blit(score, (0, 0))
-
     all_sprites.draw(screen)
     pygame.display.update()
 
