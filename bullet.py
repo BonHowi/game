@@ -24,7 +24,4 @@ class Bullet(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            if collision_obj.hp > 0:
-                collision_obj.hp -= self.damage
-                if collision_obj.hp <= 0:
-                    self.game.player.score += 1
+            self.game.player.calculate_collison(collision_obj, self.damage)

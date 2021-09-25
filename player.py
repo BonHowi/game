@@ -51,11 +51,14 @@ class Player(pygame.sprite.Sprite):
 
     def attack_collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
-            if collision_obj.hp > 0:
-                collision_obj.hp -= self.weapon.damage
-                if collision_obj.hp <= 0:
-                    self.score += 1
-            self.attacked = True
+            self.calculate_collison(collision_obj, self.weapon.damage)
+
+    def calculate_collison(self, collision_obj, damage):
+        if collision_obj.hp > 0:
+            collision_obj.hp -= damage
+            if collision_obj.hp <= 0:
+                self.score += 1
+        self.attacked = True
 
     def update(self):
         self.rect.clamp_ip(self.game.screen_rect)
