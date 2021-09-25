@@ -1,12 +1,13 @@
 import random
 
 import pygame
+from pygame.sprite import collide_rect
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 FPS = 60
-SIZE = (1200, 800)
+SIZE = (1200, 600)
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -50,13 +51,13 @@ class Weapon(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.image = pygame.Surface((20, 20))
+        self.image = pygame.Surface((10, 10))
         self.image.fill(BROWN)
-        self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
         self.rect.x = SIZE[0] / 2
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
+        self.speed = 100
         self.priority = 1000
         self.score = 0
         # Player Attacking
@@ -64,6 +65,8 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
         self.hasWeapon = False
+
+        self.hp = 100
 
     def attack(self, collision_obj):
         if self.attacking and self.hasWeapon :
@@ -85,10 +88,13 @@ class Player(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
-            if collision_obj in all_sprites:
-                self.score += 1
-                self.image.fill(RED)
-            collision_obj.kill()
+            if collision_obj.hp > 0:
+                collision_obj.hp -= 5
+            else:
+                if collision_obj in all_sprites:
+                    self.score += 1
+                    self.image.fill(RED)
+                collision_obj.kill()
         else:
             self.image.fill(BROWN)
 
@@ -108,21 +114,44 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.image = pygame.Surface((2, 2))
         self.image.fill(BLUE)
-        self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
+        self.rect.x = SIZE[0] / 2
+        self.rect.y = SIZE[1] / 2
+
         self.velocity = [0, 0]
         self.priority = 100
+        self.hp = 150
+        self.max_hp = 150
 
     def update(self):
         self.rect.move_ip(*self.velocity)
 
     def move(self, dtick):
-        self.velocity[0] = random.randint(-50, 150) * dtick / 2
-        self.velocity[1] = random.randint(-50, 150) * dtick / 2
+        self.velocity[0] = random.randint(-150, 150) * dtick / 2
+        self.velocity[1] = random.randint(-150, 150) * dtick / 2
 
-    # def collision(self, collided):
-    #     if self.rect.colliderect(collided):
-    #         self.image.fill(RED)
+    def collision(self, collided):
+        if self.rect.colliderect(collided):
+            self.image.fill(RED)
+
+    def draw_health(self, surf):
+        health_rect = pygame.Rect(0, 0, 15, self.image.get_width() + 1)
+        health_rect.midbottom = self.rect.centerx, self.rect.top
+        draw_health_bar(surf, health_rect.topleft, health_rect.size,
+                        (0, 0, 0), (255, 0, 0), (0, 255, 0), self.hp / self.max_hp)
+
+
+class Wall(pygame.sprite.Sprite):
+    def __init__(self, *groups):
+        super().__init__(*groups)
+        wall = (random.randint(1, 100), random.randint(1, 100))
+        self.image = pygame.Surface(wall)
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        x = random.randint(100, 500)
+        y = random.randint(100, 500)
+        self.rect.x = x
+        self.rect.y = y
 
 
 class FPSCounter:
@@ -145,8 +174,13 @@ class FPSCounter:
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
-
-
+def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
+    pygame.draw.rect(surf, back_c, (*pos, *size))
+    pygame.draw.rect(surf, border_c, (*pos, *size), 1)
+    inner_pos = (pos[0] + 1, pos[1] + 1)
+    inner_size = ((size[0] - 2) * progress, size[1] - 2)
+    rect = (round(inner_pos[0]), round(inner_pos[1]), round(inner_size[0]), round(inner_size[1]))
+    pygame.draw.rect(surf, health_c, rect)
 
 
 all_sprites = pygame.sprite.Group()
@@ -158,6 +192,10 @@ katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50,all_sprites)
 kij = Weapon(1, 'Kij', 5, BROWN,300, 50, all_sprites)
 
 #player.assign_weapon(sword)
+
+wall_list = []
+for _ in range(5):
+    wall_list.append(Wall(all_sprites))
 
 enemy_list = []
 for _ in range(50):
@@ -171,24 +209,23 @@ while running:
     fps_counter = FPSCounter(screen, myfont, clock, GREEN, (150, 10))
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
-
+    old_velocity = player.velocity
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 player.direction = 'UP'
-                player.velocity[1] = -200 * dt
+                player.velocity[1] = -player.speed * dt
             elif event.key == pygame.K_s:
                 player.direction = 'DOWN'
-                player.velocity[1] = 200 * dt
+                player.velocity[1] = player.speed * dt
             elif event.key == pygame.K_a:
                 player.direction = 'LEFT'
-                player.velocity[0] = -200 * dt
+                player.velocity[0] = -player.speed * dt
             elif event.key == pygame.K_d:
                 player.direction = 'RIGHT'
-                player.velocity[0] = 200 * dt
+                player.velocity[0] = player.speed * dt
             elif event.key == pygame.K_SPACE:
                 player.attacking = True
 
@@ -211,14 +248,22 @@ while running:
         katana.collision(player)
         kij.collision(player)
         enemy.rect.clamp_ip(screen_rect)
+        if enemy.hp > 0:
+            enemy.draw_health(screen)
 
     all_sprites.update()
-    all_sprites.draw(screen)
+    for block in wall_list:
+        if collide_rect(player, block):
+            velocity = [i * (-1) for i in old_velocity]
+            player.velocity = velocity
+            player.update()
+            player.velocity = [0, 0]
     player.render(screen)
     fps_counter.update()
     fps_counter.render()
     screen.blit(coordinates, (0, 0))
-    pygame.display.flip()
+    all_sprites.draw(screen)
+    pygame.display.update()
 
 print("Exited the game loop. Game will quit...")
 quit()
