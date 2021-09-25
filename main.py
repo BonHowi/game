@@ -2,7 +2,6 @@ import random
 
 import pygame
 from pygame.sprite import collide_rect
-import copy
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -47,16 +46,12 @@ class Weapon(pygame.sprite.Sprite):
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
             if collision_obj.weapon.name != self.name:
-                print(collision_obj.weapon.name)
-                print(self.name)
-                # weapon = collision_obj.weapon
                 weapon = Weapon(collision_obj.weapon.damage, collision_obj.weapon.name, collision_obj.weapon.width,
                                 collision_obj.weapon.color, collision_obj.weapon.rect.x, collision_obj.weapon.rect.y,
                                 all_sprites)
 
             collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
             self.kill()
-
 
 
 class Player(pygame.sprite.Sprite):
@@ -76,7 +71,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
         self.hasWeapon = False
-        self.weapon = Weapon(1, 'Gole piesci', 2, RED, 200, 50, all_sprites)
+        self.weapon = Weapon(1, 'Gole piesci', 2, RED, 350, 50, all_sprites)
         self.hp = 100
 
     def attack(self, collision_obj):
@@ -201,10 +196,11 @@ def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
 all_sprites = pygame.sprite.Group()
 # screen = Screen(all_sprites)
 player = Player(all_sprites)
-######assigning weapon
+# assigning weapon
 sword = Weapon(15, 'Sword', 15, RED, 200, 50, all_sprites)
 katana = Weapon(25, 'Katana', 36, KATANA_COLOR, 250, 50, all_sprites)
 kij = Weapon(1, 'Kij', 5, BLUE, 300, 50, all_sprites)
+piesci = Weapon(1, 'Gole piesci', 2, RED, 350, 50, all_sprites)
 
 # player.assign_weapon(sword)
 
