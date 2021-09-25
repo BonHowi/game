@@ -184,6 +184,35 @@ class FPSCounter:
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
+class PlayerInfo:
+    def __init__(self, surface, font, cock, color, pos):
+        self.surface = surface
+        self.font = font
+        self.clock = cock
+        self.pos = pos
+        self.color = color
+        self.space_between = 20
+
+        self.weapon_text = self.font.render("Weapon: " + str(player.weapon.name), False, self.color)
+        self.hp_text = self.font.render("HP: " + str(player.hp), False, self.color)
+        self.damage_text = self.font.render("Damage: " + str(player.weapon.damage), False, self.color)
+
+        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
+        self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
+        self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
+
+    def render(self):
+        self.surface.blit(self.weapon_text, self.weapon_text_rect)
+        self.surface.blit(self.hp_text, self.hp_text_rect)
+        self.surface.blit(self.damage_text, self.damage_text_rect)
+
+    def update(self):
+        text = "Weapon: " + str(player.weapon.name)
+        #self.weapon_text = self.font.render(text, False, self.color)
+        #self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
+
+
+
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
     pygame.draw.rect(surf, back_c, (*pos, *size))
     pygame.draw.rect(surf, border_c, (*pos, *size), 1)
@@ -218,6 +247,8 @@ while running:
     clock = pygame.time.Clock()
     screen_rect = screen.get_rect()
     fps_counter = FPSCounter(screen, myfont, clock, GREEN, (150, 10))
+    player_info = PlayerInfo(screen, myfont, clock, GREEN, (800, 10))
+
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
     old_velocity = player.velocity
@@ -264,6 +295,7 @@ while running:
     katana.collision(player)
     kij.collision(player)
 
+
     all_sprites.update()
     for block in wall_list:
         if collide_rect(player, block):
@@ -272,9 +304,14 @@ while running:
             player.update()
             player.velocity = [0, 0]
     player.render(screen)
+
     fps_counter.update()
     fps_counter.render()
+    #player_info.update() i think, niepotrzebne
+    player_info.render()
+
     screen.blit(coordinates, (0, 0))
+
     all_sprites.draw(screen)
     pygame.display.update()
 
