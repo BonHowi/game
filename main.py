@@ -70,10 +70,10 @@ class Player(pygame.sprite.Sprite):
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
+        self.attacked = False
 
     def attack(self, collision_obj):
-        if self.attacking and self.hasWeapon:
-            self.current_stamina = 0
+        if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
             if self.direction == 'RIGHT':
                 self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
                                                 self.weapon.blade_length, self.rect.height)
@@ -90,9 +90,9 @@ class Player(pygame.sprite.Sprite):
                 self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,
                                                 self.weapon.blade_length)
                 self.collision(collision_obj)
-
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
+
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
             if collision_obj.hp >= 0:
@@ -100,10 +100,8 @@ class Player(pygame.sprite.Sprite):
             else:
                 if collision_obj in all_sprites:
                     self.score += 1
-                    self.image.fill(RED)
                 collision_obj.kill()
-        else:
-            self.image.fill(BROWN)
+            self.attacked = True
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -130,7 +128,7 @@ class Enemy(pygame.sprite.Sprite):
         self.old_velocity = [0, 0]
         self.priority = 100
 
-        self.max_hp = 150
+        self.max_hp = 15
         self.hp = self.max_hp
 
     def update(self):
@@ -203,9 +201,9 @@ class PlayerInfo:
         self.stamina_text = self.font.render("Stamina: " + str(player.current_stamina), False, self.color)
 
         self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
-        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
-        self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
-        self.stamina_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 3 * self.space_between))
+        self.stamina_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
+        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
+        self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 3 * self.space_between))
 
     def render(self):
         self.surface.blit(self.hp_text, self.hp_text_rect)
@@ -277,7 +275,6 @@ while running:
                 player.image.fill(RED)
                 player.attacking = True
 
-
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w or event.key == pygame.K_s:
                 player.velocity[1] = 0
@@ -289,12 +286,11 @@ while running:
 
     player.rect.clamp_ip(screen_rect)
     if player.current_stamina < player.max_stamina:
-        player.current_stamina += 10
-
-
+        player.current_stamina += 100
 
     coordinates = myfont.render('SCORE: ' + str(player.score), False, (255, 0, 0))
 
+    player.attacked = False
     for enemy in enemy_list:
         enemy.move(dt)
         player.attack(enemy)
@@ -302,6 +298,8 @@ while running:
         enemy.rect.clamp_ip(screen_rect)
         if enemy.hp > 0:
             enemy.draw_health(screen)
+    if player.attacked:
+        player.current_stamina = 0
 
     sword.collision(player)
     katana.collision(player)
