@@ -9,14 +9,19 @@ FPS = 60
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+skull = pygame.image.load('skull.jpg')
+skull = pygame.transform.scale(skull,(720, 480))
+
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((32, 32))
-        self.image.fill(WHITE)
-        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()  # Get rect of same size as 'image'.
         self.velocity = [0, 0]
 
     def update(self):
@@ -49,7 +54,9 @@ while running:
 
     player.update()
 
+    screen.blit(skull, (100, 100))
     screen.blit(player.image, player.rect)
+
     pygame.display.update()  # Or pygame.display.flip()
 
 print("Exited the game loop. Game will quit...")
