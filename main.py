@@ -82,13 +82,13 @@ while running:
     player.rect.clamp_ip(screen_rect)
     player.update()
 
-    screen.blit(skull, (100, 100))
-    screen.blit(player.image, player.rect)
+
 
     enemy.move(dt)
     enemy.rect.clamp_ip(screen_rect)
     enemy.update()
 
+    screen.blit(skull, (0,0))
     screen.blit(player.image, player.rect)
     screen.blit(enemy.image, enemy.rect)
     pygame.display.update()  # Or pygame.display.flip()
