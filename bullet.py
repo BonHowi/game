@@ -10,7 +10,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.direction = ''
         self.damage = 10
-        self.speed = 10
+        self.speed = 3
 
     def update(self):
         if self.direction == 'UP':
