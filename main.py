@@ -30,6 +30,7 @@ class Game:
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
+
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
@@ -59,8 +60,11 @@ class Game:
 
     def run_game(self):
         running = True
+
         while running:
             dt = self.clock.tick(self.FPS) / 400
+            self.last_shot = pygame.time.get_ticks()
+
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
             for event in pygame.event.get():
@@ -83,9 +87,12 @@ class Game:
                         self.player.image.fill(self.RED)
                         self.player.attacking = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
+                   # mouse_x, mouse_y = pygame.mouse.get_pos()
+
                     bullet = Bullet(self)
                     bullet.rect.x = self.player.rect.x
                     bullet.rect.y = self.player.rect.y
+
                     bullet.direction = self.player.direction  # kierunek strzału
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
@@ -123,7 +130,6 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
-
             for block in self.wall_list:
                 if collide_rect(self.player, block):
                     velocity = [i * (-1) for i in self.player.old_velocity]

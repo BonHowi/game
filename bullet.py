@@ -5,12 +5,12 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface([4, 10])
+        self.image = pygame.Surface([3, 3])
         self.image.fill(self.game.WHITE)
         self.rect = self.image.get_rect()
         self.direction = ''
         self.damage = 10
-        self.speed = 10
+        self.speed = 3
 
     def update(self):
         if self.direction == 'UP':
