@@ -41,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
         self.priority = 1000
-        #blit_objects.append(self)
+        # blit_objects.append(self)
 
         # Player Attacking
         self.attacking = False
@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
 
     def attack(self):
         if self.attacking == True:
-            self.attack_range = pygame.Rect(self.rect.x + self.rect.width,self.rect.y, 30, self.rect.height)
+            self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
 
@@ -58,7 +58,7 @@ class Player(pygame.sprite.Sprite):
         self.attack()
 
     def render(self, display):
-        #pygame.draw.rect(display, (255, 0, 0), self.rect)
+        # pygame.draw.rect(display, (255, 0, 0), self.rect)
         pygame.draw.rect(display, (0, 255, 0), self.attack_range)
         display.blit(self.image, self.rect)
 
@@ -106,15 +106,6 @@ class FPSCounter:
         text = f"{self.clock.get_fps():2.0f} FPS"
         self.fps_text = self.font.render(text, False, self.color)
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
-
-
-def blit_all(blit_objects_list):
-    blit_objects_list.sort(key=lambda x: x.priority, reverse=False)
-    counter = 0
-    for blit_ob in blit_objects_list:
-        screen.blit(blit_ob.image, blit_ob.rect)
-        counter += 1
-    print(counter)
 
 
 all_sprites = pygame.sprite.Group()
@@ -170,9 +161,6 @@ while running:
     all_sprites.update()
     all_sprites.draw(screen)
     player.render(screen)
-
-
-
 
     screen.blit(coordinates, (0, 0))
     fps_counter.render()
