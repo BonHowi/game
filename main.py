@@ -53,20 +53,19 @@ class Player(pygame.sprite.Sprite):
                                                 self.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - 30, self.rect.y, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x - self.blade_length, self.rect.y, self.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - 30,  self.rect.height, 30)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.blade_length, self.rect.height, self.blade_length)
                 self.collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,30)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height, self.blade_length)
                 self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
 
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
-            print(collision_obj)
             if collision_obj in all_sprites:
                 self.score += 1
                 self.image.fill(RED)
