@@ -57,6 +57,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = SIZE[0] / 2
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
+        self.old_velocity = [0, 0]
         self.speed = 100
         self.priority = 1000
         self.score = 0
@@ -91,7 +92,7 @@ class Player(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj.rect):
-            if collision_obj.hp > 0:
+            if collision_obj.hp >= 0:
                 collision_obj.hp -= self.weapon.damage
             else:
                 if collision_obj in all_sprites:
@@ -123,14 +124,17 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = SIZE[1] / 2
 
         self.velocity = [0, 0]
+        self.old_velocity = [0, 0]
         self.priority = 100
-        self.hp = 150
+
         self.max_hp = 150
+        self.hp = self.max_hp
 
     def update(self):
         self.rect.move_ip(*self.velocity)
 
     def move(self, dtick):
+        self.old_velocity = self.velocity
         self.velocity[0] = random.randint(-150, 150) * dtick / 2
         self.velocity[1] = random.randint(-150, 150) * dtick / 2
 
@@ -148,12 +152,15 @@ class Enemy(pygame.sprite.Sprite):
 class Wall(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        wall = (random.randint(1, 100), random.randint(1, 100))
+        if random.randint(1, 2) % 2:
+            wall = (random.randint(40, 100), random.randint(1, 10))
+        else:
+            wall = (random.randint(1, 10), random.randint(40, 200))
         self.image = pygame.Surface(wall)
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        x = random.randint(100, 500)
-        y = random.randint(100, 500)
+        x = random.randint(100, SIZE[0] - 100)
+        y = random.randint(100, SIZE[1] - 100)
         self.rect.x = x
         self.rect.y = y
 
@@ -187,23 +194,23 @@ class PlayerInfo:
         self.color = color
         self.space_between = 20
 
-        self.weapon_text = self.font.render("Weapon: " + str(player.weapon.name), False, self.color)
         self.hp_text = self.font.render("HP: " + str(player.hp), False, self.color)
+        self.weapon_text = self.font.render("Weapon: " + str(player.weapon.name), False, self.color)
         self.damage_text = self.font.render("Damage: " + str(player.weapon.damage), False, self.color)
 
-        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
-        self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
+        self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
+        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
         self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
 
     def render(self):
-        self.surface.blit(self.weapon_text, self.weapon_text_rect)
         self.surface.blit(self.hp_text, self.hp_text_rect)
+        self.surface.blit(self.weapon_text, self.weapon_text_rect)
         self.surface.blit(self.damage_text, self.damage_text_rect)
 
     def update(self):
         text = "Weapon: " + str(player.weapon.name)
-        # self.weapon_text = self.font.render(text, False, self.color)
-        # self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
+        self.weapon_text = self.font.render(text, False, self.color)
+        self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
@@ -226,11 +233,11 @@ kij = Weapon(1, 'Kij', 5, BLUE, 300, 50, all_sprites)
 # player.assign_weapon(sword)
 
 wall_list = []
-for _ in range(5):
+for _ in range(random.randint(10, 30)):
     wall_list.append(Wall(all_sprites))
 
 enemy_list = []
-for _ in range(50):
+for _ in range(1000):
     enemy_list.append(Enemy(all_sprites))
 
 running = True
@@ -243,7 +250,7 @@ while running:
 
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
-    old_velocity = player.velocity
+    player.old_velocity = player.velocity
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -261,6 +268,7 @@ while running:
                 player.direction = 'RIGHT'
                 player.velocity[0] = player.speed * dt
             elif event.key == pygame.K_SPACE:
+                player.image.fill(RED)
                 player.attacking = True
 
         elif event.type == pygame.KEYUP:
@@ -269,6 +277,7 @@ while running:
             elif event.key == pygame.K_a or event.key == pygame.K_d:
                 player.velocity[0] = 0
             elif event.key == pygame.K_SPACE:
+                player.image.fill(BROWN)
                 player.attacking = False
 
     player.rect.clamp_ip(screen_rect)
@@ -290,10 +299,17 @@ while running:
     all_sprites.update()
     for block in wall_list:
         if collide_rect(player, block):
-            velocity = [i * (-1) for i in old_velocity]
+            velocity = [i * (-1) for i in player.old_velocity]
             player.velocity = velocity
             player.update()
             player.velocity = [0, 0]
+        for enemy in enemy_list:
+            if collide_rect(enemy, block):
+                velocity_en = [i * (-1) for i in enemy.old_velocity]
+                enemy.velocity = velocity_en
+                enemy.update()
+                enemy.velocity = [0, 0]
+
     player.render(screen)
 
     fps_counter.update()
