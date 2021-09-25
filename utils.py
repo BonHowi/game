@@ -25,7 +25,6 @@ class PlayerInfo:
         self.game.screen.blit(self.stamina_text, self.stamina_text_rect)
         self.game.screen.blit(self.time_text, self.time_text_rect)
 
-
     def update(self):
         self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 0, 0))
         self.hp_text = self.game.myfont.render("HP: " + str(self.game.player.hp),
@@ -36,8 +35,8 @@ class PlayerInfo:
                                                    False, self.game.GREEN)
         self.stamina_text = self.game.myfont.render("Stamina: " + str(self.game.player.current_stamina),
                                                     False, self.game.GREEN)
-        self.time_text = self.game.myfont.render("Time: " + str(self.game.last_shot),
-                                                    False, self.game.GREEN)
+        self.time_text = self.game.myfont.render("Time: " + f"{round(self.game.last_shot / 1000, 1)}s",
+                                                 False, self.game.GREEN)
 
         self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
         self.stamina_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))

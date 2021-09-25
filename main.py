@@ -30,7 +30,6 @@ class Game:
 
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
-
         self.all_enemy = None
         self.all_environment = None
         self.all_player = None
@@ -40,16 +39,16 @@ class Game:
         self.sword = None
         self.katana = None
         self.kij = None
-
         self.screen = None
         self.clock = None
         self.screen_rect = None
-
         self.fps_counter = None
         self.player_info = None
         self.wall_list = []
         self.enemy_list = []
         self.bullet_list = None
+
+        self.last_shot = None
 
     def init_all(self):
         self.wall_list = []
@@ -91,7 +90,6 @@ class Game:
         while running:
             dt = self.clock.tick(self.FPS) / 400
             self.last_shot = pygame.time.get_ticks()
-
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
             for event in pygame.event.get():
@@ -117,7 +115,7 @@ class Game:
                         self.game_over()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
-                   # mouse_x, mouse_y = pygame.mouse.get_pos()
+                    # mouse_x, mouse_y = pygame.mouse.get_pos()
 
                     bullet = Bullet(self)
                     bullet.rect.x = self.player.rect.x
@@ -167,7 +165,7 @@ class Game:
                     self.player.update()
                     self.player.velocity = [0, 0]
 
-                for bullet in self.bullet_list: ##shooting wall, bullet disapers
+                for bullet in self.bullet_list:  ##shooting wall, bullet disapers
                     if collide_rect(block, bullet):
                         bullet.kill()
 
