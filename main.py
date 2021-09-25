@@ -130,6 +130,11 @@ class Game:
                     self.player.velocity = velocity
                     self.player.update()
                     self.player.velocity = [0, 0]
+
+                for bullet in self.bullet_list: ##shooting wall, bullet disapers
+                    if collide_rect(block, bullet):
+                        bullet.kill()
+
             for enemy in self.enemy_list:
                 if collide_rect(enemy, block):
                     velocity_en = [i * (-1) for i in enemy.old_velocity]
