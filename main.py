@@ -144,10 +144,11 @@ class Enemy(pygame.sprite.Sprite):
             self.image.fill(RED)
 
     def draw_health(self, surf):
-        health_rect = pygame.Rect(0, 0, 15, self.image.get_width() + 1)
-        health_rect.midbottom = self.rect.centerx, self.rect.top
-        draw_health_bar(surf, health_rect.topleft, health_rect.size,
-                        (0, 0, 0), (255, 0, 0), (0, 255, 0), self.hp / self.max_hp)
+        if self.hp < self.max_hp:
+            health_rect = pygame.Rect(0, 0, 15, self.image.get_width() + 1)
+            health_rect.midbottom = self.rect.centerx, self.rect.top
+            draw_health_bar(surf, health_rect.topleft, health_rect.size,
+                            (0, 0, 0), (255, 0, 0), (0, 255, 0), self.hp / self.max_hp)
 
 
 class Wall(pygame.sprite.Sprite):
