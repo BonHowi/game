@@ -42,33 +42,36 @@ class Player(pygame.sprite.Sprite):
 
         # Player Attacking
         self.direction = ''
-
         self.attacking = False
+        self.blade_length = 50
         self.attack_range = pygame.Rect(0, 0, 0, 0)
 
     def attack(self, collision_obj):
         if self.attacking:
             if self.direction == 'RIGHT':
-                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
+                                                self.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - self.rect.width, self.rect.y, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x - self.blade_length, self.rect.y,
+                                                self.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.rect.height, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.blade_length,
+                                                self.rect.width, self.blade_length)
                 self.collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, 30, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height,
+                                                self.rect.width, self.blade_length)
                 self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
+            self.image.fill(BROWN)
 
     def collision(self, collision_obj):
         if self.attack_range.colliderect(collision_obj):
-            self.image.fill(RED)
             collision_obj.kill()
-        else:
-            self.image.fill(BROWN)
+            self.image.fill(RED)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -76,7 +79,7 @@ class Player(pygame.sprite.Sprite):
     def render(self, display):
         # pygame.draw.rect(display, (255, 0, 0), self.rect)
         pygame.draw.rect(display, (0, 255, 0), self.attack_range)
-        #display.blit(self.image, self.rect)
+        # display.blit(self.image, self.rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -109,14 +112,14 @@ class FPSCounter:
         self.pos = pos
         self.color = color
 
-        self.fps_text = self.font.render(str(int(self.clock.get_fps())) + "FPS", False, self.color)
+        self.fps_text = self.font.render(str(int(60)) + "FPS", False, self.color)
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
     def render(self):
         self.surface.blit(self.fps_text, self.fps_text_rect)
 
     def update(self):
-        text = f"{self.clock.get_fps():2.0f} FPS"
+        text = f"{60:2.0f} FPS"
         self.fps_text = self.font.render(text, False, self.color)
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
