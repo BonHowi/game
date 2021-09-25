@@ -15,12 +15,12 @@ blit_objects = [] #table of objects to blit
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-
-
-
-
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+BROWN = (185, 100, 0)
+
+
+
 
 # pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
@@ -30,7 +30,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((20, 20))
-        self.image.fill(WHITE)
+        self.image.fill(BROWN)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
         self.velocity = [0, 0]
         blit_objects.append([self.image,self.rect])
@@ -45,6 +45,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill(BLUE)
+        self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
         self.velocity = [0, 0]
         blit_objects.append([self.image,self.rect])
@@ -52,9 +53,18 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.rect.move_ip(*self.velocity)
 
-    def move(self, dtick):
-        self.velocity[0] = random.randint(-150, 150) * dtick / 2
-        self.velocity[1] = random.randint(-150, 150) * dtick / 2
+    def move(self, dtick, collided):
+        self.velocity[0] = random.randint(-50, 150) * dtick / 2
+        self.velocity[1] = random.randint(-50, 150) * dtick / 2
+        self.collision(collided)
+
+    def collision(self, collided):
+        if self.rect.colliderect(collided):
+            self.image.fill(RED)
+            self.velocity[0] = -self.velocity[0]
+            self.velocity[0] = -self.velocity[1]
+        else:
+            self.image.fill(BLUE)
 
 
 player = Player()
@@ -90,13 +100,13 @@ while running:
             elif event.key == pygame.K_a or event.key == pygame.K_d:
                 player.velocity[0] = 0
             elif event.key == pygame.K_SPACE:
-                player.image.fill(WHITE)
+                player.image.fill(BROWN)
     player.rect.clamp_ip(screen_rect)
     player.update()
 
     coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (255, 0, 0))
 
-    enemy.move(dt)
+    enemy.move(dt, player)
     enemy.rect.clamp_ip(screen_rect)
     enemy.update()
 
