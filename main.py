@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame
 from pygame.sprite import collide_rect
@@ -30,11 +31,31 @@ class Game:
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
+        self.all_enemy = None
+        self.all_environment = None
+        self.all_player = None
+        # screen = Screen(all_sprites)
+        self.player = None
+        # assigning weapon
+        self.sword = None
+        self.katana = None
+        self.kij = None
 
+        self.screen = None
+        self.clock = None
+        self.screen_rect = None
+
+        self.fps_counter = None
+        self.player_info = None
+        self.wall_list = []
+        self.enemy_list = []
+        self.bullet_list = None
+
+    def init_all(self):
+        self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
-        # screen = Screen(all_sprites)
         self.player = Player(self, self.all_player)
         # assigning weapon
         self.sword = Weapon(15, 'Sword', 15, self.RED, 200, 50, self.all_environment)
@@ -54,11 +75,17 @@ class Game:
 
         self.enemy_list = []
         for _ in range(10):
-            self.enemy_list.append(Enemy(self, self.all_enemy))
+            self.enemy_list.append(Enemy(self, 200, 150, self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
 
+    def game_over(self):
+        self.init_all()
+        pygame.display.flip()
+        self.run_game()
+
     def run_game(self):
+        self.init_all()
         running = True
 
         while running:
@@ -86,6 +113,9 @@ class Game:
                     elif event.key == pygame.K_SPACE:
                         self.player.image.fill(self.RED)
                         self.player.attacking = True
+                    if event.key == pygame.K_r:
+                        self.game_over()
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
                    # mouse_x, mouse_y = pygame.mouse.get_pos()
 
