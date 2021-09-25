@@ -101,7 +101,7 @@ while running:
     player.rect.clamp_ip(screen_rect)
     player.update()
 
-    coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (0, 0, 0))
+    coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (255, 0, 0))
 
     enemy.move(dt, player)
     enemy.rect.clamp_ip(screen_rect)
@@ -109,6 +109,7 @@ while running:
 
     # screen.blit(player.image, player.rect)
     # screen.blit(enemy.image, enemy.rect)
+
     blit_all(blit_objects)
     screen.blit(coordinates, (0, 0))
 
