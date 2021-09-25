@@ -214,7 +214,7 @@ class PlayerInfo:
     def update(self):
         text = "Weapon: " + str(player.weapon.name)
         #self.weapon_text = self.font.render(text, False, self.color)
-       # self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
+        #self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
 
@@ -311,7 +311,7 @@ while running:
 
     fps_counter.update()
     fps_counter.render()
-    player_info.update()
+    #player_info.update() i think, niepotrzebne
     player_info.render()
 
     screen.blit(coordinates, (0, 0))
