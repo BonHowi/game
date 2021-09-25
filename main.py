@@ -6,7 +6,6 @@ successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 FPS = 60
-blit_objects = []  # table of objects to blit
 SIZE = (1200, 800)
 
 BLACK = (0, 0, 0)
@@ -27,7 +26,6 @@ class Screen(pygame.sprite.Sprite):
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
         self.priority = 0
-        blit_objects.append(self)
 
 
 class Player(pygame.sprite.Sprite):
@@ -41,21 +39,27 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
         self.priority = 1000
-        # blit_objects.append(self)
 
         # Player Attacking
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
 
-    def attack(self):
+    def attack(self, collision_obj):
         if self.attacking:
             self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y, 30, self.rect.height)
+            self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
 
+    def collision(self, collision_obj):
+        if self.attack_range.colliderect(collision_obj):
+            self.image.fill(RED)
+            collision_obj.kill()
+        else:
+            self.image.fill(BROWN)
+
     def update(self):
         self.rect.move_ip(*self.velocity)
-        self.attack()
 
     def render(self, display):
         # pygame.draw.rect(display, (255, 0, 0), self.rect)
@@ -72,20 +76,17 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.velocity = [0, 0]
         self.priority = 100
-        blit_objects.append(self)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
 
-    def move(self, dtick, collided):
+    def move(self, dtick):
         self.velocity[0] = random.randint(-50, 150) * dtick / 2
         self.velocity[1] = random.randint(-50, 150) * dtick / 2
-        self.collision(collided)
 
-    def collision(self, collided):
-        if self.rect.colliderect(collided):
-            self.image.fill(RED)
-            self.kill()
+    # def collision(self, collided):
+    #     if self.rect.colliderect(collided):
+    #         self.image.fill(RED)
 
 
 class FPSCounter:
@@ -154,17 +155,16 @@ while running:
     coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (255, 0, 0))
 
     for enemy in enemy_list:
-        if enemy.priority > 0:
-            enemy.move(dt, player)
-            enemy.rect.clamp_ip(screen_rect)
+        enemy.move(dt)
+        player.attack(enemy)
+        enemy.rect.clamp_ip(screen_rect)
 
     all_sprites.update()
     all_sprites.draw(screen)
     player.render(screen)
-
-    screen.blit(coordinates, (0, 0))
-    fps_counter.render()
     fps_counter.update()
+    fps_counter.render()
+    screen.blit(coordinates, (0, 0))
     pygame.display.flip()
 
 print("Exited the game loop. Game will quit...")
