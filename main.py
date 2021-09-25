@@ -45,7 +45,7 @@ class Weapon(pygame.sprite.Sprite):
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
             collision_obj.assign_weapon(self) # if collided, assigning weapon to player
-
+            self.kill()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
@@ -173,6 +173,7 @@ class FPSCounter:
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
 
+
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
     pygame.draw.rect(surf, back_c, (*pos, *size))
     pygame.draw.rect(surf, border_c, (*pos, *size), 1)
@@ -206,6 +207,7 @@ while running:
     clock = pygame.time.Clock()
     screen_rect = screen.get_rect()
     fps_counter = FPSCounter(screen, myfont, clock, GREEN, (150, 10))
+
     dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
     old_velocity = player.velocity
@@ -252,6 +254,7 @@ while running:
     katana.collision(player)
     kij.collision(player)
 
+
     all_sprites.update()
     for block in wall_list:
         if collide_rect(player, block):
@@ -260,9 +263,13 @@ while running:
             player.update()
             player.velocity = [0, 0]
     player.render(screen)
+
     fps_counter.update()
     fps_counter.render()
+
+
     screen.blit(coordinates, (0, 0))
+
     all_sprites.draw(screen)
     pygame.display.update()
 
