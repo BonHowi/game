@@ -19,13 +19,13 @@ BROWN = (185, 100, 0)
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
 
-class Screen(pygame.sprite.Sprite):
-    def __init__(self, *groups):
-        super().__init__(*groups)
-        self.image = pygame.Surface(SIZE)
-        self.image.fill(BLACK)
-        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
-        self.priority = 0
+# class Screen(pygame.sprite.Sprite):
+#     def __init__(self, *groups):
+#         super().__init__(*groups)
+#         self.image = pygame.Surface(SIZE)
+#         self.image.fill(BLACK)
+#         self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
+#         self.priority = 0
 
 
 class Player(pygame.sprite.Sprite):
@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = SIZE[1] / 2
         self.velocity = [0, 0]
         self.priority = 1000
-
+        self.score = 0
         # Player Attacking
         self.direction = ''
         self.attacking = False
@@ -53,33 +53,32 @@ class Player(pygame.sprite.Sprite):
                                                 self.blade_length, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - self.blade_length, self.rect.y,
-                                                self.blade_length, self.rect.height)
+                self.attack_range = pygame.Rect(self.rect.x - 30, self.rect.y, 30, self.rect.height)
                 self.collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.blade_length,
-                                                self.rect.width, self.blade_length)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - 30,  self.rect.height, 30)
                 self.collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height,
-                                                self.rect.width, self.blade_length)
+                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,30)
                 self.collision(collision_obj)
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
-            self.image.fill(BROWN)
 
     def collision(self, collision_obj):
-        if self.attack_range.colliderect(collision_obj):
+        if self.attack_range.colliderect(collision_obj.rect):
+            print(collision_obj)
+            if collision_obj in all_sprites:
+                self.score += 1
+                self.image.fill(RED)
             collision_obj.kill()
-            self.image.fill(RED)
+        else:
+            self.image.fill(BROWN)
 
     def update(self):
         self.rect.move_ip(*self.velocity)
 
     def render(self, display):
-        # pygame.draw.rect(display, (255, 0, 0), self.rect)
         pygame.draw.rect(display, (0, 255, 0), self.attack_range)
-        # display.blit(self.image, self.rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -125,7 +124,7 @@ class FPSCounter:
 
 
 all_sprites = pygame.sprite.Group()
-screen = Screen(all_sprites)
+# screen = Screen(all_sprites)
 player = Player(all_sprites)
 
 enemy_list = []
@@ -171,7 +170,7 @@ while running:
 
     player.rect.clamp_ip(screen_rect)
 
-    coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (255, 0, 0))
+    coordinates = myfont.render('SCORE: ' + str(player.score), False, (255, 0, 0))
 
     for enemy in enemy_list:
         enemy.move(dt)
