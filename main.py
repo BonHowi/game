@@ -29,36 +29,36 @@ class Game:
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
 
-        self.all_sprites = pygame.sprite.Group()
+        self.all_enemy = pygame.sprite.Group()
+        self.all_environment = pygame.sprite.Group()
+        self.all_player = pygame.sprite.Group()
         # screen = Screen(all_sprites)
-        self.player = Player(self, self.all_sprites)
+        self.player = Player(self, self.all_player)
         # assigning weapon
-        self.sword = Weapon(15, 'Sword', 15, self.RED, 200, 50, self.all_sprites)
-        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, 250, 50, self.all_sprites)
-        self.kij = Weapon(1, 'Kij', 5, self.BLUE, 300, 50, self.all_sprites)
+        self.sword = Weapon(15, 'Sword', 15, self.RED, 200, 50, self.all_environment)
+        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, 250, 50, self.all_environment)
+        self.kij = Weapon(1, 'Kij', 5, self.BLUE, 300, 50, self.all_environment)
 
-        # player.assign_weapon(sword)
+        self.screen = pygame.display.set_mode(self.SIZE)
+        self.clock = pygame.time.Clock()
+        self.screen_rect = self.screen.get_rect()
+
+        self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
+        self.player_info = PlayerInfo(self, (800, 10))
 
         self.wall_list = []
         for _ in range(random.randint(10, 30)):
-            self.wall_list.append(Wall(self, self.all_sprites))
+            self.wall_list.append(Wall(self, self.all_environment))
 
         self.enemy_list = []
         for _ in range(1000):
-            self.enemy_list.append(Enemy(self, self.all_sprites))
+            self.enemy_list.append(Enemy(self, self.all_enemy))
 
     def run_game(self):
         running = True
         while running:
-            screen = pygame.display.set_mode(self.SIZE)
-            clock = pygame.time.Clock()
-            screen_rect = screen.get_rect()
-            fps_counter = FPSCounter(screen, self.myfont, clock, self.GREEN, (150, 10))
-            player_info = PlayerInfo(self.player, screen, self.myfont, clock, self.GREEN, (800, 10))
-
-            dt = clock.tick(
-                self.FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
-            screen.fill(self.BLACK)  # Fill the screen with background color.
+            dt = self.clock.tick(self.FPS) / 400
+            self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -89,20 +89,16 @@ class Game:
                         self.player.image.fill(self.BROWN)
                         self.player.attacking = False
 
-            self.player.rect.clamp_ip(screen_rect)
-            if self.player.current_stamina < self.player.max_stamina:
-                self.player.current_stamina += 100
-
-            coordinates = self.myfont.render('SCORE: ' + str(self.player.score), False, (255, 0, 0))
-
-            self.player.attacked = False
             for enemy in self.enemy_list:
                 enemy.move(dt)
                 self.player.attack(enemy)
 
-                enemy.rect.clamp_ip(screen_rect)
+                enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
-                    enemy.draw_health(screen)
+                    enemy.draw_health(self.screen)
+                else:
+                    enemy.kill()
+                    self.enemy_list.remove(enemy)
             if self.player.attacked:
                 self.player.current_stamina = 0
 
@@ -110,7 +106,10 @@ class Game:
             self.katana.collision(self.player)
             self.kij.collision(self.player)
 
-            self.all_sprites.update()
+            self.all_environment.update()
+            self.all_enemy.update()
+            self.all_player.update()
+
             for block in self.wall_list:
                 if collide_rect(self.player, block):
                     velocity = [i * (-1) for i in self.player.old_velocity]
@@ -124,16 +123,15 @@ class Game:
                         enemy.update()
                         enemy.velocity = [0, 0]
 
-            self.player.render(screen)
+            self.player.render(self.screen)
+            self.fps_counter.update()
+            self.fps_counter.render()
+            self.player_info.update()
+            self.player_info.render()
 
-            fps_counter.update()
-            fps_counter.render()
-            # player_info.update() i think, niepotrzebne
-            player_info.render()
-
-            screen.blit(coordinates, (0, 0))
-
-            self.all_sprites.draw(screen)
+            self.all_environment.draw(self.screen)
+            self.all_enemy.draw(self.screen)
+            self.all_player.draw(self.screen)
             pygame.display.update()
 
         print("Exited the game loop. Game will quit...")
