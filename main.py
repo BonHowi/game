@@ -15,14 +15,13 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 skull = pygame.image.load('skull.jpg')
-skull = pygame.transform.scale(skull,(720, 480))
+skull = pygame.transform.scale(skull, (720, 480))
 
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-#pygame.font.init()
+# pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 15)
-
 
 
 class Player(pygame.sprite.Sprite):
@@ -49,8 +48,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.move_ip(*self.velocity)
 
     def move(self, dtick):
-        self.velocity[0] = random.randint(-50, 50) * dtick
-        self.velocity[1] = random.randint(-50, 50) * dtick
+        self.velocity[0] = random.randint(-150, 150) * dtick / 2
+        self.velocity[1] = random.randint(-150, 150) * dtick / 2
 
 
 player = Player()
@@ -58,7 +57,7 @@ enemy = Enemy()
 
 running = True
 while running:
-    dt = clock.tick(FPS) / 100  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
+    dt = clock.tick(FPS) / 400  # Returns milliseconds between each call to 'tick'. The convert time to seconds.
     screen.fill(BLACK)  # Fill the screen with background color.
 
     for event in pygame.event.get():
@@ -86,13 +85,13 @@ while running:
     player.rect.clamp_ip(screen_rect)
     player.update()
 
-    coordinates = myfont.render(str(player.rect.x) + ', ' +  str(player.rect.y), False, (0, 0, 0))
+    coordinates = myfont.render(str(player.rect.x) + ', ' + str(player.rect.y), False, (0, 0, 0))
 
     enemy.move(dt)
     enemy.rect.clamp_ip(screen_rect)
     enemy.update()
 
-    screen.blit(skull, (0,0))
+    screen.blit(skull, (0, 0))
     screen.blit(player.image, player.rect)
     screen.blit(enemy.image, enemy.rect)
     screen.blit(coordinates, (0, 0))
