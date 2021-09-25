@@ -1,12 +1,12 @@
 import pygame
-from player import Player
-WHITE = (255, 255, 255)
+
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         super().__init__()
+        self.game = game
         self.image = pygame.Surface([4, 10])
-        self.image.fill(WHITE)
+        self.image.fill(self.game.WHITE)
         self.rect = self.image.get_rect()
         self.direction = ''
         self.damage = 10
@@ -24,5 +24,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            collision_obj.kill()
-            self.kill()
+            if collision_obj.hp > 0:
+                collision_obj.hp -= self.damage
+                if collision_obj.hp <= 0:
+                    self.game.player.score += 1
