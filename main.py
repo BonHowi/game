@@ -43,7 +43,6 @@ class Weapon(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            print('dupa')
             collision_obj.assign_weapon(self) # if collided, assigning weapon to player
 
 
@@ -207,10 +206,12 @@ while running:
     for enemy in enemy_list:
         enemy.move(dt)
         player.attack(enemy)
-        sword.collision(player)
-        katana.collision(player)
-        kij.collision(player)
+
         enemy.rect.clamp_ip(screen_rect)
+
+    sword.collision(player)
+    katana.collision(player)
+    kij.collision(player)
 
     all_sprites.update()
     all_sprites.draw(screen)
