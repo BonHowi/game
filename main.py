@@ -6,6 +6,7 @@ from pygame.sprite import collide_rect
 
 from enemy import Enemy, EnemySlow
 from environment import Wall
+from maploader import MapLoader
 from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
@@ -17,6 +18,8 @@ successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 particles = []
+
+
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -30,12 +33,13 @@ class Game:
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
 
-        self.color = [self.BLACK,self.WHITE, self.RED, self.BLUE, self.BROWN, self.KATANA_COLOR]
+        self.color = [self.BLACK, self.WHITE, self.RED, self.BLUE, self.BROWN, self.KATANA_COLOR]
 
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
         self.all_enemy = None
         self.all_environment = None
+        self.all_wall = None
         self.all_player = None
         # screen = Screen(all_sprites)
         self.player = None
@@ -51,13 +55,14 @@ class Game:
         self.wall_list = []
         self.enemy_list = []
         self.bullet_list = None
-
+        self.map = None
         self.last_shot = None
 
     def init_all(self):
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
+        self.all_wall = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
         self.player = Player(self, self.all_player)
         # assigning weapon
@@ -77,10 +82,6 @@ class Game:
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
 
-        self.wall_list = []
-        for _ in range(random.randint(10, 30)):
-            self.wall_list.append(Wall(self, self.all_environment))
-
         self.enemy_list = []
         for _ in range(10):
             self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
@@ -88,6 +89,8 @@ class Game:
             self.enemy_list.append(Enemy(self, 400, 50, self.RED, "Zbigniew", self.all_enemy))
         for _ in range(5):
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Zbigniew", self.all_enemy))
+
+        self.map = MapLoader(self)
 
         self.bullet_list = pygame.sprite.Group()
 
@@ -129,7 +132,7 @@ class Game:
                         self.game_over()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
-                    bullet = Bullet(self,self.player.rect.x, self.player.rect.y)
+                    bullet = Bullet(self, self.player.rect.x, self.player.rect.y)
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
@@ -162,9 +165,11 @@ class Game:
             self.katana.collision(self.player)
             self.kij.collision(self.player)
 
+            self.all_wall.update()
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
+
             block = None
 
             for block in self.wall_list:
@@ -174,12 +179,13 @@ class Game:
                     self.player.update()
                     self.player.velocity = [0, 0]
 
-                for bullet in self.bullet_list:  ##shooting wall, bullet disapers
+                for bullet in self.bullet_list:  # shooting wall, bullet disapers
                     if collide_rect(block, bullet):
                         bullet.kill()
-                        #--------------PARTICLES----------------#
+                        # --------------PARTICLES----------------#
                         for _ in range(15):
-                            particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2], random.randint(4, 6)])
+                            particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2],
+                                              random.randint(4, 6)])
                         # particle animation
 
             for enemy in self.enemy_list:
@@ -194,15 +200,17 @@ class Game:
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
-            #---------PARTICLE ANIMATION############
+
+            # ---------PARTICLE ANIMATION############
             for particle in particles:
-                particle[0][0] +=particle[1][0]#x axis
-                particle[0][1] += particle[1][1]#y axis
-                particle[2] -=0.1
+                particle[0][0] += particle[1][0]  # x axis
+                particle[0][1] += particle[1][1]  # y axis
+                particle[2] -= 0.1
                 pygame.draw.circle(self.screen, random.choice(self.color), particle[0], particle[2])
-                if particle[2] <=0:
+                if particle[2] <= 0:
                     particles.remove(particle)
-            #----------------------###############################
+            # ----------------------###############################
+            self.all_wall.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
