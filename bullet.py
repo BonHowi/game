@@ -11,18 +11,29 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 5
+        self.speed = 3
         self.damage = 10 + self.game.player.score * 5
 
-        mouse = pygame.mouse.get_pos()
-        start = pygame.math.Vector2(self.rect.center)
-        distance = mouse - start
-        position = pygame.math.Vector2(start)
-        self.vel = distance.normalize() * self.speed
+        self.pos = (x, y)
+
+        mx, my = pygame.mouse.get_pos()
+        self.dir = (mx - x, my - y)
+        length = math.hypot(*self.dir)
+        self.dir = (self.dir[0] / length, self.dir[1] / length)
+        angle = math.degrees(math.atan2(-self.dir[1], self.dir[0]))
+
+        # mouse = pygame.mouse.get_pos()
+        # start = pygame.math.Vector2(self.rect.center)
+        # distance = mouse - start
+        # position = pygame.math.Vector2(start)
+        # self.vel = distance.normalize() * self.speed
 
     def update(self):
-        self.rect.x  += self.vel[0]
-        self.rect.y  += self.vel[1]
+        self.pos = (self.pos[0] + self.dir[0] * self.speed,
+                    self.pos[1] + self.dir[1] * self.speed)
+
+        self.rect.x  = self.pos[0]
+        self.rect.y  = self.pos[1]
 
 
     def collision(self, collision_obj):
