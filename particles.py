@@ -1,22 +1,19 @@
 import pygame
 import random
 
-class Particle(pygame.sprite.Sprite):
-    def __init__(self, game):
+class Particle():
+    def __init__(self, game, x, y):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface([1, 1])
-        self.image.fill(self.game.RED)
-        self.rect = self.image.get_rect()
-        self.direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
-        self.speed = random.randint(1, 10)
+        self.x = x
+        self.y = y
+        self.radius = random.randint(4, 6)
 
     def update(self):
-        if self.direction == 'UP':
-            self.rect.y -= self.speed
-        elif self.direction == 'RIGHT':
-            self.rect.x += self.speed
-        elif self.direction == 'LEFT':
-            self.rect.x -= self.speed
-        elif self.direction == 'DOWN':
-            self.rect.y += self.speed
+        self.x += random.randint(0, 20) / 10 - 1
+        self.y += 2
+        self.radius -= 0.1
+        pygame.draw.circle(self.game.screen, random.choice(self.game.color), (self.x, self.y), self.radius)
+        ##########DEALING WITH SMALL PARTICLES##############
+        # if self.radius <= 0:
+        #     self.particles.remove(self)

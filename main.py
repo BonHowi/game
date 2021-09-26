@@ -10,7 +10,6 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
-from particle_test import ParticleTest
 from particles import Particle
 
 successes, failures = pygame.init()
@@ -130,11 +129,8 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
                     bullet = Bullet(self,self.player.rect.x, self.player.rect.y)
-                    bullet1 = Bullet(self, self.player.rect.x + 3, self.player.rect.y - 50)
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
-                    self.all_environment.add(bullet1)
-                    self.bullet_list.add(bullet1)
 
 
                 elif event.type == pygame.KEYUP:
@@ -151,7 +147,10 @@ class Game:
                 enemy.move(dt)
                 self.player.attack(enemy)
                 for bullet in self.bullet_list:
-                    bullet.collision(enemy)
+                    if bullet.collision(enemy):
+                        for _ in range(15):
+                            particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+
 
                 enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
@@ -183,8 +182,8 @@ class Game:
                         bullet.kill()
                         #--------------PARTICLES----------------#
                         for _ in range(15):
-                            particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2], random.randint(4, 6)])
-                        # particle animation
+                            particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+
 
             for enemy in self.enemy_list:
                 if collide_rect(enemy, block):
@@ -200,18 +199,11 @@ class Game:
             self.player_info.render()
             #---------PARTICLE ANIMATION############
             for particle in particles:
-                particle[0][0] +=particle[1][0]#x axis
-                particle[0][1] += particle[1][1]#y axis
-                particle[2] -=0.1
-                pygame.draw.circle(self.screen, random.choice(self.color), particle[0], particle[2])
-                if particle[2] <=0:
-                    particles.remove(particle)
-            #----------------------###############################
+                particle.update()
+            ##########################################
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
-            pygame.draw.circle(self.screen, (250, 45, 250, 0), (250, 250), 50)
-
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
