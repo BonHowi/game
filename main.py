@@ -13,7 +13,7 @@ from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
 from player_dust import DustParticle
-
+from rain import RainParticle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
@@ -185,7 +185,7 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
-
+            self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
             block = None
 
             for block in self.wall_list:
