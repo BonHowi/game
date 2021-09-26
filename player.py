@@ -29,6 +29,8 @@ class Player(pygame.sprite.Sprite):
         self.attacked = False
         ########GUN PROPERTIES, Moze tymczasowo########
         self.gun_length = 25
+        self.gun_width = 5
+
 
 
     def attack(self, collision_obj):
@@ -73,15 +75,21 @@ class Player(pygame.sprite.Sprite):
     def render(self, display):
         if self.hasWeapon:
             pygame.draw.rect(display, self.weapon.color, self.attack_range)
-
         ####render broni##### poprawic, zeby kule strzelaly z koncowki broni a nie ze srodka playera
         start = pygame.math.Vector2(self.rect.center)
         mouse = pygame.mouse.get_pos()
         end = start + (mouse - start).normalize() * self.gun_length
-        pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=5)
+        pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
+
+    def gun_point(self):#zmienic, bo brzydko
+        start = pygame.math.Vector2(self.rect.center)
+        mouse = pygame.mouse.get_pos()
+        end = start + (mouse - start).normalize() * self.gun_length
+        return end
 
     def assign_weapon(self, weapon: Weapon):
         self.weapon = weapon
         self.hasWeapon = True
+
     def gun_line(self,ax, ay, bx, by, radius):
         pass

@@ -7,7 +7,8 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface([3, 3])
+        self.bullet_size = 7
+        self.image = pygame.Surface([self.bullet_size, self.bullet_size])
         self.image.fill(self.game.WHITE)
         self.rect = self.image.get_rect()
         self.rect.x = x
