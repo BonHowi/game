@@ -12,6 +12,7 @@ from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
+from player_dust import DustParticle
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -67,9 +68,9 @@ class Game:
         ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
-        self.sword = Weapon(15, 'Sword', 15, self.RED, wp_spawn_x, wp_spawn_y)
-        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, wp_spawn_x + 50, wp_spawn_y)
-        self.kij = Weapon(1, 'Kij', 5, self.BLUE, wp_spawn_x - 50, wp_spawn_y)
+        self.sword = Weapon(15, 'Sword', 15, self.RED, self.all_environment)
+        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, self.all_environment)
+        self.kij = Weapon(1, 'Kij', 5, self.BLUE, self.all_environment)
         #add weapons to the menu
 
         ##########################################################################
@@ -111,18 +112,24 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
+
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
                         self.player.velocity[1] = -self.player.speed * dt
+
+
                     elif event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
                         self.player.velocity[1] = self.player.speed * dt
+
                     elif event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
                         self.player.velocity[0] = -self.player.speed * dt
+
                     elif event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
                         self.player.velocity[0] = self.player.speed * dt
+
                     elif event.key == pygame.K_SPACE:
                         self.player.image.fill(self.RED)
                         self.player.attacking = True

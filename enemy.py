@@ -53,9 +53,9 @@ class Enemy(pygame.sprite.Sprite):
         if self.step >= threshold:
             self.old_velocity = self.velocity
 
-            self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
-            self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
-            # self.move_towards_player(self.game.player, dtick)
+            #self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
+            #self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
+            self.move_towards_player(self.game.player, dtick)
             self.step = 0
             # self.find_target(dtick, self.game.player)
         self.step += 1
@@ -67,7 +67,7 @@ class Enemy(pygame.sprite.Sprite):
         if dirvect.length_squared() > 0:
             dirvect.normalize()
         # Move along this normalized vector towards the player at current speed.
-            dirvect.scale_to_length(self.speed * dtick)
+            dirvect.scale_to_length(self.speed * 3 * dtick)
         self.rect.move_ip(dirvect)
 
     def find_target(self, dtick, target):

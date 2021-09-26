@@ -2,7 +2,7 @@ import pygame
 
 
 class Weapon(pygame.sprite.Sprite):#usuniete groups
-    def __init__(self, damage, name, width, color, x, y,*groups):
+    def __init__(self, damage, name, width, color,*groups):
         super().__init__(*groups)
         self.width = width
         self.damage = damage
@@ -12,8 +12,7 @@ class Weapon(pygame.sprite.Sprite):#usuniete groups
         self.image = pygame.Surface((20, 20))
         self.image.fill(color)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
