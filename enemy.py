@@ -1,6 +1,6 @@
 import random
 import pygame
-
+import math
 
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
     pygame.draw.rect(surf, back_c, (*pos, *size))
