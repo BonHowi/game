@@ -17,7 +17,9 @@ from rain import RainParticle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-
+from pygame import mixer
+mixer.music.load('rain-01.mp3')
+mixer.music.play(-1)
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -173,6 +175,8 @@ class Game:
                     enemy.draw_health(self.screen)
                 else:
                     enemy.kill()
+                    self.player.gun_length = self.player.gun_length/self.player.score
+
                     self.enemy_list.remove(enemy)
             if self.player.attacked:
                 self.player.current_stamina = 0

@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.current_stamina = self.max_stamina
         self.attacked = False
         ########GUN PROPERTIES, Moze tymczasowo########
-        self.gun_length = 25
+        self.gun_length = 15
         self.gun_width = 5
 
 
