@@ -64,7 +64,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.clamp_ip(self.game.screen_rect)
         self.rect.move_ip(*self.velocity)
         if self.current_stamina < self.max_stamina:
-            self.current_stamina += 100
+            self.current_stamina += 10
         self.attacked = False
 
     def render(self, display):

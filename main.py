@@ -130,8 +130,12 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
                     bullet = Bullet(self,self.player.rect.x, self.player.rect.y)
+                    bullet1 = Bullet(self, self.player.rect.x + 3, self.player.rect.y - 50)
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
+                    self.all_environment.add(bullet1)
+                    self.bullet_list.add(bullet1)
+
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
@@ -206,9 +210,9 @@ class Game:
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
+            pygame.draw.circle(self.screen, (250, 45, 250, 0), (250, 250), 50)
 
             pygame.display.update()
-
         print("Exited the game loop. Game will quit...")
         quit()
 

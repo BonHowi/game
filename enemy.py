@@ -65,8 +65,8 @@ class EnemySlow(Enemy):
 
     def move(self, dtick):
         self.old_velocity = self.velocity
-        self.velocity[0] = random.randint(-self.hp, self.hp) / 200
-        self.velocity[1] = random.randint(-self.hp, self.hp) / 200
+        self.velocity[0] = random.randint(-(self.max_hp-self.hp), (self.max_hp-self.hp)) / 200
+        self.velocity[1] = random.randint(-(self.max_hp-self.hp), (self.max_hp-self.hp)) / 200
 
     def set_side(self):
         enemy_side = int(self.hp / 10)
