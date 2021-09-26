@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)
         self.hasWeapon = False
-        self.weapon = Weapon(0, 'Gole piesci', 2, self.game.RED, 35000, 50000, self.game.all_player)
+        self.weapon = Weapon(0, 'Gole piesci', 2, self.game.RED, 35000, 50000, self.game.all_environment)#usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina

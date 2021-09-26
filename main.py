@@ -64,16 +64,15 @@ class Game:
         self.all_wall = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
         self.player = Player(self, self.all_player)
-        # assigning weapon
+        ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
-        self.sword = Weapon(15, 'Sword', 15, self.RED, wp_spawn_x, wp_spawn_y,
-                            self.all_environment)
-        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, wp_spawn_x + 50, wp_spawn_y,
-                             self.all_environment)
-        self.kij = Weapon(1, 'Kij', 5, self.BLUE, wp_spawn_x - 50, wp_spawn_y,
-                          self.all_environment)
+        self.sword = Weapon(15, 'Sword', 15, self.RED, wp_spawn_x, wp_spawn_y)
+        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, wp_spawn_x + 50, wp_spawn_y)
+        self.kij = Weapon(1, 'Kij', 5, self.BLUE, wp_spawn_x - 50, wp_spawn_y)
+        #add weapons to the menu
 
+        ##########################################################################
         self.screen = pygame.display.set_mode(self.SIZE)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
@@ -130,6 +129,17 @@ class Game:
                     if event.key == pygame.K_r:
                         self.game_over()
 
+
+                    if event.key == pygame.K_1:
+                        self.player.assign_weapon(self.sword)
+                        self.items_menu.weapon = 'sword'
+                    if event.key == pygame.K_2:
+                        self.player.assign_weapon(self.katana)
+                        self.items_menu.weapon = 'katana'
+                    if event.key == pygame.K_3:
+                        self.player.assign_weapon(self.kij)
+                        self.items_menu.weapon = 'kij'
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])
                     self.all_environment.add(bullet)
@@ -162,9 +172,9 @@ class Game:
             if self.player.attacked:
                 self.player.current_stamina = 0
 
-            self.sword.collision(self.player)
-            self.katana.collision(self.player)
-            self.kij.collision(self.player)
+            #self.sword.collision(self.player)
+            #self.katana.collision(self.player)
+            #self.kij.collision(self.player)
 
             self.all_wall.update()
             self.all_environment.update()
@@ -206,7 +216,10 @@ class Game:
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
+
+            ##item bar display
             self.items_menu.draw()
+
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()

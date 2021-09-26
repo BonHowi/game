@@ -1,8 +1,8 @@
 import pygame
 
 
-class Weapon(pygame.sprite.Sprite):
-    def __init__(self, damage, name, width, color, x, y, *groups):
+class Weapon(pygame.sprite.Sprite):#usuniete groups
+    def __init__(self, damage, name, width, color, x, y,*groups):
         super().__init__(*groups)
         self.width = width
         self.damage = damage
