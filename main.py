@@ -91,6 +91,7 @@ class Game:
         self.map = MapLoader(self)
 
         self.bullet_list = pygame.sprite.Group()
+
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -152,7 +153,6 @@ class Game:
                         for _ in range(15):
                             self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
 
-
                 enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
                     enemy.draw_health(self.screen)
@@ -194,15 +194,17 @@ class Game:
                     enemy.update()
                     enemy.velocity = [0, 0]
 
+
+
+            self.all_environment.draw(self.screen)
+            self.all_enemy.draw(self.screen)
+            self.all_player.draw(self.screen)
+            self.all_wall.draw(self.screen)
             self.player.render(self.screen)
             self.fps_counter.update()
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
-
-            self.all_environment.draw(self.screen)
-            self.all_enemy.draw(self.screen)
-            self.all_player.draw(self.screen)
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
