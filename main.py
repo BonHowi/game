@@ -83,14 +83,15 @@ class Game:
         self.enemy_list = []
         for _ in range(10):
             self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
-        for _ in range(10):
-            self.enemy_list.append(Enemy(self, 400, 50, self.RED, "Zbigniew", self.all_enemy))
+        for _ in range(100):
+            self.enemy_list.append(Enemy(self, 200, 50, self.RED, "Zbigniew", self.all_enemy))
         for _ in range(5):
-            self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Zbigniew", self.all_enemy))
+            self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.map = MapLoader(self)
 
         self.bullet_list = pygame.sprite.Group()
+
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -148,9 +149,7 @@ class Game:
                 enemy.move(dt)
                 self.player.attack(enemy)
                 for bullet in self.bullet_list:
-                    if bullet.collision(enemy):
-                        for _ in range(15):
-                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+                    bullet.collision_enemy(enemy)
 
 
                 enemy.rect.clamp_ip(self.screen_rect)
@@ -181,26 +180,21 @@ class Game:
                     self.player.velocity = [0, 0]
 
                 for bullet in self.bullet_list:  # shooting wall, bullet disapers
-                    if collide_rect(block, bullet):
-                        bullet.kill()
-                        # --------------PARTICLES----------------#
-                        for _ in range(15):
-                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+                    bullet.collision(block)
 
-            for enemy in self.enemy_list:
-                if collide_rect(enemy, block):
-                    velocity_en = [i * (-1) for i in enemy.old_velocity]
-                    enemy.velocity = velocity_en
-                    enemy.update()
-                    enemy.velocity = [0, 0]
-
-            self.player.render(self.screen)
-
+                for enemy in self.enemy_list:
+                    if collide_rect(enemy, block):
+                        velocity_en = [i * (-1) for i in enemy.old_velocity]
+                        enemy.velocity = velocity_en
+                        enemy.update()
+                        enemy.velocity = [0, 0]
 
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
+            self.player.render(self.screen)
+
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
