@@ -30,6 +30,8 @@ class Game:
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
 
+        self.color = [self.BLACK,self.WHITE, self.RED, self.BLUE, self.BROWN, self.KATANA_COLOR]
+
         # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
         self.all_enemy = None
@@ -176,7 +178,7 @@ class Game:
                     if collide_rect(block, bullet):
                         bullet.kill()
                         #--------------PARTICLES----------------#
-                        for _ in range(5):
+                        for _ in range(15):
                             particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2], random.randint(4, 6)])
                         # particle animation
 
@@ -197,7 +199,9 @@ class Game:
                 particle[0][0] +=particle[1][0]#x axis
                 particle[0][1] += particle[1][1]#y axis
                 particle[2] -=0.1
-                pygame.draw.circle(self.screen, self.RED, particle[0], particle[2])
+                pygame.draw.circle(self.screen, random.choice(self.color), particle[0], particle[2])
+                if particle[2] <=0:
+                    particles.remove(particle)
             #----------------------###############################
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
