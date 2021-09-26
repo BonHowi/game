@@ -83,11 +83,11 @@ class Game:
         self.map = MapLoader(self)
         self.enemy_list = []
         for _ in range(10):
-            self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
+            self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(100):
-            self.enemy_list.append(Enemy(self, 200, 50, self.RED, "Zbigniew", self.all_enemy))
+            self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
         for _ in range(3):
-            self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Janusz", self.all_enemy))
+            self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
         self.items_menu = Items_bar(self)
@@ -145,7 +145,6 @@ class Game:
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
-
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         self.player.velocity[1] = 0
@@ -161,7 +160,6 @@ class Game:
                 self.player.attack(enemy)
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
-
 
                 enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
