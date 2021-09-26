@@ -83,11 +83,11 @@ class Game:
 
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(1):
+        for _ in range(10):
             self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
-        for _ in range(3):
+        for _ in range(100):
             self.enemy_list.append(Enemy(self, 200, 50, self.RED, "Zbigniew", self.all_enemy))
-        for _ in range(2):
+        for _ in range(3):
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
