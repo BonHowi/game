@@ -28,6 +28,7 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.priority = 100
+        self.step = 400
 
     def set_side(self):
         enemy_side = self.max_hp / 10
@@ -48,9 +49,33 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.move_ip(*self.velocity)
 
     def move(self, dtick):
-        self.old_velocity = self.velocity
-        self.velocity[0] = random.randint(-self.speed, self.speed) * dtick / 2
-        self.velocity[1] = random.randint(-self.speed, self.speed) * dtick / 2
+        threshold = random.randrange(1, 20)
+        if self.step >= threshold:
+            self.old_velocity = self.velocity
+
+            self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
+            self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
+            # self.move_towards_player(self.game.player, dtick)
+            self.step = 0
+            # self.find_target(dtick, self.game.player)
+        self.step += 1
+
+    def move_towards_player(self, player, dtick):
+        # Find direction vector (dx, dy) between enemy and player.
+        dirvect = pygame.math.Vector2(player.rect.x - self.rect.x,
+                                      player.rect.y - self.rect.y)
+        if dirvect.length_squared() > 0:
+            dirvect.normalize()
+        # Move along this normalized vector towards the player at current speed.
+            dirvect.scale_to_length(self.speed * dtick)
+        self.rect.move_ip(dirvect)
+
+    def find_target(self, dtick, target):
+        dist_to_target_x = target.rect.x - self.rect.x
+        dist_to_target_y = target.rect.x - self.rect.y
+
+        self.velocity[0] = dist_to_target_x / self.speed * dtick * 10
+        self.velocity[1] = dist_to_target_y / self.speed * dtick * 10
 
     def collision(self, collided):
         if self.rect.colliderect(collided):
