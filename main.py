@@ -80,6 +80,7 @@ class Game:
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
 
+        self.map = MapLoader(self)
         self.enemy_list = []
         for _ in range(10):
             self.enemy_list.append(Enemy(self, 200, 150, self.BLUE, "Ryszard", self.all_enemy))
@@ -87,8 +88,6 @@ class Game:
             self.enemy_list.append(Enemy(self, 400, 50, self.RED, "Zbigniew", self.all_enemy))
         for _ in range(5):
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Zbigniew", self.all_enemy))
-
-        self.map = MapLoader(self)
 
         self.bullet_list = pygame.sprite.Group()
 
@@ -193,8 +192,6 @@ class Game:
                     enemy.velocity = velocity_en
                     enemy.update()
                     enemy.velocity = [0, 0]
-
-
 
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)

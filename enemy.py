@@ -34,10 +34,18 @@ class Enemy(pygame.sprite.Sprite):
         return enemy_side
 
     def spawn(self):
-        pos_x = random.randint(1, self.game.SIZE[0])
-        pos_y = random.randint(1, self.game.SIZE[1])
-        self.rect.x = pos_x
-        self.rect.y = pos_y
+        # pos_x = random.randint(1, self.game.SIZE[0])
+        # pos_y = random.randint(1, self.game.SIZE[1])
+        # self.rect.x = pos_x
+        # self.rect.y = pos_y
+        for idx, element in enumerate(self.game.map.map):
+            for i, char in enumerate(element):
+                if char == "0":
+                    self.rect.x = int(self.game.SIZE[0] - self.game.SIZE[0] / len(element) * i) - self.game.map.block_w
+                    self.rect.y = int(
+                        self.game.SIZE[1] - self.game.SIZE[1] / len(self.game.map.map) * idx) - self.game.map.block_h
+                    self.game.map.map[idx][i] = "_"
+                    break
 
     def update(self):
         self.rect.move_ip(*self.velocity)
@@ -65,8 +73,8 @@ class EnemySlow(Enemy):
 
     def move(self, dtick):
         self.old_velocity = self.velocity
-        self.velocity[0] = random.randint(-(self.max_hp-self.hp), (self.max_hp-self.hp)) / 200
-        self.velocity[1] = random.randint(-(self.max_hp-self.hp), (self.max_hp-self.hp)) / 200
+        self.velocity[0] = random.randint(-(self.max_hp - self.hp), (self.max_hp - self.hp)) / 200
+        self.velocity[1] = random.randint(-(self.max_hp - self.hp), (self.max_hp - self.hp)) / 200
 
     def set_side(self):
         enemy_side = int(self.hp / 10)
