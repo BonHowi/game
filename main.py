@@ -11,13 +11,10 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
-from particle_test import ParticleTest
 from particles import Particle
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
-
-particles = []
 
 
 class Game:
@@ -56,6 +53,7 @@ class Game:
         self.enemy_list = []
         self.bullet_list = None
         self.map = None
+        self.particles = []
         self.last_shot = None
 
     def init_all(self):
@@ -93,7 +91,6 @@ class Game:
         self.map = MapLoader(self)
 
         self.bullet_list = pygame.sprite.Group()
-
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -136,6 +133,7 @@ class Game:
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
+
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         self.player.velocity[1] = 0
@@ -150,7 +148,10 @@ class Game:
                 enemy.move(dt)
                 self.player.attack(enemy)
                 for bullet in self.bullet_list:
-                    bullet.collision(enemy)
+                    if bullet.collision(enemy):
+                        for _ in range(15):
+                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+
 
                 enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
@@ -184,9 +185,7 @@ class Game:
                         bullet.kill()
                         # --------------PARTICLES----------------#
                         for _ in range(15):
-                            particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2],
-                                              random.randint(4, 6)])
-                        # particle animation
+                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
 
             for enemy in self.enemy_list:
                 if collide_rect(enemy, block):
@@ -201,22 +200,14 @@ class Game:
             self.player_info.update()
             self.player_info.render()
 
-            # ---------PARTICLE ANIMATION############
-            for particle in particles:
-                particle[0][0] += particle[1][0]  # x axis
-                particle[0][1] += particle[1][1]  # y axis
-                particle[2] -= 0.1
-                pygame.draw.circle(self.screen, random.choice(self.color), particle[0], particle[2])
-                if particle[2] <= 0:
-                    particles.remove(particle)
-            # ----------------------###############################
-            self.all_wall.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
-
+            # ---------PARTICLE ANIMATION############
+            for particle in self.particles:
+                particle.update()
+            ##########################################
             pygame.display.update()
-
         print("Exited the game loop. Game will quit...")
         quit()
 

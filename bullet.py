@@ -1,6 +1,6 @@
 import pygame
 import math
-
+from particles import Particle
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -11,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y  = y
-        self.speed = 3
+        self.speed = 2
         self.damage = 10 + self.game.player.score * 5
 
         self.pos = (x, y)
@@ -30,6 +30,9 @@ class Bullet(pygame.sprite.Sprite):
 
 
     def collision(self, collision_obj):
-        if self.rect.colliderect(collision_obj.rect): #zmienione bullet rect
+        if self.rect.colliderect(collision_obj.rect):
             self.game.player.calculate_collison(collision_obj, self.damage)
             self.kill()
+            return True
+
+
