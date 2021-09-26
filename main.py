@@ -15,7 +15,7 @@ from particles import Particle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-particles = []
+
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -50,7 +50,7 @@ class Game:
         self.wall_list = []
         self.enemy_list = []
         self.bullet_list = None
-
+        self.particles = []
         self.last_shot = None
 
     def init_all(self):
@@ -89,7 +89,6 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Zbigniew", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
-
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -149,7 +148,7 @@ class Game:
                 for bullet in self.bullet_list:
                     if bullet.collision(enemy):
                         for _ in range(15):
-                            particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
 
 
                 enemy.rect.clamp_ip(self.screen_rect)
@@ -182,7 +181,7 @@ class Game:
                         bullet.kill()
                         #--------------PARTICLES----------------#
                         for _ in range(15):
-                            particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
+                            self.particles.append(Particle(self, bullet.rect.x, bullet.rect.y))
 
 
             for enemy in self.enemy_list:
@@ -198,12 +197,13 @@ class Game:
             self.player_info.update()
             self.player_info.render()
             #---------PARTICLE ANIMATION############
-            for particle in particles:
+            for particle in self.particles:
                 particle.update()
             ##########################################
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
+
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()

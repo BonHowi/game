@@ -27,6 +27,9 @@ class Player(pygame.sprite.Sprite):
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
         self.attacked = False
+        ########GUN PROPERTIES, Moze tymczasowo########
+        self.gun_length = 25
+
 
     def attack(self, collision_obj):
         if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
@@ -71,6 +74,14 @@ class Player(pygame.sprite.Sprite):
         if self.hasWeapon:
             pygame.draw.rect(display, self.weapon.color, self.attack_range)
 
+        ####render broni##### poprawic, zeby kule strzelaly z koncowki broni a nie ze srodka playera
+        start = pygame.math.Vector2(self.rect.center)
+        mouse = pygame.mouse.get_pos()
+        end = start + (mouse - start).normalize() * self.gun_length
+        pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=5)
+
     def assign_weapon(self, weapon: Weapon):
         self.weapon = weapon
         self.hasWeapon = True
+    def gun_line(self,ax, ay, bx, by, radius):
+        pass
