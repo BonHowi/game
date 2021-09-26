@@ -11,7 +11,7 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
-from particles import Particle
+from item_bar import Items_bar
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -55,7 +55,8 @@ class Game:
         self.map = None
         self.particles = []
         self.last_shot = None
-
+        self.items_menu = None
+        
     def init_all(self):
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
@@ -90,6 +91,7 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
+        self.items_menu = pygame.sprite.Group()
 
     def game_over(self):
         self.init_all()
@@ -129,7 +131,7 @@ class Game:
                         self.game_over()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
-                    bullet = Bullet(self, self.player.rect.x, self.player.rect.y)
+                    bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
