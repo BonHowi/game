@@ -101,6 +101,7 @@ class Game:
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -124,10 +125,7 @@ class Game:
                         self.game_over()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
-                    bullet = Bullet(self)
-                    bullet.rect.x = self.player.rect.x
-                    bullet.rect.y = self.player.rect.y
-                    bullet.direction = self.player.direction  # kierunek strzału
+                    bullet = Bullet(self,self.player.rect.x, self.player.rect.y)
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
@@ -195,8 +193,6 @@ class Game:
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
-
-
 
             pygame.display.update()
 
