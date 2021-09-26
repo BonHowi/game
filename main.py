@@ -16,7 +16,7 @@ from particles import Particle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-
+particles = []
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -175,6 +175,9 @@ class Game:
                 for bullet in self.bullet_list:  ##shooting wall, bullet disapers
                     if collide_rect(block, bullet):
                         bullet.kill()
+                        #--------------PARTICLES----------------#
+                        for _ in range(5):
+                            particles.append([[bullet.rect.x, bullet.rect.y], [random.randint(0, 20) / 10 - 1, 2], random.randint(4, 6)])
                         # particle animation
 
             for enemy in self.enemy_list:
@@ -189,7 +192,13 @@ class Game:
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
-
+            #---------PARTICLE ANIMATION############
+            for particle in particles:
+                particle[0][0] +=particle[1][0]#x axis
+                particle[0][1] += particle[1][1]#y axis
+                particle[2] -=0.1
+                pygame.draw.circle(self.screen, self.RED, particle[0], particle[2])
+            #----------------------###############################
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
