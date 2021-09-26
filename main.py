@@ -91,7 +91,7 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 10, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
-        self.items_menu = pygame.sprite.Group()
+        self.items_menu = Items_bar(self)
 
     def game_over(self):
         self.init_all()
@@ -197,6 +197,7 @@ class Game:
             self.all_wall.draw(self.screen)
             self.player.render(self.screen)
 
+
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
@@ -205,6 +206,7 @@ class Game:
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
+            self.items_menu.draw()
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
