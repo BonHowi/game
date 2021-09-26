@@ -34,18 +34,17 @@ class Enemy(pygame.sprite.Sprite):
         return enemy_side
 
     def spawn(self):
-        # pos_x = random.randint(1, self.game.SIZE[0])
-        # pos_y = random.randint(1, self.game.SIZE[1])
-        # self.rect.x = pos_x
-        # self.rect.y = pos_y
-        for idx, element in enumerate(self.game.map.map):
-            for i, char in enumerate(element):
-                if char == "0":
-                    self.rect.x = int(self.game.SIZE[0] - self.game.SIZE[0] / len(element) * i) - self.game.map.block_w
-                    self.rect.y = int(
-                        self.game.SIZE[1] - self.game.SIZE[1] / len(self.game.map.map) * idx) - self.game.map.block_h
-                    self.game.map.map[idx][i] = "_"
-                    break
+        spawned = False
+        while not spawned:
+            spawn_point = self.game.map.spawn_points[random.randint(0, len(self.game.map.spawn_points) - 1)]
+            if spawn_point[1]:
+                spawn_point_y = spawn_point[0]
+                spawn_point_x = spawn_point[1][random.randint(0, len(spawn_point[1]) - 1)]
+                print(spawn_point_x)
+                print(spawn_point_y)
+                self.rect.x = spawn_point_x
+                self.rect.y = spawn_point_y
+                spawned = True
 
     def update(self):
         self.rect.move_ip(*self.velocity)
