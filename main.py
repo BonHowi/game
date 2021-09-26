@@ -195,18 +195,20 @@ class Game:
                     enemy.velocity = [0, 0]
 
             self.player.render(self.screen)
-            self.fps_counter.update()
-            self.fps_counter.render()
-            self.player_info.update()
-            self.player_info.render()
+
 
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
+            self.all_wall.draw(self.screen)
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
             ##########################################
+            self.fps_counter.update()
+            self.fps_counter.render()
+            self.player_info.update()
+            self.player_info.render()
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
