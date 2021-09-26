@@ -1,6 +1,8 @@
 import pygame
 import random
 
+#direction of the bullet, if the bullet shoots right, the particles should move on the right side of x axis
+
 class Particle():
     def __init__(self, game, x, y):
         super().__init__()
@@ -8,6 +10,7 @@ class Particle():
         self.x = x
         self.y = y
         self.radius = random.randint(10, 14)
+        self.direction = 1
 
     def update(self):
         self.x += random.randint(-1, 1) 

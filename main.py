@@ -196,14 +196,14 @@ class Game:
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
-            #---------PARTICLE ANIMATION############
-            for particle in self.particles:
-                particle.update()
-            ##########################################
+
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
-
+            # ---------PARTICLE ANIMATION############
+            for particle in self.particles:
+                particle.update()
+            ##########################################
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
