@@ -1,12 +1,14 @@
 import pygame
 import math
+import random
 from particles import Particle
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface([3, 3])
+        self.bullet_size = 7
+        self.image = pygame.Surface([self.bullet_size, self.bullet_size])
         self.image.fill(self.game.WHITE)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -31,8 +33,16 @@ class Bullet(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            self.game.player.calculate_collison(collision_obj, self.damage)
+            self.sparkle()
             self.kill()
-            return True
 
+    def collision_enemy(self, collision_enemy):
+        if self.rect.colliderect(collision_enemy.rect):
+            self.game.player.calculate_collison(collision_enemy, self.damage)
+            self.sparkle()
+            self.kill()
+
+    def sparkle(self):
+        for _ in range(random.randint(10, 25)):
+            self.game.particles.append(Particle(self.game, self.rect.x, self.rect.y))
 
