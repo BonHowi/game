@@ -40,8 +40,6 @@ class Enemy(pygame.sprite.Sprite):
             if spawn_point[1]:
                 spawn_point_y = spawn_point[0]
                 spawn_point_x = spawn_point[1][random.randint(0, len(spawn_point[1]) - 1)]
-                print(spawn_point_x)
-                print(spawn_point_y)
                 self.rect.x = spawn_point_x
                 self.rect.y = spawn_point_y
                 spawned = True
