@@ -17,9 +17,6 @@ from rain import RainParticle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-from pygame import mixer
-mixer.music.load('rain-01.mp3')
-mixer.music.play(-1)
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -60,7 +57,7 @@ class Game:
         self.last_shot = None
         self.items_menu = None
         
-    def init_all(self):
+    def init_all(self, map):
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
@@ -83,13 +80,13 @@ class Game:
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
 
-        self.map = MapLoader(self)
+        self.map = MapLoader(self, map)
         self.enemy_list = []
-        for _ in range(10):
-            self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
-        for _ in range(100):
+        for _ in range(0):
+            self.enemy_list.append(Enemy(self, 45, 150, self.BLUE, "Ryszard", self.all_enemy))
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
-        for _ in range(3):
+        for _ in range(0):
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
@@ -101,7 +98,7 @@ class Game:
         self.run_game()
 
     def run_game(self):
-        self.init_all()
+        self.init_all("maps/map2.txt")
         running = True
 
         while running:
@@ -114,21 +111,19 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
                         self.player.velocity[1] = -self.player.speed * dt
 
-
-                    elif event.key == pygame.K_s:
+                    if event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
                         self.player.velocity[1] = self.player.speed * dt
 
-                    elif event.key == pygame.K_a:
+                    if event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
                         self.player.velocity[0] = -self.player.speed * dt
 
-                    elif event.key == pygame.K_d:
+                    if event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
                         self.player.velocity[0] = self.player.speed * dt
 
@@ -138,7 +133,7 @@ class Game:
                     if event.key == pygame.K_r:
                         self.game_over()
 
-
+                    #Weapon selection
                     if event.key == pygame.K_1:
                         self.player.assign_weapon(self.sword)
                         self.items_menu.weapon = 'sword'
@@ -154,11 +149,19 @@ class Game:
                     self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
-                elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_w or event.key == pygame.K_s:
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_w:
                         self.player.velocity[1] = 0
-                    elif event.key == pygame.K_a or event.key == pygame.K_d:
+
+                    elif event.key == pygame.K_a:
                         self.player.velocity[0] = 0
+
+                    elif event.key == pygame.K_s:
+                        self.player.velocity[1] = 0
+
+                    elif event.key == pygame.K_d:
+                        self.player.velocity[0] = 0
+
                     elif event.key == pygame.K_SPACE:
                         self.player.image.fill(self.BROWN)
                         self.player.attacking = False
@@ -175,8 +178,6 @@ class Game:
                     enemy.draw_health(self.screen)
                 else:
                     enemy.kill()
-                    self.player.gun_length = self.player.gun_length/self.player.score
-
                     self.enemy_list.remove(enemy)
             if self.player.attacked:
                 self.player.current_stamina = 0
@@ -189,7 +190,7 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
-            self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
+            #self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
             block = None
 
             for block in self.wall_list:
@@ -200,15 +201,7 @@ class Game:
                     self.player.velocity = [0, 0]
 
                 for bullet in self.bullet_list:  # shooting wall, bullet disapers
-
                     bullet.collision(block)
-
-                for enemy in self.enemy_list:
-                    if collide_rect(enemy, block):
-                        velocity_en = [i * (-1) for i in enemy.old_velocity]
-                        enemy.velocity = velocity_en
-                        enemy.update()
-                        enemy.velocity = [0, 0]
 
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
