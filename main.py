@@ -29,10 +29,7 @@ class Game:
         self.BLUE = (0, 0, 255)
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
-
         self.color = [self.BLACK, self.WHITE, self.RED, self.BLUE, self.BROWN, self.KATANA_COLOR]
-
-        # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
         self.all_enemy = None
         self.all_environment = None
@@ -56,17 +53,18 @@ class Game:
         self.particles = []
         self.last_shot = None
         self.items_menu = None
+        self.map_list = ["maps/map1.txt", "maps/map2.txt"]
+        self.current_map = 0
         
-    def init_all(self, map):
+    def init_all(self):
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
         self.all_wall = pygame.sprite.Group()
+        self.all_wall = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
         self.player = Player(self, self.all_player)
         ############WEAPONS############################################################
-        wp_spawn_x = self.SIZE[0] / 2
-        wp_spawn_y = self.SIZE[1] / 2 + 40
         self.sword = Weapon(15, 'Sword', 15, self.RED, self.all_environment)
         self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, self.all_environment)
         self.kij = Weapon(1, 'Kij', 5, self.BLUE, self.all_environment)
@@ -76,29 +74,33 @@ class Game:
         self.screen = pygame.display.set_mode(self.SIZE)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
-
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-
-        self.map = MapLoader(self, map)
+        self.map = MapLoader(self, self.map_list[self.current_map])
         self.enemy_list = []
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 45, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
-        for _ in range(0):
+        for _ in range(1):
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
         self.items_menu = Items_bar(self)
 
+
     def game_over(self):
-        self.init_all()
+        self.current_map = 0
         pygame.display.flip()
         self.run_game()
 
+    def next_map(self):
+        pygame.display.flip()
+        self.current_map = 1
+        self.run_game()
+
     def run_game(self):
-        self.init_all("maps/map2.txt")
+        self.init_all()
         running = True
 
         while running:
@@ -106,6 +108,12 @@ class Game:
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
+            ####next level
+            next_level = pygame.Surface((100, 100))
+            next_level.fill(self.BROWN)
+            next_level_rect = next_level.get_rect()  # Get rect of some size as 'image'.
+            next_level_rect.x =  1100
+            next_level_rect.y =  250
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -132,6 +140,11 @@ class Game:
                         self.player.attacking = True
                     if event.key == pygame.K_r:
                         self.game_over()
+
+                    if event.key == pygame.K_n:
+                        self.next_map()
+
+
 
                     #Weapon selection
                     if event.key == pygame.K_1:
@@ -222,7 +235,17 @@ class Game:
             ##item bar display
             self.items_menu.draw()
 
+            #gowno do zooma
+            # for i in range(100):
+            #     scaled_win = pygame.transform.smoothscale(self.screen, (self.SIZE[0] + i, self.SIZE[1] + i))
+            #     self.screen.blit(scaled_win, (0-i, 0-i))
+            #     pygame.display.flip()
+            #     pygame.time.delay(60)
+            self.screen.blit(next_level, next_level_rect)
+            if pygame.Rect.colliderect(next_level_rect, self.player.rect):
+                self.next_map()
             pygame.display.update()
+
         print("Exited the game loop. Game will quit...")
         quit()
 
@@ -230,7 +253,6 @@ class Game:
 def main():
     game = Game()
     game.run_game()
-
 
 if __name__ == "__main__":
     main()
