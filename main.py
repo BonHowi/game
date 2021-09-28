@@ -17,9 +17,6 @@ from rain import RainParticle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-from pygame import mixer
-mixer.music.load('rain-01.mp3')
-mixer.music.play(-1)
 class Game:
     def __init__(self):
         self.FPS = 144
@@ -66,7 +63,7 @@ class Game:
         self.all_environment = pygame.sprite.Group()
         self.all_wall = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
-        self.player = Player(self, self.all_player)
+
         ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
@@ -77,6 +74,7 @@ class Game:
 
         ##########################################################################
         self.screen = pygame.display.set_mode(self.SIZE)
+        self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
 
@@ -85,11 +83,11 @@ class Game:
 
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(10):
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
-        for _ in range(100):
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
-        for _ in range(3):
+        for _ in range(0):
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.bullet_list = pygame.sprite.Group()
@@ -133,7 +131,6 @@ class Game:
                         self.player.velocity[0] = self.player.speed * dt
 
                     elif event.key == pygame.K_SPACE:
-                        self.player.image.fill(self.RED)
                         self.player.attacking = True
                     if event.key == pygame.K_r:
                         self.game_over()
@@ -157,10 +154,11 @@ class Game:
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         self.player.velocity[1] = 0
+                        self.player.direction = ''
                     elif event.key == pygame.K_a or event.key == pygame.K_d:
                         self.player.velocity[0] = 0
+                        self.player.direction = ''
                     elif event.key == pygame.K_SPACE:
-                        self.player.image.fill(self.BROWN)
                         self.player.attacking = False
 
             self.player.attacked = False
@@ -175,12 +173,10 @@ class Game:
                     enemy.draw_health(self.screen)
                 else:
                     enemy.kill()
-                    self.player.gun_length = self.player.gun_length/self.player.score
 
                     self.enemy_list.remove(enemy)
             if self.player.attacked:
                 self.player.current_stamina = 0
-
             #self.sword.collision(self.player)
             #self.katana.collision(self.player)
             #self.kij.collision(self.player)
@@ -189,7 +185,7 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
-            self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
+            #self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
             block = None
 
             for block in self.wall_list:
@@ -209,6 +205,9 @@ class Game:
                         enemy.velocity = velocity_en
                         enemy.update()
                         enemy.velocity = [0, 0]
+            # for i in range(int(self.SIZE[0]/20)):
+            #     for x in range(int(self.SIZE[1]/10)):
+            #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
 
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)

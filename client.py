@@ -2,7 +2,7 @@ import socket
 import pygame as pg
 
 c=socket.socket()                       # arguementss (IPV4, TCP)
-HOST1='192.168.0.55'                    # IPV4 address of the server
+HOST1='192.168.1.25'                    # IPV4 address of the server
 PORT=7070
 c.connect((HOST1,PORT))                 # connects client to an address
 msg=c.recv(64)                          # recieves a packet of 64 bytes from server

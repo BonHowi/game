@@ -19,9 +19,9 @@ class Enemy(pygame.sprite.Sprite):
         self.max_hp = max_hp
         self.hp = self.max_hp
         self.color = color
-        enemy_side = self.set_side()
-        self.image = pygame.Surface((enemy_side, enemy_side))
-        self.image.fill(color)
+        enemy_side = int(self.set_side())
+        self.image = pygame.image.load("player/dungeonSprites_v1.0/goblin_/idle_/lIdle_0.png")
+        self.image = pygame.transform.scale(self.image, (enemy_side*3, enemy_side*3))
         self.rect = self.image.get_rect()
         self.spawn()
         self.speed = speed
