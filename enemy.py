@@ -84,7 +84,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 23, 37, 52)
 
         # pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
     def move(self, dtick):
         threshold = random.randrange(1, 20)

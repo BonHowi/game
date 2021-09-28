@@ -139,6 +139,8 @@ class Game:
                         self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:
                         self.game_over()
+                    if event.key == pygame.K_z:
+                        pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
 
                     if event.key == pygame.K_1:
@@ -181,7 +183,6 @@ class Game:
                     self.enemy_list.remove(enemy)
 
             if self.player.attacked:
-                print('dupa')
                 self.player.current_stamina = 0
 
 
