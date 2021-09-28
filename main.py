@@ -17,9 +17,6 @@ from rain import RainParticle
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
-from pygame import mixer
-mixer.music.load('rain-01.mp3')
-mixer.music.play(-1)
 class Game:
     def __init__(self):
         self.FPS = 144
