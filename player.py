@@ -26,9 +26,9 @@ class Player(pygame.sprite.Sprite):
         self.player_index = 0
         # Player Attacking
         self.attacking = False
-        self.attack_range = pygame.Rect(0, 0, 0, 0)
-        self.hasWeapon = False
-        self.weapon = Weapon(0, 'Gole piesci', 2, self.game.RED, self.game.all_environment)#usuniete groups z self.game
+        self.attack_range = pygame.Rect(0, 0, 0, 0)#zmienione tymczasowo
+        self.hasWeapon = True
+        self.weapon = Weapon(10, 'Gole piesci', 2, self.game.RED, self.game.all_environment)#usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
@@ -37,6 +37,8 @@ class Player(pygame.sprite.Sprite):
         self.gun_length = 15
         self.gun_width = 5
         self.load_animation('player/walk')
+        #hitbox
+        self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
 
 
     def load_animation(self, path):
@@ -60,7 +62,7 @@ class Player(pygame.sprite.Sprite):
             if self.direction == 'LEFT':
                 self.image = self.animation_database["LEFT_WALK"][int(self.player_index)]
 
-            if self.direction == 'UP':
+            elif self.direction == 'UP':
                 self.image = self.animation_database["LEFT_WALK"][int(self.player_index)]
 
             elif self.direction == "RIGHT":
@@ -71,6 +73,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = pygame.image.load("player/idle/basic.png")
             self.image = pygame.transform.scale(self.image, self.image_size)
+
 
     def attack(self, collision_obj):
         if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
@@ -93,7 +96,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.attack_range = pygame.Rect(0, 0, 0, 0)
 
-    def attack_collision(self, collision_obj):
+    def attack_collision(self, collision_obj):#do zmiany
         if self.attack_range.colliderect(collision_obj.rect):
             self.calculate_collison(collision_obj, self.weapon.damage)
 
@@ -112,21 +115,35 @@ class Player(pygame.sprite.Sprite):
         self.animation()
         self.rect.clamp_ip(self.game.screen_rect)
         self.rect.move_ip(*self.velocity)
+
+        #self.hitbox.clamp_ip(self.game.screen_rect)
+        #self.hitbox.move_ip(*self.velocity)
+
         if self.current_stamina < self.max_stamina:
             self.current_stamina += 10
         self.attacked = False
 
-    def render(self, display):
+        self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
+
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+
+
+    def render(self):
         if self.hasWeapon:
-            pygame.draw.rect(display, self.weapon.color, self.attack_range)
+            pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
         ####render broni##### poprawic, zeby kule strzelaly z koncowki broni a nie ze srodka playera
-        start = pygame.math.Vector2(self.rect.center)
+        katana_image = pygame.image.load("weapon/katana.png")
+        katana_image = pygame.transform.scale(katana_image, (100, 100))
+        self.game.screen.blit(katana_image, (-10, 500))
+
+        start = pygame.math.Vector2(self.rect.midright)
         mouse = pygame.mouse.get_pos()
         end = start + (mouse - start).normalize() * self.gun_length
         pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
     def gun_point(self):#zmienic, bo brzydko
-        start = pygame.math.Vector2(self.rect.center)
+        start = pygame.math.Vector2(self.rect.midright)
         mouse = pygame.mouse.get_pos()
         end = start + (mouse - start).normalize() * self.gun_length
         return end

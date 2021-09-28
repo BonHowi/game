@@ -15,13 +15,19 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, speed, max_hp, color, name, *groups):
         super().__init__(*groups)
         self.name = name
+        self.animation_database = {"LEFT_WALK": [],
+                                   "RIGHT_WALK": []
+                                   }
+
+        self.player_index = 0
         self.game = game
         self.max_hp = max_hp
         self.hp = self.max_hp
         self.color = color
         enemy_side = int(self.set_side())
-        self.image = pygame.image.load("player/dungeonSprites_v1.0/goblin_/idle_/lIdle_0.png")
-        self.image = pygame.transform.scale(self.image, (enemy_side*3, enemy_side*3))
+        self.image_size = (5*enemy_side, 5*enemy_side)
+        self.image = pygame.image.load("goblin/idle/lIdle_0.png")
+        self.image = pygame.transform.scale(self.image, self.image_size)
         self.rect = self.image.get_rect()
         self.spawn()
         self.speed = speed
@@ -29,6 +35,32 @@ class Enemy(pygame.sprite.Sprite):
         self.old_velocity = [0, 0]
         self.priority = 100
         self.step = 400
+        self.load_animation('goblin/walk')
+        self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
+
+    def load_animation(self, path):
+        animation_name = path.split('/')[-1]
+        for _ in range(4):
+            image_loc = animation_name + "_left" + str(_) + ".png"
+            print(image_loc)
+            animation_image = pygame.image.load(path + '/' + image_loc).convert()
+            animation_image = pygame.transform.scale(animation_image, self.image_size)
+            self.animation_database["LEFT_WALK"].append(animation_image)
+        for _ in range(4):
+            image_loc = animation_name + "_right" + str(_) + ".png"
+            animation_image = pygame.image.load(path + '/' + image_loc).convert()
+            animation_image = pygame.transform.scale(animation_image, self.image_size)
+            self.animation_database["RIGHT_WALK"].append(animation_image)
+
+    def animation(self):
+
+        self.player_index += 0.07 # how fast animation changes
+        if self.player_index >= 4:
+            self.player_index = 0
+
+        self.image = self.animation_database["LEFT_WALK"][int(self.player_index)]
+
+
 
     def set_side(self):
         enemy_side = self.max_hp / 10
@@ -46,7 +78,13 @@ class Enemy(pygame.sprite.Sprite):
                 spawned = True
 
     def update(self):
+        self.animation()
         self.rect.move_ip(*self.velocity)
+       # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
+        self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 23, 37, 52)
+
+        # pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
     def move(self, dtick):
         threshold = random.randrange(1, 20)

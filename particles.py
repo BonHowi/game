@@ -17,7 +17,7 @@ class Particle():
     def update(self):
         self.x += random.randint(-1, 1) 
         self.y += random.randint(-1, 1)
-        self.radius -= 0.45
+        self.radius -= 0.20
         pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), self.radius)
         ##########DEALING WITH SMALL PARTICLES##############
         if self.radius <= 0:

@@ -83,7 +83,7 @@ class Game:
 
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(0):
+        for _ in range(1):
             self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -98,12 +98,16 @@ class Game:
         pygame.display.flip()
         self.run_game()
 
+    def collided(self, sprite, other):
+        """Check if the hitbox of one sprite collides with rect of another sprite."""
+        return sprite.hitbox.colliderect(other.rect)
+
     def run_game(self):
         self.init_all()
         running = True
 
         while running:
-            dt = self.clock.tick(self.FPS) / 400
+            dt = (self.clock.tick(self.FPS) / 400)
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
@@ -132,6 +136,7 @@ class Game:
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = True
+                        self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:
                         self.game_over()
 
@@ -173,38 +178,61 @@ class Game:
                     enemy.draw_health(self.screen)
                 else:
                     enemy.kill()
-
                     self.enemy_list.remove(enemy)
+
             if self.player.attacked:
+                print('dupa')
                 self.player.current_stamina = 0
-            #self.sword.collision(self.player)
-            #self.katana.collision(self.player)
-            #self.kij.collision(self.player)
+
 
             self.all_wall.update()
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
-            #self.particles.append(RainParticle(self, random.randint(0, self.SIZE[0]), 0))
-            block = None
+
+
+
+            #Instead of using player.rect, player.hitbox is used
+            # def collided(self, sprite, other):
+            #     """Check if the hitbox of one sprite collides with rect of another sprite."""
+            #     return sprite.hitbox.colliderect(other.rect)
+            #Check for collision between player and wall
+            collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
+            for sprite in collided_sprites_player:
+                velocity = [i * (-1) for i in self.player.old_velocity]
+                self.player.velocity = velocity
+                self.player.update()
+                self.player.velocity = [0, 0]
+
+            #Check for collision between enemy and walls
+            for enemy in self.all_enemy:
+                collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
+                for sprite in collided_sprites_enemy:
+                    velocity_en = [i * (-1) for i in enemy.old_velocity]
+                    enemy.velocity = velocity_en
+                    enemy.update()
+                    enemy.velocity = [0, 0]
+
 
             for block in self.wall_list:
-                if collide_rect(self.player, block):
-                    velocity = [i * (-1) for i in self.player.old_velocity]
-                    self.player.velocity = velocity
-                    self.player.update()
-                    self.player.velocity = [0, 0]
+
+                #Given our hitbox, we do not have to check collide_rect, cause
+                #it exclusively uses rect attribute of Sprite class
+                # if collide_rect(self.player, block):
+                #     velocity = [i * (-1) for i in self.player.old_velocity]
+                #     self.player.velocity = velocity
+                #     self.player.update()
+                #     self.player.velocity = [0, 0]
 
                 for bullet in self.bullet_list:  # shooting wall, bullet disapers
-
                     bullet.collision(block)
 
-                for enemy in self.enemy_list:
-                    if collide_rect(enemy, block):
-                        velocity_en = [i * (-1) for i in enemy.old_velocity]
-                        enemy.velocity = velocity_en
-                        enemy.update()
-                        enemy.velocity = [0, 0]
+                # for enemy in self.enemy_list:
+                #     if collide_rect(enemy, block):
+                #         velocity_en = [i * (-1) for i in enemy.old_velocity]
+                #         enemy.velocity = velocity_en
+                #         enemy.update()
+                #         enemy.velocity = [0, 0]
             # for i in range(int(self.SIZE[0]/20)):
             #     for x in range(int(self.SIZE[1]/10)):
             #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
@@ -213,7 +241,7 @@ class Game:
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
-            self.player.render(self.screen)
+            self.player.render()
 
 
             # ---------PARTICLE ANIMATION############

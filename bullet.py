@@ -37,12 +37,12 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
     def collision_enemy(self, collision_enemy):
-        if self.rect.colliderect(collision_enemy.rect):
+        if self.rect.colliderect(collision_enemy.hitbox):
             self.game.player.calculate_collison(collision_enemy, self.damage)
             self.sparkle()
             self.kill()
 
     def sparkle(self):
-        for _ in range(random.randint(10, 25)):
+        for _ in range(random.randint(5, 10)):
             self.game.particles.append(Particle(self.game, self.rect.x, self.rect.y))
 
