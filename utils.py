@@ -13,12 +13,14 @@ class PlayerInfo:
         self.damage_text = None
         self.stamina_text = None
         self.time_text = None
+        self.log_text = None
 
         self.hp_text_rect = None
         self.stamina_text_rect = None
         self.weapon_text_rect = None
         self.damage_text_rect = None
         self.time_text_rect = None
+        self.log_text_rect = None
 
     def render(self):
         self.game.screen.blit(self.coordinates, (0, 0))
@@ -27,6 +29,8 @@ class PlayerInfo:
         self.game.screen.blit(self.damage_text, self.damage_text_rect)
         self.game.screen.blit(self.stamina_text, self.stamina_text_rect)
         self.game.screen.blit(self.time_text, self.time_text_rect)
+        #self.game.screen.blit(self.log_text, self.log_text_rect)
+
 
     def update(self):
         self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 0, 0))
@@ -40,6 +44,8 @@ class PlayerInfo:
                                                     False, self.game.GREEN)
         self.time_text = self.game.myfont.render("Time: " + f"{round(self.game.last_shot / 1000, 1)}s",
                                                  False, self.game.GREEN)
+        #self.time_text = self.game.myfont.render("KEY: " + pygame.key.name(event.key)
+         #                                        False, self.game.GREEN)
 
         self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
         self.stamina_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))

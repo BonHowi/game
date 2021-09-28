@@ -2,17 +2,19 @@ from environment import Wall
 
 
 class MapLoader:
-    def __init__(self, game):
+    def __init__(self, game, file):
         self.game = game
         self.map = []
         self.block_w = 0
         self.block_h = 0
         self.spawn_points = []
+        self.map_file = file
         self.load_map()
         self.create_map_env()
 
+
     def load_map(self):
-        with open('maps/map1.txt') as file:
+        with open(self.map_file) as file:
             self.map = [list(line)[:-1] for line in file.readlines()]
         self.map.reverse()
         for idx, element in enumerate(self.map):
