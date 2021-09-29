@@ -115,6 +115,14 @@ class Game:
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
+            
+            katana = pygame.image.load("weapon/katana.png")
+            katana = pygame.transform.scale(katana, (75, 75))
+            katana_rect = katana.get_rect()
+            pygame.Surface.blit(self.screen, katana, self.player.rect.midtop)
+            #pygame.draw.rect(self.screen, self.WHITE, (self.player.rect.midtop[0],self.player.rect.midtop[1],75, 75), width = 2)
+            hitbox = pygame.Rect(self.player.rect.midtop[0] + 30, self.player.rect.midtop[1], 15, 75)
+            pygame.draw.rect(self.screen, self.RED, hitbox, width = 1)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -157,7 +165,7 @@ class Game:
                         self.items_menu.weapon = 'kij'
 
                 if pygame.mouse.get_pressed()[0] and self.counter >60:  # strzelanie nabojami
-                    bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])
+                    bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])#adding bullet at the end of rifle
                     #self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
                     self.counter = 0

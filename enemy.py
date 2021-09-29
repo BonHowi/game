@@ -66,18 +66,17 @@ class Enemy(pygame.sprite.Sprite):
         '''old rect.x - rect.x > '''
 
     def animation(self):
-        #hurt animation bu shrinking image and painting red
-        # if self.counter >=4:
-        #     self.hurt = False
-        #     self.counter = 0
-        # if self.hurt and self.counter < 4:#if hurt
-        #     if self.player_index >= 4:
-        #         self.player_index = 0
-        #     self.image = self.animation_database["HURT_RIGHT"][int(self.player_index)]
-        #     self.player_index +=0.2
-        #     self.counter +=0.2
+        if self.counter >=4:
+            self.hurt = False
+            self.counter = 0
+        if self.hurt and self.counter < 4:#if hurt
+            if self.player_index >= 4:
+                self.player_index = 0
+            self.image = self.animation_database["HURT_RIGHT"][2]#just the red animation
+            self.player_index += 0.035
+            self.counter +=0.2
 
-        if self.moving():#if moving
+        elif self.moving():#if moving
             self.player_index += 0.035  # how fast animation changes
             if self.player_index >= 4:
                 self.player_index = 0
@@ -101,12 +100,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
-        if self.hurt:
-            self.image = pygame.transform.scale(self.image, (self.image.get_width()-15, self.image.get_height()-15))
-            self.counter +=0.2
-            if self.counter > 4:
-                self.counter = 0
-                self.hurt = False
+
 
     def set_side(self):
         enemy_side = self.max_hp / 10
@@ -127,10 +121,10 @@ class Enemy(pygame.sprite.Sprite):
         self.animation()
         #self.rect.move_ip(*self.velocity)
        # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
-        self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 23, 37, 52)
+        self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 26, 37, 52)
 
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
     def move(self, dtick):
 

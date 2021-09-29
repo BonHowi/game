@@ -33,7 +33,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def draw(self):
         radius = 5
-        self.sparkle()
+        #self.sparkle() kometa
         pygame.draw.circle(self.game.screen, self.game.GREEN, (self.rect.x+radius/2, self.rect.y+radius/2), radius)
         pygame.draw.circle(self.game.screen, (242, 255, 50), (self.rect.x + radius / 2, self.rect.y + radius / 2),
                            radius-1)

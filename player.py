@@ -147,7 +147,7 @@ class Player(pygame.sprite.Sprite):
         start = pygame.math.Vector2(self.rect.midright)
         mouse = pygame.mouse.get_pos()
         end = start + (mouse - start).normalize() * self.gun_length
-        pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
+        #pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
     def gun_point(self):#zmienic, bo brzydko
         start = pygame.math.Vector2(self.rect.midright)
