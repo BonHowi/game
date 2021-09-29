@@ -1,6 +1,6 @@
 import random
 import time
-
+import math
 import pygame
 from pygame.sprite import collide_rect
 
@@ -21,7 +21,6 @@ class Game:
     def __init__(self):
         self.FPS = 60
         self.SIZE = (1200, 600)
-
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
         self.RED = (255, 0, 0)
@@ -29,10 +28,6 @@ class Game:
         self.BLUE = (0, 0, 255)
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
-
-        self.color = [self.BLACK, self.WHITE, self.RED, self.BLUE, self.BROWN, self.KATANA_COLOR]
-
-        # pygame.font.init()
         self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
         self.all_enemy = None
         self.all_environment = None
@@ -57,6 +52,7 @@ class Game:
         self.last_shot = None
         self.items_menu = None
         self.bg = None
+        self.entity_size = (75, 75)#size of the characters(player, enemy)
 
     def init_all(self):
         self.wall_list = []
@@ -68,9 +64,9 @@ class Game:
         ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
-        self.sword = Weapon(15, 'Sword', 15, self.RED, self.all_environment)
-        self.katana = Weapon(25, 'Katana', 36, self.KATANA_COLOR, self.all_environment)
-        self.kij = Weapon(1, 'Kij', 5, self.BLUE, self.all_environment)
+        #self.sword = Weapon(self, 15, 'sword', 15, self.RED, self.all_environment)
+        self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.all_environment)
+        #self.kij = Weapon(self, 1, 'kij', 5, self.BLUE, self.all_environment)
         #add weapons to the menu
 
         ##########################################################################
@@ -84,7 +80,7 @@ class Game:
         self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(1):
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -115,8 +111,6 @@ class Game:
         self.init_all()
         running = True
 
-
-
         while running:
             dt = self.clock.tick(60)
             dt = dt/400
@@ -127,18 +121,20 @@ class Game:
             #####################################################################
             #rotating sword goes here and sword hitbox
             #testing if katana hits enemy
-            katana = pygame.image.load("weapon/katana.png").convert_alpha()
-            katana = pygame.transform.scale(katana, (75, 75))
-            katana_mask = pygame.mask.from_surface(katana)
-            katana_rect = katana_mask.get_rect()
-            katana_rect.topleft = self.player.hitbox.topright
-            pygame.Surface.blit(self.screen, katana, katana_rect)
-            katana_rect_mask = self.getMaskRect(katana, *katana_rect.topleft)
-            pygame.draw.rect(self.screen, self.RED, katana_rect_mask, width=1)
+
+
+
+
             for enemy in self.enemy_list:
-                if enemy.mask.overlap(katana_mask, (enemy.rect_mask.x - katana_rect_mask.x,
-                                                    enemy.rect_mask.y - katana_rect_mask.y)):
-                    print('collision')
+                if pygame.sprite.collide_mask(enemy, self.player):
+
+                    print('atak!')
+                    enemy.hurt = True
+
+                # if enemy.mask.overlap(katana_mask, (enemy.rect_mask.x - katana_rect_mask.x,
+                #                                     enemy.rect_mask.y - katana_rect_mask.y)):
+                #     enemy.hurt = True
+                #     print('collision')
             ####################################################################################
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

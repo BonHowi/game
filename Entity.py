@@ -1,16 +1,33 @@
 import pygame
 import os
+
 '''Parent class for characters'''
+
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, game, *groups):
-        super().__init__(*groups)
+    def __init__(self, game, ):
+        pygame.sprite.Sprite.__init__(self, *groups)
         self.animation_database = {"IDLE_LEFT": [],
                                    "IDLE_RIGHT": [],
                                    "WALK_LEFT": [],
                                    "WALK_RIGHT": []}
+        self.game = game
+        self.image = None
+        self.velocity = [0, 0]
+        self.old_velocity = [0, 0]
+        self.speed = None
+        self.priority = None
+        self.direction  = None
+        self.animation_index = 0
+        self.hp = None
+        #loading all animations associated with given entity
 
-
-
+    '''Function that returns entity hitbox around its non-transparent pixels(.png)'''
+    def getMaskRect(self, surf, top=0, left=0):
+        surf_mask = pygame.mask.from_surface(surf)
+        rect_list = surf_mask.get_bounding_rects()
+        surf_mask_rect = rect_list[0].unionall(rect_list)
+        surf_mask_rect.move_ip(top, left)
+        return surf_mask_rect
 
     def load_animation(self, path):
         animation_states = os.listdir(path)

@@ -42,7 +42,7 @@ class Enemy(pygame.sprite.Sprite):
         self.step = 400
         self.direction = "UP"
         self.load_animation('goblin/')
-        self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
+        self.hitbox = None
         self.hurt = False
         self.counter = 0
 
@@ -124,6 +124,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.x = spawn_point_x
                 self.rect.y = spawn_point_y
                 self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
+                self.hitbox = self.rect_mask
                 spawned = True
 
     def update(self):

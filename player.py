@@ -1,24 +1,23 @@
 import pygame
 import os
 from weapon import Weapon
+from Entity import Entity
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game, *groups):
+    def __init__(self, game,*groups):
         super().__init__(*groups)
         self.game = game
         self.animation_database = {"IDLE_LEFT":[],
                                    "IDLE_RIGHT":[],
                                    "WALK_LEFT":[],
                                    "WALK_RIGHT":[]}
+
         self.image_size = (75, 75)
         self.image = pygame.image.load("player/idle/right_idle0.png")
         self.image = pygame.transform.scale(self.image,self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.mask.get_rect(center = self.game.screen.get_rect().center)
         self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)  # Get rect of some size as 'image'.
-        #self.rect.center = (self.game.SIZE[0] / 2, self.game.SIZE[1] / 2)
-        #self.rect.x = self.game.SIZE[0] / 2
-        #self.rect.y = self.game.SIZE[1] / 2
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.speed = 100
@@ -31,7 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)#zmienione tymczasowo
         self.hasWeapon = True
-        self.weapon = Weapon(10, 'Gole piesci', 2, self.game.RED, self.game.all_environment)#usuniete groups z self.game
+        self.weapon = Weapon(self.game, 10, 'katana', 2, self.game.RED, self.game.all_environment)#usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
@@ -152,14 +151,9 @@ class Player(pygame.sprite.Sprite):
         if self.hasWeapon:
             pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
 
-
-        katana_image = pygame.image.load("weapon/katana.png")
-        katana_image = pygame.transform.scale(katana_image, (100, 100))
-        self.game.screen.blit(katana_image, (-10, 500))
-
-        start = pygame.math.Vector2(self.rect.midright)
-        mouse = pygame.mouse.get_pos()
-        end = start + (mouse - start).normalize() * self.gun_length
+        #start = pygame.math.Vector2(self.rect.midright)
+        #mouse = pygame.mouse.get_pos()
+        #end = start + (mouse - start).normalize() * self.gun_length
         #pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
     def gun_point(self):#zmienic, bo brzydko
