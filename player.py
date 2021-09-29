@@ -1,7 +1,6 @@
 import pygame
 import os
 from weapon import Weapon
-pygame.display.set_mode()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, *groups):
@@ -54,9 +53,15 @@ class Player(pygame.sprite.Sprite):
                 animation_image = pygame.transform.scale(animation_image, self.image_size)
                 self.animation_database[key].append(animation_image)
 
+    def moving(self):
+        if self.velocity[0] != 0 or self.velocity[1] != 0:
+            return True
+        else:
+            return False
+
     def animation(self):
-        if self.player_moving:
-            self.player_index += 0.05 # how fast animation changes
+        if self.moving():
+            self.player_index += 1.0/15 # how fast animation changes
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
@@ -71,7 +76,7 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "DOWN":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
         else:#if idle
-            self.player_index += 0.035  # how fast animation changes
+            self.player_index += 1.0/15  # how fast animation changes
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
@@ -89,7 +94,7 @@ class Player(pygame.sprite.Sprite):
         if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
             if self.direction == 'RIGHT':
                 self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
-                                                self.weapon.blade_length, self.rect.height)
+                                                self.weapon.blade_length + 100, self.rect.height)
                 self.attack_collision(collision_obj)
             elif self.direction == 'LEFT':
                 self.attack_range = pygame.Rect(self.rect.x - self.weapon.blade_length, self.rect.y,
@@ -103,8 +108,7 @@ class Player(pygame.sprite.Sprite):
                 self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,
                                                 self.weapon.blade_length)
                 self.attack_collision(collision_obj)
-        else:
-            self.attack_range = pygame.Rect(0, 0, 0, 0)
+
 
     def attack_collision(self, collision_obj):#do zmiany
         if self.attack_range.colliderect(collision_obj.rect):
@@ -124,17 +128,17 @@ class Player(pygame.sprite.Sprite):
         if self.current_stamina < self.max_stamina:
             self.current_stamina += 10
         self.attacked = False
-
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
 
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
 
     def render(self):
         if self.hasWeapon:
             pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
-        ####render broni##### poprawic, zeby kule strzelaly z koncowki broni a nie ze srodka playera
+
+
         katana_image = pygame.image.load("weapon/katana.png")
         katana_image = pygame.transform.scale(katana_image, (100, 100))
         self.game.screen.blit(katana_image, (-10, 500))

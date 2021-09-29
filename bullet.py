@@ -13,7 +13,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y  = y
-        self.speed = 2
+        self.speed = 5
         self.damage = 10 + self.game.player.score * 5
 
         self.pos = (x, y)
@@ -29,6 +29,14 @@ class Bullet(pygame.sprite.Sprite):
 
         self.rect.x  = self.pos[0]
         self.rect.y  = self.pos[1]
+        #self.draw()
+
+    def draw(self):
+        radius = 5
+        self.sparkle()
+        pygame.draw.circle(self.game.screen, self.game.GREEN, (self.rect.x+radius/2, self.rect.y+radius/2), radius)
+        pygame.draw.circle(self.game.screen, (242, 255, 50), (self.rect.x + radius / 2, self.rect.y + radius / 2),
+                           radius-1)
 
 
     def collision(self, collision_obj):
@@ -43,6 +51,6 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
     def sparkle(self):
-        for _ in range(random.randint(5, 10)):
+        for _ in range(random.randint(2, 4)):
             self.game.particles.append(Particle(self.game, self.rect.x, self.rect.y))
 

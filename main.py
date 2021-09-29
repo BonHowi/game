@@ -19,7 +19,7 @@ print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 class Game:
     def __init__(self):
-        self.FPS = 144
+        self.FPS = 60
         self.SIZE = (1200, 600)
 
         self.BLACK = (0, 0, 0)
@@ -107,7 +107,8 @@ class Game:
         running = True
 
         while running:
-            dt = (self.clock.tick(self.FPS) / 400)
+            dt = self.clock.tick(60)
+            dt = dt/400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
@@ -119,30 +120,23 @@ class Game:
 
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
-                        self.player.player_moving = True
                         self.player.velocity[1] = -self.player.speed * dt
 
                     elif event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
-                        self.player.player_moving = True
-
                         self.player.velocity[1] = self.player.speed * dt
 
                     elif event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
-                        self.player.player_moving = True
-
                         self.player.velocity[0] = -self.player.speed * dt
 
                     elif event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
-                        self.player.player_moving = True
-
                         self.player.velocity[0] = self.player.speed * dt
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = True
-                        self.player.current_stamina = 0#zmienione
+                        #self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:
                         self.game_over()
                     if event.key == pygame.K_z:
@@ -161,7 +155,7 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])
-                    self.all_environment.add(bullet)
+                    #self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
 
                 elif event.type == pygame.KEYUP:
@@ -174,15 +168,14 @@ class Game:
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = False
-
             self.player.attacked = False
             for enemy in self.enemy_list:
                 enemy.move(dt)
-                self.player.attack(enemy)
+                self.player.attack(enemy)#checking for attack
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
 
-                enemy.rect.clamp_ip(self.screen_rect)
+                #enemy.rect.clamp_ip(self.screen_rect)
                 if enemy.hp > 0:
                     enemy.draw_health(self.screen)
                 else:
@@ -197,6 +190,7 @@ class Game:
             self.all_environment.update()
             self.all_enemy.update()
             self.all_player.update()
+            self.bullet_list.update()
 
 
 
@@ -245,11 +239,14 @@ class Game:
             #     for x in range(int(self.SIZE[1]/10)):
             #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
 
+            #self.bullet_list.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
             self.player.render()
+            for bullet in self.bullet_list:
+                bullet.draw()
 
 
             # ---------PARTICLE ANIMATION############

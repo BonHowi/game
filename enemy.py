@@ -1,7 +1,7 @@
 import random
 import pygame
 import math
-
+import os
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
     pygame.draw.rect(surf, back_c, (*pos, *size))
     pygame.draw.rect(surf, border_c, (*pos, *size), 1)
@@ -15,9 +15,10 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, speed, max_hp, color, name, *groups):
         super().__init__(*groups)
         self.name = name
-        self.animation_database = {"LEFT_WALK": [],
-                                   "RIGHT_WALK": []
-                                   }
+        self.animation_database = {"IDLE_LEFT": [],
+                                   "IDLE_RIGHT": [],
+                                   "WALK_LEFT": [],
+                                   "WALK_RIGHT": []}
 
         self.player_index = 0
         self.game = game
@@ -26,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
         self.color = color
         enemy_side = int(self.set_side())
         self.image_size = (5*enemy_side, 5*enemy_side)
-        self.image = pygame.image.load("goblin/idle/lIdle_0.png")
+        self.image = pygame.image.load("goblin/idle/right_idle0.png")
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.rect = self.image.get_rect()
         self.spawn()
@@ -35,29 +36,58 @@ class Enemy(pygame.sprite.Sprite):
         self.old_velocity = [0, 0]
         self.priority = 100
         self.step = 400
-        self.load_animation('goblin/walk')
+        self.direction = "UP"
+        self.load_animation('goblin/')
         self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
 
+
     def load_animation(self, path):
-        animation_name = path.split('/')[-1]
-        for _ in range(4):
-            image_loc = animation_name + "_left" + str(_) + ".png"
-            animation_image = pygame.image.load(path + '/' + image_loc).convert()
-            animation_image = pygame.transform.scale(animation_image, self.image_size)
-            self.animation_database["LEFT_WALK"].append(animation_image)
-        for _ in range(4):
-            image_loc = animation_name + "_right" + str(_) + ".png"
-            animation_image = pygame.image.load(path + '/' + image_loc).convert()
-            animation_image = pygame.transform.scale(animation_image, self.image_size)
-            self.animation_database["RIGHT_WALK"].append(animation_image)
+        animation_states = os.listdir(path)
+        for state in animation_states:
+            substates = os.listdir(path + state)
+            for ss in substates:
+                image_loc = ss
+                elements = image_loc.split('_')
+                key = state.upper() + '_' + elements[0].upper()  # key to dictionary
+                animation_image = pygame.image.load(path + state + '/' + image_loc).convert()
+                animation_image = pygame.transform.scale(animation_image, self.image_size)
+                self.animation_database[key].append(animation_image)
 
+    def moving(self):
+        if self.old_velocity != self.velocity:
+            return True
+        else:
+            return False
+    def check_direction(self):
+        '''old rect.x - rect.x > '''
     def animation(self):
+        if self.moving():
+            self.player_index += 0.035  # how fast animation changes
+            if self.player_index >= 4:
+                self.player_index = 0
+            if self.direction == 'LEFT':
+                self.image = self.animation_database["WALK_LEFT"][int(self.player_index)]
 
-        self.player_index += 0.07 # how fast animation changes
-        if self.player_index >= 4:
-            self.player_index = 0
+            elif self.direction == 'UP':
+                self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
 
-        self.image = self.animation_database["LEFT_WALK"][int(self.player_index)]
+            elif self.direction == "RIGHT":
+                self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
+
+            elif self.direction == "DOWN":
+                self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
+        else:  # if idle
+            self.player_index += 0.035  # how fast animation changes
+            if self.player_index >= 4:
+                self.player_index = 0
+            if self.direction == 'LEFT':
+                self.image = self.animation_database["IDLE_LEFT"][int(self.player_index)]
+            elif self.direction == 'RIGHT':
+                self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
+            elif self.direction == "UP":
+                self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
+            elif self.direction == "DOWN":
+                self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
 
 
@@ -78,21 +108,22 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.animation()
-        self.rect.move_ip(*self.velocity)
+        #self.rect.move_ip(*self.velocity)
        # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 23, 37, 52)
 
-        # pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
     def move(self, dtick):
+
         threshold = random.randrange(1, 20)
         if self.step >= threshold:
             self.old_velocity = self.velocity
 
             #self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
             #self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
-            self.move_towards_player(self.game.player, dtick)
+            self.move_towards_player(self.game.player, dtick) # zmiana
             self.step = 0
             # self.find_target(dtick, self.game.player)
         self.step += 1
