@@ -47,6 +47,7 @@ class Game:
         self.wall_list = []
         self.enemy_list = []
         self.bullet_list = None
+        self.weapon_group = None
         self.map = None
         self.particles = []
         self.last_shot = None
@@ -60,12 +61,14 @@ class Game:
         self.all_environment = pygame.sprite.Group()
         self.all_wall = pygame.sprite.Group()
         self.all_player = pygame.sprite.Group()
+        self.bullet_list = pygame.sprite.Group()
+        self.weapon_group = pygame.sprite.Group()
 
         ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
         #self.sword = Weapon(self, 15, 'sword', 15, self.RED, self.all_environment)
-        self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.all_environment)
+        self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.weapon_group)
         #self.kij = Weapon(self, 1, 'kij', 5, self.BLUE, self.all_environment)
         #add weapons to the menu
 
@@ -87,7 +90,7 @@ class Game:
         for _ in range(0):
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
-        self.bullet_list = pygame.sprite.Group()
+
         self.items_menu = Items_bar(self)
 
 
@@ -211,7 +214,7 @@ class Game:
             if self.player.attacked:
                 self.player.current_stamina = 0
 
-
+            self.weapon_group.update()
             self.all_wall.update()
             self.all_environment.update()
             self.all_enemy.update()
@@ -266,6 +269,7 @@ class Game:
             #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
 
             #self.bullet_list.draw(self.screen)
+            #self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)

@@ -30,7 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.attacking = False
         self.attack_range = pygame.Rect(0, 0, 0, 0)#zmienione tymczasowo
         self.hasWeapon = True
-        self.weapon = Weapon(self.game, 10, 'katana', 2, self.game.RED, self.game.all_environment)#usuniete groups z self.game
+        self.weapon = Weapon(self.game, 10, 'katana', 2, self.game.RED, self.game.weapon_group)#usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
@@ -148,8 +148,9 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, width=1)
 
     def render(self):
-        if self.hasWeapon:
-            pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
+        pass
+        # if self.hasWeapon:
+        #     pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
 
         #start = pygame.math.Vector2(self.rect.midright)
         #mouse = pygame.mouse.get_pos()
