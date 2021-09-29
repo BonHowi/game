@@ -104,9 +104,17 @@ class Game:
         """Check if the hitbox of one sprite collides with rect of another sprite."""
         return sprite.hitbox.colliderect(other.rect)
 
+    def getMaskRect(self, surf, top=0, left=0):
+        surf_mask = pygame.mask.from_surface(surf)
+        rect_list = surf_mask.get_bounding_rects()
+        surf_mask_rect = rect_list[0].unionall(rect_list)
+        surf_mask_rect.move_ip(top, left)
+        return surf_mask_rect
+
     def run_game(self):
         self.init_all()
         running = True
+
 
 
         while running:
@@ -115,15 +123,23 @@ class Game:
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
-            
-            katana = pygame.image.load("weapon/katana.png")
-            katana = pygame.transform.scale(katana, (75, 75))
-            katana_rect = katana.get_rect()
-            pygame.Surface.blit(self.screen, katana, self.player.rect.midtop)
-            #pygame.draw.rect(self.screen, self.WHITE, (self.player.rect.midtop[0],self.player.rect.midtop[1],75, 75), width = 2)
-            hitbox = pygame.Rect(self.player.rect.midtop[0] + 30, self.player.rect.midtop[1], 15, 75)
-            pygame.draw.rect(self.screen, self.RED, hitbox, width = 1)
 
+            #####################################################################
+            #rotating sword goes here and sword hitbox
+            #testing if katana hits enemy
+            katana = pygame.image.load("weapon/katana.png").convert_alpha()
+            katana = pygame.transform.scale(katana, (75, 75))
+            katana_mask = pygame.mask.from_surface(katana)
+            katana_rect = katana_mask.get_rect()
+            katana_rect.topleft = self.player.hitbox.topright
+            pygame.Surface.blit(self.screen, katana, katana_rect)
+            katana_rect_mask = self.getMaskRect(katana, *katana_rect.topleft)
+            pygame.draw.rect(self.screen, self.RED, katana_rect_mask, width=1)
+            for enemy in self.enemy_list:
+                if enemy.mask.overlap(katana_mask, (enemy.rect_mask.x - katana_rect_mask.x,
+                                                    enemy.rect_mask.y - katana_rect_mask.y)):
+                    print('collision')
+            ####################################################################################
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False

@@ -13,9 +13,12 @@ class Player(pygame.sprite.Sprite):
         self.image_size = (75, 75)
         self.image = pygame.image.load("player/idle/right_idle0.png")
         self.image = pygame.transform.scale(self.image,self.image_size)
-        self.rect = self.image.get_rect()  # Get rect of some size as 'image'.
-        self.rect.x = self.game.SIZE[0] / 2
-        self.rect.y = self.game.SIZE[1] / 2
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.mask.get_rect(center = self.game.screen.get_rect().center)
+        self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)  # Get rect of some size as 'image'.
+        #self.rect.center = (self.game.SIZE[0] / 2, self.game.SIZE[1] / 2)
+        #self.rect.x = self.game.SIZE[0] / 2
+        #self.rect.y = self.game.SIZE[1] / 2
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.speed = 100
@@ -39,8 +42,15 @@ class Player(pygame.sprite.Sprite):
         self.load_animation('player/')
         #hitbox
         self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
-
-
+    
+    
+    def getMaskRect(self, surf, top=0, left=0):
+        surf_mask = pygame.mask.from_surface(surf)
+        rect_list = surf_mask.get_bounding_rects()
+        surf_mask_rect = rect_list[0].unionall(rect_list)
+        surf_mask_rect.move_ip(top, left)
+        return surf_mask_rect
+    
     def load_animation(self, path):
         animation_states = os.listdir(path)
         for state in animation_states:
@@ -93,19 +103,19 @@ class Player(pygame.sprite.Sprite):
     def attack(self, collision_obj):
         if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
             if self.direction == 'RIGHT':
-                self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.rect.y,
-                                                self.weapon.blade_length + 100, self.rect.height)
+                self.attack_range = pygame.Rect(self.hitbox.x + self.hitbox.width, self.hitbox.y,
+                                                self.weapon.blade_length, self.hitbox.height)
                 self.attack_collision(collision_obj)
             elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.rect.x - self.weapon.blade_length, self.rect.y,
-                                                self.weapon.blade_length, self.rect.height)
+                self.attack_range = pygame.Rect(self.hitbox.x - self.weapon.blade_length, self.hitbox.y,
+                                                self.weapon.blade_length, self.hitbox.height)
                 self.attack_collision(collision_obj)
             elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y - self.weapon.blade_length, self.rect.height,
+                self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y - self.weapon.blade_length, self.hitbox.height,
                                                 self.weapon.blade_length)
                 self.attack_collision(collision_obj)
             elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.rect.x, self.rect.y + self.rect.height, self.rect.height,
+                self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y + self.hitbox.height, self.hitbox.height,
                                                 self.weapon.blade_length)
                 self.attack_collision(collision_obj)
 
@@ -126,6 +136,9 @@ class Player(pygame.sprite.Sprite):
         self.animation()
         self.rect.clamp_ip(self.game.screen_rect)
         self.rect.move_ip(*self.velocity)
+
+        self.rect_mask.move_ip(*self.velocity)
+
         if self.current_stamina < self.max_stamina:
             self.current_stamina += 10
         self.attacked = False
@@ -133,7 +146,7 @@ class Player(pygame.sprite.Sprite):
 
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
-
+        pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, width=1)
 
     def render(self):
         if self.hasWeapon:

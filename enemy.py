@@ -31,7 +31,9 @@ class Enemy(pygame.sprite.Sprite):
         self.image_size = (5*enemy_side, 5*enemy_side)
         self.image = pygame.image.load("goblin/idle/right_idle0.png")
         self.image = pygame.transform.scale(self.image, self.image_size)
-        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.mask.get_rect()
+        self.rect_mask = None  # Get rect of some size as 'image'.
         self.spawn()
         self.speed = speed
         self.velocity = [0, 0]
@@ -44,6 +46,12 @@ class Enemy(pygame.sprite.Sprite):
         self.hurt = False
         self.counter = 0
 
+    def getMaskRect(self, surf, top=0, left=0):
+        surf_mask = pygame.mask.from_surface(surf)
+        rect_list = surf_mask.get_bounding_rects()
+        surf_mask_rect = rect_list[0].unionall(rect_list)
+        surf_mask_rect.move_ip(top, left)
+        return surf_mask_rect
 
     def load_animation(self, path):
         animation_states = os.listdir(path)
@@ -115,16 +123,19 @@ class Enemy(pygame.sprite.Sprite):
                 spawn_point_x = spawn_point[1][random.randint(0, len(spawn_point[1]) - 1)]
                 self.rect.x = spawn_point_x
                 self.rect.y = spawn_point_y
+                self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
                 spawned = True
 
     def update(self):
+
         self.animation()
         #self.rect.move_ip(*self.velocity)
        # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 26, 37, 52)
 
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
+        pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
 
     def move(self, dtick):
 
@@ -148,6 +159,8 @@ class Enemy(pygame.sprite.Sprite):
         # Move along this normalized vector towards the player at current speed.
             dirvect.scale_to_length(self.speed * 3 * dtick)
         self.rect.move_ip(dirvect)
+
+        self.rect_mask.move_ip(dirvect)
 
     def find_target(self, dtick, target):
         dist_to_target_x = target.rect.x - self.rect.x
