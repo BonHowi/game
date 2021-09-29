@@ -18,7 +18,9 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_database = {"IDLE_LEFT": [],
                                    "IDLE_RIGHT": [],
                                    "WALK_LEFT": [],
-                                   "WALK_RIGHT": []}
+                                   "WALK_RIGHT": [],
+                                   "HURT_LEFT":[],
+                                   "HURT_RIGHT": []}
 
         self.player_index = 0
         self.game = game
@@ -39,6 +41,8 @@ class Enemy(pygame.sprite.Sprite):
         self.direction = "UP"
         self.load_animation('goblin/')
         self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
+        self.hurt = False
+        self.counter = 0
 
 
     def load_animation(self, path):
@@ -60,20 +64,29 @@ class Enemy(pygame.sprite.Sprite):
             return False
     def check_direction(self):
         '''old rect.x - rect.x > '''
+
     def animation(self):
-        if self.moving():
+        #hurt animation bu shrinking image and painting red
+        # if self.counter >=4:
+        #     self.hurt = False
+        #     self.counter = 0
+        # if self.hurt and self.counter < 4:#if hurt
+        #     if self.player_index >= 4:
+        #         self.player_index = 0
+        #     self.image = self.animation_database["HURT_RIGHT"][int(self.player_index)]
+        #     self.player_index +=0.2
+        #     self.counter +=0.2
+
+        if self.moving():#if moving
             self.player_index += 0.035  # how fast animation changes
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
                 self.image = self.animation_database["WALK_LEFT"][int(self.player_index)]
-
             elif self.direction == 'UP':
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
             elif self.direction == "RIGHT":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
             elif self.direction == "DOWN":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
         else:  # if idle
@@ -88,8 +101,12 @@ class Enemy(pygame.sprite.Sprite):
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
-
-
+        if self.hurt:
+            self.image = pygame.transform.scale(self.image, (self.image.get_width()-15, self.image.get_height()-15))
+            self.counter +=0.2
+            if self.counter > 4:
+                self.counter = 0
+                self.hurt = False
 
     def set_side(self):
         enemy_side = self.max_hp / 10

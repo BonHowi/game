@@ -117,6 +117,7 @@ class Player(pygame.sprite.Sprite):
     def calculate_collison(self, collision_obj, damage):
         if collision_obj.hp > 0:
             collision_obj.hp -= damage
+            collision_obj.hurt = True #indicating that enemy is hurt
             if collision_obj.hp <= 0:
                 self.score += 1
         self.attacked = True
@@ -131,7 +132,7 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
 
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
 
 
     def render(self):

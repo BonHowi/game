@@ -56,7 +56,8 @@ class Game:
         self.particles = []
         self.last_shot = None
         self.items_menu = None
-        
+        self.bg = None
+
     def init_all(self):
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
@@ -80,7 +81,7 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-
+        self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
         for _ in range(1):
@@ -92,6 +93,7 @@ class Game:
 
         self.bullet_list = pygame.sprite.Group()
         self.items_menu = Items_bar(self)
+
 
     def game_over(self):
         self.init_all()
@@ -105,6 +107,7 @@ class Game:
     def run_game(self):
         self.init_all()
         running = True
+
 
         while running:
             dt = self.clock.tick(60)
@@ -153,10 +156,13 @@ class Game:
                         self.player.assign_weapon(self.kij)
                         self.items_menu.weapon = 'kij'
 
-                elif event.type == pygame.MOUSEBUTTONDOWN:  # strzelanie nabojami
+                if pygame.mouse.get_pressed()[0] and self.counter >60:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])
                     #self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
+                    self.counter = 0
+
+
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
@@ -201,7 +207,7 @@ class Game:
             #Check for collision between player and wall
             collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
             for sprite in collided_sprites_player:
-                velocity = [i * (-1) for i in self.player.old_velocity]
+                velocity = [i * (-0.25) for i in self.player.old_velocity]#how far from wall will you bounce
                 self.player.velocity = velocity
                 self.player.update()
                 self.player.velocity = [0, 0]
@@ -260,7 +266,7 @@ class Game:
 
             ##item bar display
             self.items_menu.draw()
-
+            self.counter +=1
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
