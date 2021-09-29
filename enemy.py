@@ -42,7 +42,6 @@ class Enemy(pygame.sprite.Sprite):
         animation_name = path.split('/')[-1]
         for _ in range(4):
             image_loc = animation_name + "_left" + str(_) + ".png"
-            print(image_loc)
             animation_image = pygame.image.load(path + '/' + image_loc).convert()
             animation_image = pygame.transform.scale(animation_image, self.image_size)
             self.animation_database["LEFT_WALK"].append(animation_image)

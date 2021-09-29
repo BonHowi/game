@@ -119,19 +119,25 @@ class Game:
 
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
+                        self.player.player_moving = True
                         self.player.velocity[1] = -self.player.speed * dt
-
 
                     elif event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
+                        self.player.player_moving = True
+
                         self.player.velocity[1] = self.player.speed * dt
 
                     elif event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
+                        self.player.player_moving = True
+
                         self.player.velocity[0] = -self.player.speed * dt
 
                     elif event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
+                        self.player.player_moving = True
+
                         self.player.velocity[0] = self.player.speed * dt
 
                     elif event.key == pygame.K_SPACE:
@@ -161,10 +167,11 @@ class Game:
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         self.player.velocity[1] = 0
-                        self.player.direction = ''
+                        self.player.player_moving = False#changed from direction
                     elif event.key == pygame.K_a or event.key == pygame.K_d:
                         self.player.velocity[0] = 0
-                        self.player.direction = ''
+                        self.player.player_moving = False
+
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = False
 
