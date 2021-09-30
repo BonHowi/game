@@ -16,7 +16,7 @@ class Entity(pg.sprite.Sprite):
         self.pos = Vector2(pos)  # The original center position/pivot point.
         self.offset = Vector2(50, 0)  # We shift the sprite 50 px to the right.
         self.angle = 0
-        #self.getMaskRect()
+        self.hitbox = self.getMaskRect(self.image, *self.rect)
         #self.hitbox = getMaskRect(self.image, self.rect)
 
     def update(self):
@@ -43,7 +43,7 @@ class Entity(pg.sprite.Sprite):
 def main():
     screen = pg.display.set_mode((640, 480))
     clock = pg.time.Clock()
-    entity = Entity((100, 250))
+    entity = Entity((250, 250))
     all_sprites = pg.sprite.Group(entity)
 
     while True:
