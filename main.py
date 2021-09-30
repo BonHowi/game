@@ -94,7 +94,7 @@ class Game:
 
         self.items_menu = Items_bar(self)
 
-<<<<<<< HEAD
+
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -103,8 +103,7 @@ class Game:
         text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-=======
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
+
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -137,22 +136,19 @@ class Game:
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
 
-<<<<<<< HEAD
+
             #CHECKING if player or player's weapon collided with enemy (by masks, not rects)
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     pass
                 if pygame.sprite.collide_mask(enemy, self.player.weapon):
-=======
-            #####################################################################
-            # rotating sword goes here and sword hitbox
-            # testing if katana hits enemy
+                    enemy.hurt = True
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     print('atak!')
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
-                    enemy.hurt = True
+
+
             self.draw_text("Adam ", 50, 250, 250)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -217,11 +213,10 @@ class Game:
                 self.player.attack(enemy)  # checking for attack
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
-<<<<<<< HEAD
-=======
+
 
                 # enemy.rect.clamp_ip(self.screen_rect)
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
+
                 if enemy.hp > 0:
                     enemy.draw_health(self.screen)
                 else:
@@ -238,22 +233,22 @@ class Game:
             self.all_player.update()
             self.bullet_list.update()
 
-<<<<<<< HEAD
+
             #Instead of using player.rect, player.hitbox is used
-=======
+
             # Instead of using player.rect, player.hitbox is used
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
+
             # def collided(self, sprite, other):
             #     """Check if the hitbox of one sprite collides with rect of another sprite."""
             #     return sprite.hitbox.colliderect(other.rect)
             # Check for collision between player and wall
             collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
             for sprite in collided_sprites_player:
-<<<<<<< HEAD
+
                 velocity = [i * (-0.5) for i in self.player.old_velocity]#how far from wall will you bounce
-=======
+
                 velocity = [i * (-0.25) for i in self.player.old_velocity]  # how far from wall will you bounce
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
+
                 self.player.velocity = velocity
                 self.player.update()
                 self.player.velocity = [0, 0]
@@ -269,11 +264,11 @@ class Game:
 
             for block in self.wall_list:
 
-<<<<<<< HEAD
-=======
+
+
                 # Given our hitbox, we do not have to check collide_rect, cause
                 # it exclusively uses rect attribute of Sprite class
->>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
+
                 # if collide_rect(self.player, block):
                 #     velocity = [i * (-1) for i in self.player.old_velocity]
                 #     self.player.velocity = velocity

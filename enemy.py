@@ -136,7 +136,7 @@ class Enemy(pygame.sprite.Sprite):
         #self.hitbox = self.rect_mask
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
         #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
-        pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
 
     def move(self, dtick):
 

@@ -78,8 +78,8 @@ class Weapon(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image2)
 
         pygame.Surface.blit(self.game.screen, self.image2, self.rect)
-        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
-        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+       # pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
 
         self.angle -=1.5 * self.counter
         self.pivot = self.rect_mask.bottomleft
