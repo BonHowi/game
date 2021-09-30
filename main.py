@@ -138,17 +138,6 @@ class Game:
             if len(self.all_enemy) <=0:
                 self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            #CHECKING if player or player's weapon collided with enemy (by masks, not rects)
-            for enemy in self.enemy_list:
-                if pygame.sprite.collide_mask(enemy, self.player):
-                    pass
-                if pygame.sprite.collide_mask(enemy, self.player.weapon):
-                    enemy.hurt = True
-                    enemy.hp -= 10
-
-            for enemy in self.enemy_list:
-                if pygame.sprite.collide_mask(enemy, self.player):
-                    print('atak!')
 
 
             self.draw_text("Adam ", 50, 250, 250)
@@ -235,6 +224,18 @@ class Game:
             self.all_player.update()
             self.bullet_list.update()
 
+            #CHECKING if player or player
+            #'s weapon collided with enemy (by masks, not rects)
+            for enemy in self.enemy_list:
+                if pygame.sprite.collide_mask(enemy, self.player):
+                    pass
+                if pygame.sprite.collide_mask(self.player.weapon, enemy):
+                    enemy.hurt = True
+                # enemy.hp -= 10
+
+            for enemy in self.enemy_list:
+                if pygame.sprite.collide_mask(enemy, self.player):
+                    pass
 
             #Instead of using player.rect, player.hitbox is used
 
