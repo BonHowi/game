@@ -14,8 +14,10 @@ from bullet import Bullet
 from item_bar import Items_bar
 from player_dust import DustParticle
 from rain import RainParticle
+
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
+
 
 class Game:
     def __init__(self):
@@ -53,7 +55,7 @@ class Game:
         self.last_shot = None
         self.items_menu = None
         self.bg = None
-        self.entity_size = (75, 75)#size of the characters(player, enemy)
+        self.entity_size = (75, 75)  # size of the characters(player, enemy)
 
     def init_all(self):
         self.wall_list = []
@@ -67,10 +69,10 @@ class Game:
         ############WEAPONS############################################################
         wp_spawn_x = self.SIZE[0] / 2
         wp_spawn_y = self.SIZE[1] / 2 + 40
-        #self.sword = Weapon(self, 15, 'sword', 15, self.RED, self.all_environment)
+        # self.sword = Weapon(self, 15, 'sword', 15, self.RED, self.all_environment)
         self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.weapon_group)
-        #self.kij = Weapon(self, 1, 'kij', 5, self.BLUE, self.all_environment)
-        #add weapons to the menu
+        # self.kij = Weapon(self, 1, 'kij', 5, self.BLUE, self.all_environment)
+        # add weapons to the menu
 
         ##########################################################################
         self.screen = pygame.display.set_mode(self.SIZE)
@@ -90,9 +92,9 @@ class Game:
         for _ in range(0):
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
-
         self.items_menu = Items_bar(self)
 
+<<<<<<< HEAD
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -101,6 +103,8 @@ class Game:
         text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
+=======
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
     def game_over(self):
         self.init_all()
         pygame.display.flip()
@@ -128,16 +132,26 @@ class Game:
 
         while running:
             dt = self.clock.tick(60)
-            dt = dt/400
+            dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
 
+<<<<<<< HEAD
             #CHECKING if player or player's weapon collided with enemy (by masks, not rects)
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     pass
                 if pygame.sprite.collide_mask(enemy, self.player.weapon):
+=======
+            #####################################################################
+            # rotating sword goes here and sword hitbox
+            # testing if katana hits enemy
+
+            for enemy in self.enemy_list:
+                if pygame.sprite.collide_mask(enemy, self.player):
+                    print('atak!')
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
                     enemy.hurt = True
             self.draw_text("Adam ", 50, 250, 250)
             for event in pygame.event.get():
@@ -163,7 +177,7 @@ class Game:
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = True
-                        #self.player.current_stamina = 0#zmienione
+                        # self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:
                         self.game_over()
                     if event.key == pygame.K_z:
@@ -179,16 +193,17 @@ class Game:
                         self.player.assign_weapon(self.kij)
                         self.items_menu.weapon = 'kij'
 
-                if pygame.mouse.get_pressed()[0] and self.counter >60:  # strzelanie nabojami
-                    bullet = Bullet(self, self.player.gun_point()[0], self.player.gun_point()[1])#adding bullet at the end of rifle
-                    #self.all_environment.add(bullet)
+                if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
+                    bullet = Bullet(self, self.player.gun_point()[0],
+                                    self.player.gun_point()[1])  # adding bullet at the end of rifle
+                    # self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
                     self.counter = 0
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_s:
                         self.player.velocity[1] = 0
-                        self.player.player_moving = False#changed from direction
+                        self.player.player_moving = False  # changed from direction
                     elif event.key == pygame.K_a or event.key == pygame.K_d:
                         self.player.velocity[0] = 0
                         self.player.player_moving = False
@@ -199,9 +214,14 @@ class Game:
 
             for enemy in self.enemy_list:
                 enemy.move(dt)
-                self.player.attack(enemy)#checking for attack
+                self.player.attack(enemy)  # checking for attack
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
+<<<<<<< HEAD
+=======
+
+                # enemy.rect.clamp_ip(self.screen_rect)
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
                 if enemy.hp > 0:
                     enemy.draw_health(self.screen)
                 else:
@@ -218,19 +238,27 @@ class Game:
             self.all_player.update()
             self.bullet_list.update()
 
+<<<<<<< HEAD
             #Instead of using player.rect, player.hitbox is used
+=======
+            # Instead of using player.rect, player.hitbox is used
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
             # def collided(self, sprite, other):
             #     """Check if the hitbox of one sprite collides with rect of another sprite."""
             #     return sprite.hitbox.colliderect(other.rect)
-            #Check for collision between player and wall
+            # Check for collision between player and wall
             collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
             for sprite in collided_sprites_player:
+<<<<<<< HEAD
                 velocity = [i * (-0.5) for i in self.player.old_velocity]#how far from wall will you bounce
+=======
+                velocity = [i * (-0.25) for i in self.player.old_velocity]  # how far from wall will you bounce
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
                 self.player.velocity = velocity
                 self.player.update()
                 self.player.velocity = [0, 0]
 
-            #Check for collision between enemy and walls
+            # Check for collision between enemy and walls
             for enemy in self.all_enemy:
                 collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
                 for sprite in collided_sprites_enemy:
@@ -239,9 +267,13 @@ class Game:
                     enemy.update()
                     enemy.velocity = [0, 0]
 
-
             for block in self.wall_list:
 
+<<<<<<< HEAD
+=======
+                # Given our hitbox, we do not have to check collide_rect, cause
+                # it exclusively uses rect attribute of Sprite class
+>>>>>>> 2209c2748b0744d8816324ed7c0f492e201e21de
                 # if collide_rect(self.player, block):
                 #     velocity = [i * (-1) for i in self.player.old_velocity]
                 #     self.player.velocity = velocity
@@ -261,8 +293,8 @@ class Game:
             #     for x in range(int(self.SIZE[1]/10)):
             #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
 
-            #self.bullet_list.draw(self.screen)
-            #self.weapon_group.draw(self.screen)
+            # self.bullet_list.draw(self.screen)
+            # self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
             self.all_player.draw(self.screen)
@@ -270,7 +302,6 @@ class Game:
             self.player.render()
             for bullet in self.bullet_list:
                 bullet.draw()
-
 
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
@@ -283,7 +314,7 @@ class Game:
 
             ##item bar display
             self.items_menu.draw()
-            self.counter +=1
+            self.counter += 1
             pygame.display.update()
         print("Exited the game loop. Game will quit...")
         quit()
