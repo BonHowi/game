@@ -13,10 +13,13 @@ class Entity(pg.sprite.Sprite):
         self.image = pg.transform.scale(self.image, (100, 100))
         self.orig_image = self.image
         self.rect = self.image.get_rect(center=pos)
-        self.pos = Vector2(pos)  # The original center position/pivot point.
-        self.offset = Vector2(50, 0)  # We shift the sprite 50 px to the right.
+          # The original center position/pivot point.
+        self.offset = Vector2(4, -34)  # We shift the sprite 50 px to the right.
         self.angle = 0
-        self.hitbox = self.getMaskRect(self.image, *self.rect)
+        self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
+        self.pos = Vector2(self.hitbox.midbottom)
+        #self.pos[1] -=10
+        #self.pos[0] -= 2
         #self.hitbox = getMaskRect(self.image, self.rect)
 
     def update(self):
@@ -31,9 +34,10 @@ class Entity(pg.sprite.Sprite):
         offset_rotated = self.offset.rotate(self.angle)
         # Create a new rect with the center of the sprite + the offset.
         self.rect = self.image.get_rect(center=self.pos + offset_rotated)
+        #self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
 
     def getMaskRect(self, surf, top=0, left=0):
-        surf_mask = pygame.mask.from_surface(surf)
+        surf_mask = pg.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
         surf_mask_rect.move_ip(top, left)
@@ -61,7 +65,8 @@ def main():
         screen.fill((30, 30, 30))
         all_sprites.draw(screen)
         pg.draw.circle(screen, (255, 128, 0), [int(i) for i in entity.pos], 3)
-        pg.draw.rect(screen, (255, 128, 0), entity.rect, 2)
+        #pg.draw.rect(screen, (255, 128, 0), entity.rect, 2)
+        #pg.draw.rect(screen, (255, 0, 0), entity.hitbox, 1)
         pg.draw.line(screen, (100, 200, 255), (0, 240), (640, 240), 1)
         pg.display.flip()
         clock.tick(30)

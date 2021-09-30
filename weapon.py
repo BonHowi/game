@@ -11,7 +11,7 @@ class Weapon(pygame.sprite.Sprite):
         self.blade_length = int(width)
         self.color = color
         self.original_image = None
-        self.image2 = None
+        self.image = None
         self.mask = None
         self.rect = None
         self.rect_mask = None
@@ -21,6 +21,10 @@ class Weapon(pygame.sprite.Sprite):
         self.counter = 1
         self.angle = 0
         self.pivot = self.rect_mask.bottomleft
+        self.offset = Vector2(4, -34)
+        self.angle_change_factor_start = 2
+        self.angle_change_factor = self.angle_change_factor_start
+
 
 
     def getMaskRect(self, surf, top=0, left=0):
@@ -37,7 +41,7 @@ class Weapon(pygame.sprite.Sprite):
         self.rect = self.mask.get_rect()
         self.rect_mask = self.getMaskRect(self.original_image, *self.rect.topleft)
         self.hitbox = self.rect_mask
-        self.image2 = self.original_image
+        self.image = self.original_image
 
     def collision(self, collision_obj):
         if self.rect_mask.colliderect(collision_obj.rect):
@@ -47,39 +51,38 @@ class Weapon(pygame.sprite.Sprite):
         if self.rect_mask.colliderect(enemy.hitbox):
             pass
 
-    def rotatePivoted(self):
+    def rotate(self):
 
-        if self.angle <= -90 or self.angle >=1:
+        """Rotate the image of the sprite around a pivot point."""
+        if self.angle >= 90 or self.angle <0:
             self.counter = self.counter * (-1)
+        # Rotate the image.
+        self.image = pygame.transform.rotozoom(self.original_image, -self.angle, 1)
+        # Rotate the offset vector.
+        offset_rotated = self.offset.rotate(self.angle)
+        # Create a new rect with the center of the sprite + the offset.
+        self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + offset_rotated)
+        self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
 
-        self.image2 = pygame.transform.rotate(self.original_image, self.angle)
-        self.rect = self.image2.get_rect()
-        self.rect.center = self.pivot
+        #bigger the angle, faster the rotation, till it reaches 90 degrees
+        self.angle_change_factor = self.angle_change_factor*1.5
+        if not 0 > self.angle < -90:
+            self.angle_change_factor = self.angle_change_factor_start
 
-    def blitRotate(self, surf, image, origin, pivot, angle):
-        image_rect = image.get_rect(topleft=(origin[0] - pivot[0], origin[1] - pivot[1]))
-        offset_center_to_pivot = pygame.math.Vector2(origin) - image_rect.center
-        rotated_offset = offset_center_to_pivot.rotate(-angle)
-        rotated_image_center = (origin[0] - rotated_offset.x, origin[1] - rotated_offset.y)
-        rotated_image = pygame.transform.rotate(image, angle)
-        rotated_image_rect = rotated_image.get_rect(center=rotated_image_center)
-        surf.blit(rotated_image, rotated_image_rect)
-
+        self.angle -= self.angle_change_factor * self.counter
     def update(self):
+        self.rotate()
+        #self.rect.bottomleft = self.game.player.hitbox.topright
+        #self.rect_mask = self.getMaskRect(self.image2, *self.rect.topleft)
 
-        self.rotatePivoted()
-        self.rect.bottomleft = self.game.player.hitbox.topright
-        self.rect_mask = self.getMaskRect(self.image2, *self.rect.topleft)
+        #dx = self.rect_mask.x - self.game.player.hitbox.topright[0]
+        #self.rect_mask.x -= dx
+        #self.rect.x -= dx
+        #self.hitbox = self.rect_mask
+        #self.mask = pygame.mask.from_surface(self.image2)
 
-        dx = self.rect_mask.x - self.game.player.hitbox.topright[0]
-        self.rect_mask.x -= dx
-        self.rect.x -= dx
-        self.hitbox = self.rect_mask
-        self.mask = pygame.mask.from_surface(self.image2)
-
-        pygame.Surface.blit(self.game.screen, self.image2, self.rect)
-       # pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        pygame.Surface.blit(self.game.screen, self.image, self.rect)
+        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
         #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
 
-        self.angle -=1.5 * self.counter
-        self.pivot = self.rect_mask.bottomleft
+
