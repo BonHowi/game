@@ -24,6 +24,7 @@ class Weapon(pygame.sprite.Sprite):
         self.offset = Vector2(4, -34)
         self.angle_change_factor_start = 2
         self.angle_change_factor = self.angle_change_factor_start
+        self.is_finished = False
 
 
 
@@ -65,13 +66,18 @@ class Weapon(pygame.sprite.Sprite):
         self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
 
         #bigger the angle, faster the rotation, till it reaches 90 degrees
-        self.angle_change_factor = self.angle_change_factor*1.5
-        if not 0 > self.angle < -90:
+        self.angle_change_factor = self.angle_change_factor*1.1
+
+        if not 0 > -self.angle > -90:
             self.angle_change_factor = self.angle_change_factor_start
+            self.angle = 0
+
 
         self.angle -= self.angle_change_factor * self.counter
     def update(self):
-        self.rotate()
+        if not self.is_finished:
+            self.rotate()
+
         #self.rect.bottomleft = self.game.player.hitbox.topright
         #self.rect_mask = self.getMaskRect(self.image2, *self.rect.topleft)
 

@@ -135,7 +135,8 @@ class Game:
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
-
+            if len(self.all_enemy) <=0:
+                self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
             #CHECKING if player or player's weapon collided with enemy (by masks, not rects)
             for enemy in self.enemy_list:
@@ -143,6 +144,7 @@ class Game:
                     pass
                 if pygame.sprite.collide_mask(enemy, self.player.weapon):
                     enemy.hurt = True
+                    enemy.hp -= 10
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
