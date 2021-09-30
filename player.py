@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.gun_width = 5
         self.load_animation('player/')
         #hitbox
-        self.hitbox = pygame.Rect(self.rect.x + 18, self.rect.y + 27, 40, 48)
+        self.hitbox = self.rect_mask
     
     
     def getMaskRect(self, surf, top=0, left=0):
@@ -120,7 +120,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def attack_collision(self, collision_obj):#do zmiany
-        if self.attack_range.colliderect(collision_obj.rect):
+        if self.attack_range.colliderect(collision_obj.hitbox):
             self.calculate_collison(collision_obj, self.weapon.damage)
 
     def calculate_collison(self, collision_obj, damage):
@@ -133,29 +133,33 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.animation()
+
         self.rect.clamp_ip(self.game.screen_rect)
         self.rect.move_ip(*self.velocity)
 
+        self.rect_mask.clamp_ip(self.game.screen_rect)
         self.rect_mask.move_ip(*self.velocity)
 
         if self.current_stamina < self.max_stamina:
             self.current_stamina += 10
-        self.attacked = False
-        self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
 
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox)
-        pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, width=1)
+        self.attacked = False
+        #self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
+        self.hitbox = self.rect_mask
+        self.rect.midbottom = self.hitbox.midbottom
+        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):
-        pass
-        # if self.hasWeapon:
-        #     pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
 
-        #start = pygame.math.Vector2(self.rect.midright)
-        #mouse = pygame.mouse.get_pos()
-        #end = start + (mouse - start).normalize() * self.gun_length
-        #pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
+        if self.hasWeapon:
+             pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
+
+        # start = pygame.math.Vector2(self.rect.midright)
+        # mouse = pygame.mouse.get_pos()
+        # end = start + (mouse - start).normalize() * self.gun_length
+
+        # pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
     def gun_point(self):#zmienic, bo brzydko
         start = pygame.math.Vector2(self.rect.midright)

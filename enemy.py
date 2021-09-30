@@ -131,11 +131,11 @@ class Enemy(pygame.sprite.Sprite):
 
         self.animation()
         #self.rect.move_ip(*self.velocity)
-       # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
+        #pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 26, 37, 52)
-
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
+        #self.hitbox = self.rect_mask
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
 
     def move(self, dtick):
@@ -160,7 +160,6 @@ class Enemy(pygame.sprite.Sprite):
         # Move along this normalized vector towards the player at current speed.
             dirvect.scale_to_length(self.speed * 3 * dtick)
         self.rect.move_ip(dirvect)
-
         self.rect_mask.move_ip(dirvect)
 
     def find_target(self, dtick, target):
