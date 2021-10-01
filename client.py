@@ -20,7 +20,7 @@ if (pg.joystick.get_count() != 0):  # checks whether a joystick is connected
     joystick = pg.joystick.Joystick(0)
     print(joystick)
     joystick.init()
- 
+
 while not done:
     button = "No Button is Pressed"  # deafult msg
     if (pg.joystick.get_count() != 0):
