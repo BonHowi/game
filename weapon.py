@@ -2,8 +2,9 @@ import pygame
 from particles import Particle
 from pygame.math import Vector2
 
+
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, game, damage, name, width, color,*groups):
+    def __init__(self, game, damage, name, width, color, *groups):
         super().__init__(*groups)
         self.width = width
         self.damage = damage
@@ -25,8 +26,6 @@ class Weapon(pygame.sprite.Sprite):
         self.angle_change_factor_start = 1
         self.angle_change_factor = self.angle_change_factor_start
         self.is_finished = False
-
-
 
     def getMaskRect(self, surf, top=0, left=0):
         surf_mask = pygame.mask.from_surface(surf)
@@ -54,7 +53,7 @@ class Weapon(pygame.sprite.Sprite):
 
     def rotate(self):
         """Rotate the image of the sprite around a pivot point."""
-        if self.angle >= 90 or self.angle <0:
+        if self.angle >= 90 or self.angle < 0:
             self.counter = self.counter * (-1)
         # Rotate the image.
         self.image = pygame.transform.rotozoom(self.original_image, -self.angle, 1)
@@ -63,13 +62,13 @@ class Weapon(pygame.sprite.Sprite):
         # Create a new rect with the center of the sprite + the offset.
         self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + offset_rotated)
         self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
-        self.angle_change_factor = self.angle_change_factor*1.02
+        self.angle_change_factor = self.angle_change_factor * 1.02
         if not 0 > -self.angle > -90:
             self.angle_change_factor = self.angle_change_factor_start
             self.angle = 0
         self.angle -= self.angle_change_factor * self.counter
         '''Important to update mask'''
-        #self.mask = pygame.mask.from_surface(self.image)
+        # self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         if not self.is_finished:
@@ -85,7 +84,6 @@ class Weapon(pygame.sprite.Sprite):
         # self.mask = pygame.mask.from_surface(self.image)
 
         pygame.Surface.blit(self.game.screen, self.image, self.rect)
-        #pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
-        #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
-
-
+        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+        self.game.particles.append(Particle(self.game, self.hitbox.x, self.rect.y))

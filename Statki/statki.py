@@ -7,6 +7,7 @@ white = (255,255,255)
 green = (0,255,0)
 blue = (0,0,255)
 
+
 display_width, display_height = 800, 600
 screen = pygame.display.set_mode((display_width, display_height))
 screen.fill(white)
@@ -29,36 +30,43 @@ class Player():
     def draw(self):
         self.player_character = pygame.draw.circle(self.player_surface, self.player_color, (self.playerx, self.playery), self.player_radius, self.player_width)
 
-player = Player(250, 250, green)
-player2 = Player(100, 100, blue)
+    def input(self, event, dt):
+    #for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                self.velocity[1] = -self.speed * dt
+            elif event.key == pygame.K_s:
+                self.velocity[1] = self.speed * dt
+            elif event.key == pygame.K_a:
+                self.velocity[0] = -self.speed * dt
+            elif event.key == pygame.K_d:
+                self.velocity[0] = self.speed * dt
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w or event.key == pygame.K_s:
+                self.velocity[1] = 0
+            elif event.key == pygame.K_a or event.key == pygame.K_d:
+                self.velocity[0] = 0
+            print(event.key)
 
 running = True
-clock = pygame.time.Clock()
 
+clock = pygame.time.Clock()
+player = Player(250, 250, green)
+player2 = Player(100, 100, blue)
 
 while running:
     dt = clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            print(event.type)
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                player.velocity[1] = -player.speed * dt
-            elif event.key == pygame.K_s:
-                player.velocity[1] = player.speed * dt
-            elif event.key == pygame.K_a:
-                player.velocity[0] = -player.speed * dt
-            elif event.key == pygame.K_d:
-                player.velocity[0] = player.speed * dt
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_w or event.key == pygame.K_s:
-                player.velocity[1] = 0
-            elif event.key == pygame.K_a or event.key == pygame.K_d:
-                player.velocity[0] = 0
+        else:
+            player.input(event, dt)
+
 
     screen.fill(white)
+
     player.move()
     player.draw()
-    player2.move()
-    player2.draw()
+
     pygame.display.update()

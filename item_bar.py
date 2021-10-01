@@ -1,8 +1,9 @@
 import pygame
 from weapon import Weapon
 
+
 class Items_bar(pygame.sprite.Sprite):
-    def __init__(self, game ):
+    def __init__(self, game):
         super().__init__()
         self.game = game
         self.image = pygame.Surface((200, 50))
@@ -12,12 +13,11 @@ class Items_bar(pygame.sprite.Sprite):
         self.rect.y = 530
         self.weapon = ''
 
-
     def add_weapon(self, weapon):
         pass
 
     def draw_weapons(self):
-        #pygame.draw.rect(self.game.screen, self.game.WHITE, (20, 540, 50, 50))
+        # pygame.draw.rect(self.game.screen, self.game.WHITE, (20, 540, 50, 50))
 
         sword_image = pygame.image.load("weapon/sword.png")
         sword_image = pygame.transform.scale(sword_image, (70, 70))
@@ -31,14 +31,13 @@ class Items_bar(pygame.sprite.Sprite):
         katana_image = pygame.transform.scale(katana_image, (100, 100))
         self.game.screen.blit(katana_image, (-10, 500))
 
-        #pygame.draw.rect(self.game.screen, self.game.BLUE, (80, 540, 50, 50))
-        #pygame.draw.rect(self.game.screen, self.game.BLACK, (140, 540, 50, 50))
+        # pygame.draw.rect(self.game.screen, self.game.BLUE, (80, 540, 50, 50))
+        # pygame.draw.rect(self.game.screen, self.game.BLACK, (140, 540, 50, 50))
 
         if self.weapon == 'katana':
             katana_image = pygame.image.load("weapon/katana_picked.png")
             katana_image = pygame.transform.scale(katana_image, (100, 100))
             self.game.screen.blit(katana_image, (-10, 500))
-
 
     def draw(self):
         # s = pygame.Surface((200, 70))  # the size of your rect
@@ -46,6 +45,3 @@ class Items_bar(pygame.sprite.Sprite):
         # s.fill(self.game.BROWN)  # this fills the entire surface
         # self.game.screen.blit(s, ( self.rect.x,  self.rect.y))
         self.draw_weapons()
-
-
-

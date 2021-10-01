@@ -2,6 +2,8 @@ import random
 import pygame
 import math
 import os
+
+
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
     pygame.draw.rect(surf, back_c, (*pos, *size))
     pygame.draw.rect(surf, border_c, (*pos, *size), 1)
@@ -19,7 +21,7 @@ class Enemy(pygame.sprite.Sprite):
                                    "IDLE_RIGHT": [],
                                    "WALK_LEFT": [],
                                    "WALK_RIGHT": [],
-                                   "HURT_LEFT":[],
+                                   "HURT_LEFT": [],
                                    "HURT_RIGHT": []}
 
         self.player_index = 0
@@ -28,7 +30,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hp = self.max_hp
         self.color = color
         enemy_side = int(self.set_side())
-        self.image_size = (5*enemy_side, 5*enemy_side)
+        self.image_size = (15 * enemy_side, 15 * enemy_side)
         self.image = pygame.image.load("goblin/idle/right_idle0.png")
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
@@ -70,21 +72,22 @@ class Enemy(pygame.sprite.Sprite):
             return True
         else:
             return False
+
     def check_direction(self):
         '''old rect.x - rect.x > '''
 
     def animation(self):
-        if self.counter >=4:
+        if self.counter >= 4:
             self.hurt = False
             self.counter = 0
-        if self.hurt and self.counter < 4:#if hurt
+        if self.hurt and self.counter < 4:  # if hurt
             if self.player_index >= 4:
                 self.player_index = 0
-            self.image = self.animation_database["HURT_RIGHT"][2]#just the red animation
+            self.image = self.animation_database["HURT_RIGHT"][2]  # just the red animation
             self.player_index += 0.035
-            self.counter +=0.2
+            self.counter += 0.2
 
-        elif self.moving():#if moving
+        elif self.moving():  # if moving
             self.player_index += 0.035  # how fast animation changes
             if self.player_index >= 4:
                 self.player_index = 0
@@ -109,7 +112,6 @@ class Enemy(pygame.sprite.Sprite):
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
-
     def set_side(self):
         enemy_side = self.max_hp / 10
         return enemy_side
@@ -130,13 +132,13 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
 
         self.animation()
-        #self.rect.move_ip(*self.velocity)
-        #pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
+        # self.rect.move_ip(*self.velocity)
+        # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 26, 37, 52)
-        #self.hitbox = self.rect_mask
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
-        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
+        # self.hitbox = self.rect_mask
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
+        pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
 
     def move(self, dtick):
 
@@ -144,9 +146,9 @@ class Enemy(pygame.sprite.Sprite):
         if self.step >= threshold:
             self.old_velocity = self.velocity
 
-            #self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
-            #self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
-            self.move_towards_player(self.game.player, dtick) # zmiana
+            # self.velocity[0] = random.randint(-self.speed, self.speed) * dtick
+            # self.velocity[1] = random.randint(-self.speed, self.speed) * dtick
+            self.move_towards_player(self.game.player, dtick)  # zmiana
             self.step = 0
             # self.find_target(dtick, self.game.player)
         self.step += 1
@@ -157,7 +159,7 @@ class Enemy(pygame.sprite.Sprite):
                                       player.rect.y - self.rect.y)
         if dirvect.length_squared() > 0:
             dirvect.normalize()
-        # Move along this normalized vector towards the player at current speed.
+            # Move along this normalized vector towards the player at current speed.
             dirvect.scale_to_length(self.speed * 3 * dtick)
         self.rect.move_ip(dirvect)
         self.rect_mask.move_ip(dirvect)

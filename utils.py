@@ -22,7 +22,6 @@ class PlayerInfo:
         self.time_text_rect = None
         self.enemy_count_text_rect = None
 
-
     def render(self):
         self.game.screen.blit(self.coordinates, (0, 0))
         self.game.screen.blit(self.hp_text, self.hp_text_rect)
@@ -31,7 +30,6 @@ class PlayerInfo:
         self.game.screen.blit(self.stamina_text, self.stamina_text_rect)
         self.game.screen.blit(self.time_text, self.time_text_rect)
         self.game.screen.blit(self.enemy_count_text, self.enemy_count_text_rect)
-
 
     def update(self):
         self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 0, 0))
@@ -46,14 +44,15 @@ class PlayerInfo:
         self.time_text = self.game.myfont.render("Time: " + f"{round(self.game.last_shot / 1000, 1)}s",
                                                  False, self.game.GREEN)
         self.enemy_count_text = self.game.myfont.render("Enemy count: " + str(len(self.game.all_enemy)),
-                                                 False, self.game.GREEN)
+                                                        False, self.game.GREEN)
 
         self.hp_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1]))
         self.stamina_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + self.space_between))
         self.weapon_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 2 * self.space_between))
         self.damage_text_rect = self.weapon_text.get_rect(center=(self.pos[0], self.pos[1] + 3 * self.space_between))
         self.time_text_rect = self.time_text.get_rect(center=(self.pos[0], self.pos[1] + 4 * self.space_between))
-        self.enemy_count_text_rect = self.enemy_count_text.get_rect(center=(self.pos[0], self.pos[1] + 5 * self.space_between))
+        self.enemy_count_text_rect = self.enemy_count_text.get_rect(
+            center=(self.pos[0], self.pos[1] + 5 * self.space_between))
 
 
 class FPSCounter:
