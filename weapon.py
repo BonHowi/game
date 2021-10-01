@@ -66,7 +66,7 @@ class Weapon(pygame.sprite.Sprite):
         if not 0 > -self.angle > -90:
             self.angle_change_factor = self.angle_change_factor_start
             self.angle = 0
-        self.angle -= self.angle_change_factor * self.counter
+        #self.angle -= self.angle_change_factor * self.counter
         '''Important to update mask'''
         # self.mask = pygame.mask.from_surface(self.image)
 
@@ -83,7 +83,7 @@ class Weapon(pygame.sprite.Sprite):
         # self.hitbox = self.rect_mask
         # self.mask = pygame.mask.from_surface(self.image)
 
-        pygame.Surface.blit(self.game.screen, self.image, self.rect)
-        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
-        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+        pygame.Surface.blit(self.game.screen, self.image, self.rect, special_flags=pygame.BLEND_PREMULTIPLIED )
+        #pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
         self.game.particles.append(Particle(self.game, self.hitbox.x, self.rect.y))

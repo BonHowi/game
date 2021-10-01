@@ -5,9 +5,8 @@ from pygame import colordict
 
 # direction of the bullet, if the bullet shoots right, the particles should move on the right side of x axis
 
-class Particle():
+class Particle:
     def __init__(self, game, x, y):
-        super().__init__()
         self.game = game
         self.x = x
         self.y = y

@@ -12,6 +12,7 @@ from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
+from flame import Flame, FlameParticle
 from player_dust import DustParticle
 from rain import RainParticle
 
@@ -56,6 +57,7 @@ class Game:
         self.items_menu = None
         self.bg = None
         self.entity_size = (75, 75)  # size of the characters(player, enemy)
+        self.flame = None
 
     def init_all(self):
         self.wall_list = []
@@ -85,7 +87,7 @@ class Game:
         self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(200):
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -93,6 +95,7 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.items_menu = Items_bar(self)
+        self.flame = Flame(self.screen, 250, 250)
 
     def draw_text(self, text, size, x, y):
 
@@ -126,21 +129,22 @@ class Game:
         self.init_all()
         running = True
 
+
         while running:
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.player.old_velocity = self.player.velocity
-            if len(self.all_enemy) <= 0:
-                self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
+            # if len(self.all_enemy) <= 0:
+            #     self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.draw_text("Bartek ", 50, 250, 250)
+            #self.draw_text("Bartek ", 50, 250, 250)
+            self.flame.draw_flame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
                         self.player.velocity[1] = -self.player.speed * dt
@@ -192,8 +196,17 @@ class Game:
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = False
-            self.player.attacked = False
 
+            self.player.attacked = False
+            #TODO: wykminic jakis sposob na uzuskiwanie zespolenia predkosci z dodanych klawiszy
+            # if self.upaction:
+            #     predkosc[y] = 1
+            # else:
+            #     predkosc[y] = 0
+            # if self.downaction:
+            #     predkosc[y] = -1
+            # else:
+            #     predkosc[y] = 0
             for enemy in self.enemy_list:
                 enemy.move(dt)
                 self.player.attack(enemy)  # checking for attack
