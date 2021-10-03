@@ -67,7 +67,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hurt = False
         self.counter = 0
 
-    def getMaskRect(self, surf, top=0, left=0):
+    def getMaskRect(self, surf, top: int = 0, left: int = 0) -> None:
         """
 
         :param surf:
