@@ -23,10 +23,20 @@ class Entity(pg.sprite.Sprite):
         #self.hitbox = getMaskRect(self.image, self.rect)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.angle += 2
         self.rotate()
 
     def rotate(self):
+        """
+
+        :return:
+        :rtype:
+        """
         """Rotate the image of the sprite around a pivot point."""
         # Rotate the image.
         self.image = pg.transform.rotozoom(self.orig_image, -self.angle, 1)
@@ -37,6 +47,17 @@ class Entity(pg.sprite.Sprite):
         #self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pg.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)

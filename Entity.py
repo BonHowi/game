@@ -25,6 +25,17 @@ class Entity(pygame.sprite.Sprite):
     '''Function that returns entity hitbox around its non-transparent pixels(.png)'''
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -32,6 +43,13 @@ class Entity(pygame.sprite.Sprite):
         return surf_mask_rect
 
     def load_animation(self, path):
+        """
+
+        :param path:
+        :type path:
+        :return:
+        :rtype:
+        """
         animation_states = os.listdir(path)
         for state in animation_states:
             substates = os.listdir(path + state)

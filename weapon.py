@@ -28,6 +28,17 @@ class Weapon(pygame.sprite.Sprite):
 
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -35,6 +46,11 @@ class Weapon(pygame.sprite.Sprite):
         return surf_mask_rect
 
     def load_image(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.original_image = pygame.image.load('weapon/' + self.name + '.png')
         self.original_image = pygame.transform.scale(self.original_image, (75, 75))
         self.mask = pygame.mask.from_surface(self.original_image)
@@ -44,10 +60,24 @@ class Weapon(pygame.sprite.Sprite):
         self.image = self.original_image
 
     def collision(self, collision_obj):
+        """
+
+        :param collision_obj:
+        :type collision_obj:
+        :return:
+        :rtype:
+        """
         if self.rect_mask.colliderect(collision_obj.rect):
             collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
 
     def attack_enemy(self, enemy):
+        """
+
+        :param enemy:
+        :type enemy:
+        :return:
+        :rtype:
+        """
         if self.rect_mask.colliderect(enemy.hitbox):
             pass
 
@@ -71,6 +101,11 @@ class Weapon(pygame.sprite.Sprite):
         # self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if not self.is_finished:
             self.rotate()
         self.mask = pygame.mask.from_surface(self.image)

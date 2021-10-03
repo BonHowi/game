@@ -5,6 +5,25 @@ import os
 
 
 def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
+    """
+
+    :param surf:
+    :type surf:
+    :param pos:
+    :type pos:
+    :param size:
+    :type size:
+    :param border_c:
+    :type border_c:
+    :param back_c:
+    :type back_c:
+    :param health_c:
+    :type health_c:
+    :param progress:
+    :type progress:
+    :return:
+    :rtype:
+    """
     pygame.draw.rect(surf, back_c, (*pos, *size))
     pygame.draw.rect(surf, border_c, (*pos, *size), 1)
     inner_pos = (pos[0] + 1, pos[1] + 1)
@@ -49,6 +68,17 @@ class Enemy(pygame.sprite.Sprite):
         self.counter = 0
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -56,6 +86,13 @@ class Enemy(pygame.sprite.Sprite):
         return surf_mask_rect
 
     def load_animation(self, path):
+        """
+
+        :param path:
+        :type path:
+        :return:
+        :rtype:
+        """
         animation_states = os.listdir(path)
         for state in animation_states:
             substates = os.listdir(path + state)
@@ -68,6 +105,11 @@ class Enemy(pygame.sprite.Sprite):
                 self.animation_database[key].append(animation_image)
 
     def moving(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.old_velocity != self.velocity:
             return True
         else:
@@ -77,6 +119,11 @@ class Enemy(pygame.sprite.Sprite):
         '''old rect.x - rect.x > '''
 
     def animation(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.counter >= 4:
             self.hurt = False
             self.counter = 0
@@ -113,10 +160,20 @@ class Enemy(pygame.sprite.Sprite):
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
     def set_side(self):
+        """
+
+        :return:
+        :rtype:
+        """
         enemy_side = self.max_hp / 10
         return enemy_side
 
     def spawn(self):
+        """
+
+        :return:
+        :rtype:
+        """
         spawned = False
         while not spawned:
             spawn_point = self.game.map.spawn_points[random.randint(0, len(self.game.map.spawn_points) - 1)]
@@ -130,7 +187,11 @@ class Enemy(pygame.sprite.Sprite):
                 spawned = True
 
     def update(self):
+        """
 
+        :return:
+        :rtype:
+        """
         self.animation()
         # self.rect.move_ip(*self.velocity)
         # pygame.draw.rect(self.game.screen, (255, 0,0), self.rect, width=1)
@@ -141,7 +202,13 @@ class Enemy(pygame.sprite.Sprite):
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
 
     def move(self, dtick):
+        """
 
+        :param dtick:
+        :type dtick:
+        :return:
+        :rtype:
+        """
         threshold = random.randrange(1, 20)
         if self.step >= threshold:
             self.old_velocity = self.velocity
@@ -154,6 +221,15 @@ class Enemy(pygame.sprite.Sprite):
         self.step += 1
 
     def move_towards_player(self, player, dtick):
+        """
+
+        :param player:
+        :type player:
+        :param dtick:
+        :type dtick:
+        :return:
+        :rtype:
+        """
         # Find direction vector (dx, dy) between enemy and player.
         dirvect = pygame.math.Vector2(player.rect.x - self.rect.x,
                                       player.rect.y - self.rect.y)
@@ -165,6 +241,15 @@ class Enemy(pygame.sprite.Sprite):
         self.rect_mask.move_ip(dirvect)
 
     def find_target(self, dtick, target):
+        """
+
+        :param dtick:
+        :type dtick:
+        :param target:
+        :type target:
+        :return:
+        :rtype:
+        """
         dist_to_target_x = target.rect.x - self.rect.x
         dist_to_target_y = target.rect.x - self.rect.y
 
@@ -172,10 +257,24 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity[1] = dist_to_target_y / self.speed * dtick * 10
 
     def collision(self, collided):
+        """
+
+        :param collided:
+        :type collided:
+        :return:
+        :rtype:
+        """
         if self.rect.colliderect(collided):
             self.image.fill(self.game.RED)
 
     def draw_health(self, surf):
+        """
+
+        :param surf:
+        :type surf:
+        :return:
+        :rtype:
+        """
         if self.hp < self.max_hp:
             health_rect = pygame.Rect(0, 0, 20, 5)
             health_rect.midbottom = self.rect.centerx, self.rect.top
@@ -188,15 +287,32 @@ class EnemySlow(Enemy):
         super().__init__(game, speed, max_hp, color, name, *groups)
 
     def move(self, dtick):
+        """
+
+        :param dtick:
+        :type dtick:
+        :return:
+        :rtype:
+        """
         self.old_velocity = self.velocity
         self.velocity[0] = random.randint(-(self.max_hp - self.hp), (self.max_hp - self.hp)) / 200
         self.velocity[1] = random.randint(-(self.max_hp - self.hp), (self.max_hp - self.hp)) / 200
 
     def set_side(self):
+        """
+
+        :return:
+        :rtype:
+        """
         enemy_side = int(self.hp / 10)
         return enemy_side
 
     def update_size(self):
+        """
+
+        :return:
+        :rtype:
+        """
         pos_x = self.rect.x
         pos_y = self.rect.y
         self.image = pygame.transform.smoothscale(self.image, (self.set_side(), self.set_side()))
@@ -205,5 +321,10 @@ class EnemySlow(Enemy):
         self.rect.y = pos_y
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.update_size()
         self.rect.move_ip(*self.velocity)

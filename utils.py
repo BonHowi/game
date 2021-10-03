@@ -23,6 +23,11 @@ class PlayerInfo:
         self.enemy_count_text_rect = None
 
     def render(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.game.screen.blit(self.coordinates, (0, 0))
         self.game.screen.blit(self.hp_text, self.hp_text_rect)
         self.game.screen.blit(self.weapon_text, self.weapon_text_rect)
@@ -32,6 +37,11 @@ class PlayerInfo:
         self.game.screen.blit(self.enemy_count_text, self.enemy_count_text_rect)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 0, 0))
         self.hp_text = self.game.myfont.render("HP: " + str(self.game.player.hp),
                                                False, self.game.GREEN)
@@ -67,9 +77,19 @@ class FPSCounter:
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
     def render(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.surface.blit(self.fps_text, self.fps_text_rect)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         text = f"{self.game.clock.get_fps():2.0f} FPS"
         self.fps_text = self.font.render(text, False, self.color)
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))

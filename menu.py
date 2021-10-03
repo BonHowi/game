@@ -1,6 +1,6 @@
 import pygame
 
-class Menu():
+class Menu:
     def __init__(self, game):
         self.game = game
         self.mid_w, self.mid_h = self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2
@@ -9,9 +9,19 @@ class Menu():
         self.offset = - 100
 
     def draw_cursor(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.game.draw_text('*', 15, self.cursor_rect.x, self.cursor_rect.y)
 
     def blit_screen(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.game.window.blit(self.game.display, (0, 0))
         pygame.display.update()
         self.game.reset_keys()
@@ -26,6 +36,11 @@ class MainMenu(Menu):
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
     def display_menu(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()
@@ -40,6 +55,11 @@ class MainMenu(Menu):
 
 
     def move_cursor(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.game.DOWN_KEY:
             if self.state == 'Start':
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
@@ -62,6 +82,11 @@ class MainMenu(Menu):
                 self.state = 'Options'
 
     def check_input(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == 'Start':
@@ -81,6 +106,11 @@ class OptionsMenu(Menu):
         self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
 
     def display_menu(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()
@@ -93,6 +123,11 @@ class OptionsMenu(Menu):
             self.blit_screen()
 
     def check_input(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
@@ -112,6 +147,11 @@ class CreditsMenu(Menu):
         Menu.__init__(self, game)
 
     def display_menu(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.run_display = True
         while self.run_display:
             self.game.check_events()

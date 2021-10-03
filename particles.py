@@ -3,6 +3,8 @@ import random
 from math import atan2, cos, sin, sqrt
 
 
+# direction of the bullet, if the bullet shoots right, the particles should move on the right side of x axis
+
 class Particle:
     def __init__(self, game, x, y):
         self.game = game
@@ -16,6 +18,11 @@ class EnemyHitParticle(Particle):
     radius = random.randint(3, 8)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.x += random.randint(-1, 1)
         self.y += random.randint(-1, 1)
         self.radius -= 0.20
