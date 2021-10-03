@@ -129,6 +129,7 @@ class Game:
     def run_game(self):
         self.init_all()
         running = True
+        pygame.key.set_repeat(10, 10)
 
 
         while running:
@@ -155,21 +156,29 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
-                        self.player.velocity[1] = -self.player.speed * dt
+                        vel = [0, -self.player.speed * dt]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[1] = -self.player.speed * dt
 
-                    elif event.key == pygame.K_s:
+                    if event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
-                        self.player.velocity[1] = self.player.speed * dt
+                        vel = [0 ,self.player.speed * dt]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[1] = self.player.speed * dt
 
-                    elif event.key == pygame.K_a:
+                    if event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
-                        self.player.velocity[0] = -self.player.speed * dt
+                        vel = [-self.player.speed * dt, 0]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[0] = -self.player.speed * dt
 
-                    elif event.key == pygame.K_d:
+                    if event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
-                        self.player.velocity[0] = self.player.speed * dt
+                        vel = [self.player.speed * dt, 0]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[0] = self.player.speed * dt
 
-                    elif event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE:
                         self.player.attacking = True
                         # self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:

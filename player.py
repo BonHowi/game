@@ -181,6 +181,14 @@ class Player(pygame.sprite.Sprite):
                 self.score += 1
         self.attacked = True
 
+    def set_velocity(self, velocity):
+        # self.velocity[axis] = velocity
+        print("1: " + str(self.velocity))
+        self.velocity = [0, 0]
+        self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
+        print("2: " + str(self.velocity))
+        pass
+
     def update(self):
         """
 
