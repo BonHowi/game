@@ -58,6 +58,11 @@ class Game:
         self.entity_size = (75, 75)  # size of the characters(player, enemy)
 
     def init_all(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
@@ -85,7 +90,7 @@ class Game:
         self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(200):
+        for _ in range(2):
             self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -95,7 +100,19 @@ class Game:
         self.items_menu = Items_bar(self)
 
     def draw_text(self, text, size, x, y):
+        """
 
+        :param text:
+        :type text:
+        :param size:
+        :type size:
+        :param x:
+        :type x:
+        :param y:
+        :type y:
+        :return:
+        :rtype:
+        """
         font = pygame.font.SysFont('Comic Sans MS', size)
         text_surface = font.render(text, True, self.WHITE)
         text_rect = text_surface.get_rect()
@@ -103,6 +120,11 @@ class Game:
         self.screen.blit(text_surface, text_rect)
 
     def game_over(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.init_all()
         pygame.display.flip()
         self.run_game()
@@ -116,6 +138,17 @@ class Game:
         return sprite.hitbox.colliderect(other.hitbox)
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -123,6 +156,11 @@ class Game:
         return surf_mask_rect
 
     def run_game(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.init_all()
         running = True
 

@@ -17,6 +17,11 @@ class Items_bar(pygame.sprite.Sprite):
         pass
 
     def draw_weapons(self):
+        """
+
+        :return:
+        :rtype:
+        """
         # pygame.draw.rect(self.game.screen, self.game.WHITE, (20, 540, 50, 50))
 
         sword_image = pygame.image.load("weapon/sword.png")
@@ -40,6 +45,11 @@ class Items_bar(pygame.sprite.Sprite):
             self.game.screen.blit(katana_image, (-10, 500))
 
     def draw(self):
+        """
+
+        :return:
+        :rtype:
+        """
         # s = pygame.Surface((200, 70))  # the size of your rect
         # s.set_alpha(128)  # alpha level
         # s.fill(self.game.BROWN)  # this fills the entire surface

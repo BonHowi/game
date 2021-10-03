@@ -45,6 +45,17 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = self.rect_mask
 
     def getMaskRect(self, surf, top=0, left=0):
+        """
+
+        :param surf:
+        :type surf:
+        :param top:
+        :type top:
+        :param left:
+        :type left:
+        :return:
+        :rtype:
+        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -52,6 +63,13 @@ class Player(pygame.sprite.Sprite):
         return surf_mask_rect
 
     def load_animation(self, path):
+        """
+
+        :param path:
+        :type path:
+        :return:
+        :rtype:
+        """
         animation_states = os.listdir(path)
         for state in animation_states:
             substates = os.listdir(path + state)
@@ -64,12 +82,22 @@ class Player(pygame.sprite.Sprite):
                 self.animation_database[key].append(animation_image)
 
     def moving(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.velocity[0] != 0 or self.velocity[1] != 0:
             return True
         else:
             return False
 
     def animation(self):
+        """
+
+        :return:
+        :rtype:
+        """
         if self.moving():
             self.player_index += 1.0 / 15  # how fast animation changes
             if self.player_index >= 4:
@@ -99,6 +127,13 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
     def attack(self, collision_obj):
+        """
+
+        :param collision_obj:
+        :type collision_obj:
+        :return:
+        :rtype:
+        """
         if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
             if self.direction == 'RIGHT':
                 self.attack_range = pygame.Rect(self.hitbox.x + self.hitbox.width, self.hitbox.y,
@@ -119,10 +154,26 @@ class Player(pygame.sprite.Sprite):
                 self.attack_collision(collision_obj)
 
     def attack_collision(self, collision_obj):  # do zmiany
+        """
+
+        :param collision_obj:
+        :type collision_obj:
+        :return:
+        :rtype:
+        """
         if self.attack_range.colliderect(collision_obj.hitbox):
             self.calculate_collison(collision_obj, self.weapon.damage)
 
     def calculate_collison(self, collision_obj, damage):
+        """
+
+        :param collision_obj:
+        :type collision_obj:
+        :param damage:
+        :type damage:
+        :return:
+        :rtype:
+        """
         if collision_obj.hp > 0:
             collision_obj.hp -= damage
             collision_obj.hurt = True  # indicating that enemy is hurt
@@ -131,6 +182,11 @@ class Player(pygame.sprite.Sprite):
         self.attacked = True
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.animation()
 
         self.rect.clamp_ip(self.game.screen_rect)
@@ -150,7 +206,11 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):
+        """
 
+        :return:
+        :rtype:
+        """
         if self.hasWeapon:
             pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
 
@@ -161,14 +221,41 @@ class Player(pygame.sprite.Sprite):
         # pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
     def gun_point(self):  # zmienic, bo brzydko
+        """
+
+        :return:
+        :rtype:
+        """
         start = pygame.math.Vector2(self.rect.midright)
         mouse = pygame.mouse.get_pos()
         end = start + (mouse - start).normalize() * self.gun_length
         return end
 
     def assign_weapon(self, weapon: Weapon):
+        """
+
+        :param weapon:
+        :type weapon:
+        :return:
+        :rtype:
+        """
         self.weapon = weapon
         self.hasWeapon = True
 
     def gun_line(self, ax, ay, bx, by, radius):
+        """
+
+        :param ax:
+        :type ax:
+        :param ay:
+        :type ay:
+        :param bx:
+        :type bx:
+        :param by:
+        :type by:
+        :param radius:
+        :type radius:
+        :return:
+        :rtype:
+        """
         pass

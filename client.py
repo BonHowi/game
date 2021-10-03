@@ -16,14 +16,14 @@ pg.init()  # initiates pygame window
 screen = pg.display.set_mode((200, 200), pg.RESIZABLE)  # all operations must be performed on pg screen
 done = False
 pg.joystick.init()
-if (pg.joystick.get_count() != 0):  # checks whether a joystick is connected
+if pg.joystick.get_count() != 0:  # checks whether a joystick is connected
     joystick = pg.joystick.Joystick(0)
     print(joystick)
     joystick.init()
 
 while not done:
     button = "No Button is Pressed"  # deafult msg
-    if (pg.joystick.get_count() != 0):
+    if pg.joystick.get_count() != 0:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True

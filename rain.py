@@ -2,7 +2,7 @@ import pygame
 import random
 from player_dust import DustParticle
 
-class RainParticle():
+class RainParticle:
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
@@ -10,7 +10,13 @@ class RainParticle():
         self.x = x
         self.y = y
         self.color = (104 - self.length*5, 166 - self.length*8, 238 - self.length*10)
+
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.y += 1/ self.length * 15
         pygame.draw.line(self.game.screen, self.color, (self.x, self.y), (self.x, self.y + self.length))
         if self.y > self.game.SIZE[1] - 5:

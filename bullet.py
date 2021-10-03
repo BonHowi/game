@@ -25,6 +25,11 @@ class Bullet(pygame.sprite.Sprite):
         self.dir = (self.dir[0] / length, self.dir[1] / length)
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.pos = (self.pos[0] + self.dir[0] * self.speed,
                     self.pos[1] + self.dir[1] * self.speed)
 
@@ -33,6 +38,11 @@ class Bullet(pygame.sprite.Sprite):
         # self.draw()
 
     def draw(self):
+        """
+
+        :return:
+        :rtype:
+        """
         radius = 5
         # self.sparkle() kometa
         pygame.draw.circle(self.game.screen, self.game.GREEN, (self.rect.x + radius / 2, self.rect.y + radius / 2),
@@ -41,16 +51,35 @@ class Bullet(pygame.sprite.Sprite):
                            radius - 1)
 
     def collision(self, collision_obj):
+        """
+
+        :param collision_obj:
+        :type collision_obj:
+        :return:
+        :rtype:
+        """
         if self.rect.colliderect(collision_obj.rect):
             self.sparkle()
             self.kill()
 
     def collision_enemy(self, collision_enemy):
+        """
+
+        :param collision_enemy:
+        :type collision_enemy:
+        :return:
+        :rtype:
+        """
         if self.rect.colliderect(collision_enemy.rect_mask):  # rect->rect_mask
             self.game.player.calculate_collison(collision_enemy, self.damage)
             self.sparkle()
             self.kill()
 
     def sparkle(self):
+        """
+
+        :return:
+        :rtype:
+        """
         for _ in range(random.randint(2, 4)):
             self.game.particles.append(Particle(self.game, self.rect.x, self.rect.y))

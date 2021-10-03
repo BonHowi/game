@@ -13,6 +13,11 @@ class DustParticle():#w playerze if moving == True, spawn particle
         self.color = [191, 182, 182]
 
     def update(self):
+        """
+
+        :return:
+        :rtype:
+        """
         self.x += random.randint(-1, 1)
         self.y += random.randint(-1, 1)
         self.radius -= self.radius/20#min(0.2, self.radius/2)
