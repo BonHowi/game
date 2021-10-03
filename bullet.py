@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-from particles import EnemyHitParticle, WallHitParticle, Fireball
+from particles import EnemyHitParticle, WallHitParticle
 
 
 class Bullet(pygame.sprite.Sprite):

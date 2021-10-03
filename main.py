@@ -12,7 +12,7 @@ from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
-from particles import Fireball
+from particles import Fire
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -54,6 +54,7 @@ class Game:
         self.last_shot = None
         self.items_menu = None
         self.bg = None
+        self.floor = None
         self.entity_size = (75, 75)  # size of the characters(player, enemy)
         self.flame = None
         self.bsurf = None
@@ -80,7 +81,7 @@ class Game:
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
-        self.bsurf = pygame.Surface((1280 // 4, 720 // 4), pygame.SRCALPHA).convert_alpha()
+        self.bsurf = pygame.Surface((1200 // 4, 600 // 4), pygame.SRCALPHA).convert_alpha()
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
@@ -95,7 +96,8 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.items_menu = Items_bar(self)
-
+        self.bg = pygame.image.load('floor/floor_brick.png').convert_alpha()
+        self.floor = pygame.image.load('floor/floor.png').convert_alpha()
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -130,6 +132,7 @@ class Game:
 
 
         while running:
+
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
@@ -139,7 +142,13 @@ class Game:
             # if len(self.all_enemy) <= 0:
             #     self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.particles.append(Fireball(self, 50, 50))
+            self.particles.append(Fire(self, 50, 25))
+            self.particles.append(Fire(self, 100, 25))
+            self.particles.append(Fire(self, 150, 25))
+            self.particles.append(Fire(self, 200, 25))
+            self.particles.append(Fire(self, 250, 25))
+            for particle in self.particles:
+                particle.draw()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -295,10 +304,16 @@ class Game:
 
             # self.bullet_list.draw(self.screen)
             # self.weapon_group.draw(self.screen)
+            for i in range(5):
+                self.screen.blit(self.bg, (self.bg.get_size()[0]* i, 0))
+            for i in range(5):
+                self.screen.blit(self.floor, (self.bg.get_size()[0] * i, 242))
+            for i in range(5):
+                self.screen.blit(self.floor, (self.bg.get_size()[0] * i, 242 + 219))
+            self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
-            for particle in self.particles:
-                particle.draw()
+
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
 

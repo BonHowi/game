@@ -48,7 +48,7 @@ class WallHitParticle(Particle):
         pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), self.radius)
 
 
-class Fireball(Particle):
+class Fire(Particle):
     '''Besides some calculations and magic variables, there is a bsurf Surface in game class, which serves as screen to display fire plarticles,
     it is 4x times smaller than default window, but during blitting, it is resized to window size, as to achieve pixelated fire)'''
     def __init__(self, game, x, y):
@@ -75,7 +75,7 @@ class Fireball(Particle):
         self.counter = 0
 
     def update(self):
-        if self.counter == 2:
+        if self.counter == 4:
             self.counter = 0;
             if self.j > 360: # Angle
                 self.j = 0
@@ -86,11 +86,11 @@ class Fireball(Particle):
 
             self.i = int((self.life / self.maxlife) * 6)
 
-            self.y -= 1.25  # rise
-            self.x += ((self.sin * sin(self.j / self.sinr)) / 2) + 1  # spread
+            self.y -= 0.7  # rise
+            self.x += ((self.sin * sin(self.j / self.sinr)) / 20)   # spread
 
             if not random.randint(0, 5):
-                self.radius += 1  # circle radius, set to 10 for big bang
+                self.radius += 0.2  # circle radius, set to 10 for big bang
 
             self.draw_x, self.draw_y = self.x, self.y
 

@@ -25,6 +25,7 @@ class Weapon(pygame.sprite.Sprite):
         self.angle_change_factor_start = 1
         self.angle_change_factor = self.angle_change_factor_start
         self.is_finished = False
+        self.test = 0
 
 
     def getMaskRect(self, surf, top=0, left=0):
@@ -91,12 +92,15 @@ class Weapon(pygame.sprite.Sprite):
         offset_rotated = self.offset.rotate(self.angle)
         # Create a new rect with the center of the sprite + the offset.
         self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + offset_rotated)
+
         self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
-        self.angle_change_factor = self.angle_change_factor * 1.02
-        if not 0 > -self.angle > -90:
-            self.angle_change_factor = self.angle_change_factor_start
-            self.angle = 0
-        self.angle -= self.angle_change_factor * self.counter
+
+        # self.angle_change_factor = self.angle_change_factor * 1.02
+        #
+        # if not 0 > -self.angle > -90:
+        #     self.angle_change_factor = self.angle_change_factor_start
+        #     self.angle = 0
+        # self.angle -= self.angle_change_factor * self.counter
         '''Important to update mask'''
         # self.mask = pygame.mask.from_surface(self.image)
 
@@ -118,6 +122,8 @@ class Weapon(pygame.sprite.Sprite):
         # self.hitbox = self.rect_mask
         # self.mask = pygame.mask.from_surface(self.image)
 
-        pygame.Surface.blit(self.game.screen, self.image, self.rect, special_flags=pygame.BLEND_PREMULTIPLIED )
-        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
-        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+
+        #pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+    # def draw(self):
+    #     pygame.Surface.blit(self.game.screen, self.image, self.rect, special_flags=pygame.BLEND_PREMULTIPLIED)
