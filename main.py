@@ -12,8 +12,7 @@ from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
-from player_dust import DustParticle
-from rain import RainParticle
+from particles import Fireball
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -56,13 +55,10 @@ class Game:
         self.items_menu = None
         self.bg = None
         self.entity_size = (75, 75)  # size of the characters(player, enemy)
+        self.flame = None
+        self.bsurf = None
 
     def init_all(self):
-        """
-
-        :return:
-        :rtype:
-        """
         self.wall_list = []
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
@@ -84,14 +80,15 @@ class Game:
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
+        self.bsurf = pygame.Surface((1280 // 4, 720 // 4), pygame.SRCALPHA).convert_alpha()
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
         self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(2):
-            self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
+        for _ in range(1):
+            self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
         for _ in range(0):
@@ -100,19 +97,7 @@ class Game:
         self.items_menu = Items_bar(self)
 
     def draw_text(self, text, size, x, y):
-        """
 
-        :param text:
-        :type text:
-        :param size:
-        :type size:
-        :param x:
-        :type x:
-        :param y:
-        :type y:
-        :return:
-        :rtype:
-        """
         font = pygame.font.SysFont('Comic Sans MS', size)
         text_surface = font.render(text, True, self.WHITE)
         text_rect = text_surface.get_rect()
@@ -120,11 +105,6 @@ class Game:
         self.screen.blit(text_surface, text_rect)
 
     def game_over(self):
-        """
-
-        :return:
-        :rtype:
-        """
         self.init_all()
         pygame.display.flip()
         self.run_game()
@@ -138,17 +118,6 @@ class Game:
         return sprite.hitbox.colliderect(other.hitbox)
 
     def getMaskRect(self, surf, top=0, left=0):
-        """
-
-        :param surf:
-        :type surf:
-        :param top:
-        :type top:
-        :param left:
-        :type left:
-        :return:
-        :rtype:
-        """
         surf_mask = pygame.mask.from_surface(surf)
         rect_list = surf_mask.get_bounding_rects()
         surf_mask_rect = rect_list[0].unionall(rect_list)
@@ -156,30 +125,26 @@ class Game:
         return surf_mask_rect
 
     def run_game(self):
-        """
-
-        :return:
-        :rtype:
-        """
         self.init_all()
         running = True
         pygame.key.set_repeat(10, 10)
+
 
         while running:
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
+            self.bsurf.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-            if len(self.all_enemy) <= 0:
-                self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
+            # if len(self.all_enemy) <= 0:
+            #     self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.draw_text(" :) ", 50, 250, 250)
+            self.particles.append(Fireball(self, 50, 50))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
                         vel = [0, -self.player.speed * dt]
@@ -239,8 +204,17 @@ class Game:
 
                     elif event.key == pygame.K_SPACE:
                         self.player.attacking = False
-            self.player.attacked = False
 
+            self.player.attacked = False
+            # TODO: wykminic jakis sposob na uzuskiwanie zespolenia predkosci z dodanych klawiszy
+            # if self.upaction:
+            #     predkosc[y] = 1
+            # else:
+            #     predkosc[y] = 0
+            # if self.downaction:
+            #     predkosc[y] = -1
+            # else:
+            #     predkosc[y] = 0
             for enemy in self.enemy_list:
                 enemy.move(dt)
                 self.player.attack(enemy)  # checking for attack
@@ -332,8 +306,11 @@ class Game:
             # self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
+            for particle in self.particles:
+                particle.draw()
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
+
             self.player.render()
             for bullet in self.bullet_list:
                 bullet.draw()
@@ -341,6 +318,7 @@ class Game:
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
+
             ##########################################
             self.fps_counter.update()
             self.fps_counter.render()
@@ -350,7 +328,10 @@ class Game:
             ##item bar display
             self.items_menu.draw()
             self.counter += 1
+            self.screen.blit(pygame.transform.scale(self.bsurf, (1280, 720)),(0, 0))
+            #pygame.display.update((0, 0, 250, 250))
             pygame.display.update()
+
         print("Exited the game loop. Game will quit...")
         quit()
 

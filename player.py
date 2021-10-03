@@ -210,8 +210,8 @@ class Player(pygame.sprite.Sprite):
         # self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
-        pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):
         """
