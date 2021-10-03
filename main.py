@@ -163,6 +163,7 @@ class Game:
         """
         self.init_all()
         running = True
+        pygame.key.set_repeat(10, 10)
 
         while running:
             dt = self.clock.tick(60)
@@ -173,7 +174,7 @@ class Game:
             if len(self.all_enemy) <= 0:
                 self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.draw_text("Bartek ", 50, 250, 250)
+            self.draw_text(" :) ", 50, 250, 250)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -181,21 +182,29 @@ class Game:
 
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
-                        self.player.velocity[1] = -self.player.speed * dt
+                        vel = [0, -self.player.speed * dt]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[1] = -self.player.speed * dt
 
-                    elif event.key == pygame.K_s:
+                    if event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
-                        self.player.velocity[1] = self.player.speed * dt
+                        vel = [0 ,self.player.speed * dt]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[1] = self.player.speed * dt
 
-                    elif event.key == pygame.K_a:
+                    if event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
-                        self.player.velocity[0] = -self.player.speed * dt
+                        vel = [-self.player.speed * dt, 0]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[0] = -self.player.speed * dt
 
-                    elif event.key == pygame.K_d:
+                    if event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
-                        self.player.velocity[0] = self.player.speed * dt
+                        vel = [self.player.speed * dt, 0]
+                        self.player.set_velocity(vel)
+                        # self.player.velocity[0] = self.player.speed * dt
 
-                    elif event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE:
                         self.player.attacking = True
                         # self.player.current_stamina = 0#zmienione
                     if event.key == pygame.K_r:
