@@ -2,7 +2,6 @@ import pygame
 from particles import Particle
 from pygame.math import Vector2
 
-
 class Weapon(pygame.sprite.Sprite):
     def __init__(self, game, damage, name, width, color, *groups):
         super().__init__(*groups)
@@ -26,6 +25,7 @@ class Weapon(pygame.sprite.Sprite):
         self.angle_change_factor_start = 1
         self.angle_change_factor = self.angle_change_factor_start
         self.is_finished = False
+
 
     def getMaskRect(self, surf, top=0, left=0):
         surf_mask = pygame.mask.from_surface(surf)
@@ -66,7 +66,7 @@ class Weapon(pygame.sprite.Sprite):
         if not 0 > -self.angle > -90:
             self.angle_change_factor = self.angle_change_factor_start
             self.angle = 0
-        #self.angle -= self.angle_change_factor * self.counter
+        self.angle -= self.angle_change_factor * self.counter
         '''Important to update mask'''
         # self.mask = pygame.mask.from_surface(self.image)
 
@@ -84,6 +84,5 @@ class Weapon(pygame.sprite.Sprite):
         # self.mask = pygame.mask.from_surface(self.image)
 
         pygame.Surface.blit(self.game.screen, self.image, self.rect, special_flags=pygame.BLEND_PREMULTIPLIED )
-        #pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
-        #pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
-        self.game.particles.append(Particle(self.game, self.hitbox.x, self.rect.y))
+        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)

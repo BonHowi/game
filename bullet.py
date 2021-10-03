@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-from particles import Particle
+from particles import EnemyHitParticle, WallHitParticle, Fireball
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -30,7 +30,7 @@ class Bullet(pygame.sprite.Sprite):
 
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
-        # self.draw()
+
 
     def draw(self):
         radius = 5
@@ -42,7 +42,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def collision(self, collision_obj):
         if self.rect.colliderect(collision_obj.rect):
-            self.sparkle()
+            self.game.particles.append(WallHitParticle(self.game, self.rect.x, self.rect.y))
             self.kill()
 
     def collision_enemy(self, collision_enemy):
@@ -53,4 +53,4 @@ class Bullet(pygame.sprite.Sprite):
 
     def sparkle(self):
         for _ in range(random.randint(2, 4)):
-            self.game.particles.append(Particle(self.game, self.rect.x, self.rect.y))
+            self.game.particles.append(EnemyHitParticle(self.game, self.rect.x, self.rect.y))
