@@ -18,11 +18,6 @@ class EnemyHitParticle(Particle):
     radius = random.randint(3, 8)
 
     def update(self):
-        """
-
-        :return:
-        :rtype:
-        """
         self.x += random.randint(-1, 1)
         self.y += random.randint(-1, 1)
         self.radius -= 0.20
@@ -31,6 +26,7 @@ class EnemyHitParticle(Particle):
 
     def draw(self):
         pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), self.radius)
+
 
 class WallHitParticle(Particle):
     # color = (128, 148, 171)
@@ -51,6 +47,7 @@ class WallHitParticle(Particle):
     def draw(self):
         pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), self.radius)
 
+
 class Fireball(Particle):
 
     def __init__(self, game, x, y):
@@ -70,11 +67,12 @@ class Fireball(Particle):
         self.ox = random.randint(-1, 1)
         self.oy = random.randint(-1, 1)
         self.j = random.randint(0, 360)
-        self.i = int(((self.life -1)/ self.maxlife) * 6)
+        self.i = int(((self.life - 1) / self.maxlife) * 6)
         self.alpha = None
         self.draw_x = x
         self.draw_y = y
-        self.counter =0
+        self.counter = 0
+
     def update(self):
         if self.counter == 2:
             self.counter = 0;
@@ -87,8 +85,8 @@ class Fireball(Particle):
 
             self.i = int((self.life / self.maxlife) * 6)
 
-            self.y -= 1.25#rise
-            self.x += ((self.sin * sin(self.j / (self.sinr))) / 2) + 1 #spread
+            self.y -= 1.25  # rise
+            self.x += ((self.sin * sin(self.j / self.sinr)) / 2) + 1  # spread
 
             if not random.randint(0, 5):
                 self.radius += 0.88  # circle radius
@@ -112,6 +110,6 @@ class Fireball(Particle):
             pygame.draw.circle(self.game.bsurf, (0, 0, 0, 0), (self.draw_x + random.randint(-1, 1), self.draw_y - 4),
                                self.radius * (((self.maxlife - self.life) / self.maxlife) / 0.88), 0)
         else:
-            pygame.draw.circle(self.game.bsurf, self.color[self.i - 1] + (alpha,), (self.draw_x + random.randint(-1, 1), self.draw_y - 3),
+            pygame.draw.circle(self.game.bsurf, self.color[self.i - 1] + (alpha,),
+                               (self.draw_x + random.randint(-1, 1), self.draw_y - 3),
                                self.radius / 1.5, 0)
-
