@@ -297,8 +297,11 @@ class Game:
             # self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
+            for particle in self.particles:
+                particle.draw()
             self.all_player.draw(self.screen)
             self.all_wall.draw(self.screen)
+
             self.player.render()
             for bullet in self.bullet_list:
                 bullet.draw()
@@ -306,8 +309,7 @@ class Game:
             # ---------PARTICLE ANIMATION############
             for particle in self.particles:
                 particle.update()
-            for particle in self.particles:
-                particle.draw()
+
             ##########################################
             self.fps_counter.update()
             self.fps_counter.render()
