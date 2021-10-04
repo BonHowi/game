@@ -13,6 +13,8 @@ from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
 from particles import Fireball
+from operator import add
+from math import sqrt, pow
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -129,7 +131,6 @@ class Game:
         running = True
         pygame.key.set_repeat(10, 10)
 
-
         while running:
             dt = self.clock.tick(60)
             dt = dt / 400
@@ -140,34 +141,47 @@ class Game:
             # if len(self.all_enemy) <= 0:
             #     self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.particles.append(Fireball(self, 50, 50))
+            # self.particles.append(Fireball(self, 50, 50))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_w:
+                    pressed = pygame.key.get_pressed()
+                    # print(pressed[pygame.K_w])
+                    if pressed[pygame.K_w]:
                         self.player.direction = 'UP'
-                        vel = [0, -self.player.speed * dt]
-                        self.player.set_velocity(vel)
-                        # self.player.velocity[1] = -self.player.speed * dt
 
-                    if event.key == pygame.K_s:
+                    if pressed[pygame.K_s]:
                         self.player.direction = 'DOWN'
-                        vel = [0 ,self.player.speed * dt]
-                        self.player.set_velocity(vel)
-                        # self.player.velocity[1] = self.player.speed * dt
 
-                    if event.key == pygame.K_a:
+                    if pressed[pygame.K_a]:
                         self.player.direction = 'LEFT'
-                        vel = [-self.player.speed * dt, 0]
-                        self.player.set_velocity(vel)
-                        # self.player.velocity[0] = -self.player.speed * dt
 
-                    if event.key == pygame.K_d:
+                    if pressed[pygame.K_d]:
                         self.player.direction = 'RIGHT'
-                        vel = [self.player.speed * dt, 0]
-                        self.player.set_velocity(vel)
-                        # self.player.velocity[0] = self.player.speed * dt
+                    constant_dt = 0.04
+                    vel_up = [0, -self.player.speed * constant_dt]
+                    vel_up = [i * pressed[pygame.K_w] for i in vel_up]
+                    vel_down = [0, self.player.speed * constant_dt]
+                    vel_down = [i * pressed[pygame.K_s] for i in vel_down]
+                    vel_left = [-self.player.speed * constant_dt, 0]
+                    vel_left = [i * pressed[pygame.K_a] for i in vel_left]
+                    vel_right = [self.player.speed * constant_dt, 0]
+                    vel_right = [i * pressed[pygame.K_d] for i in vel_right]
+                    vel = zip(vel_up, vel_down, vel_left, vel_right)
+                    vel_list = [sum(item) for item in vel]
+
+                    x = sqrt(pow(vel_list[0], 2) + pow(vel_list[1], 2))
+                    # x = (vel_list[0]**2 + vel_list[1]**2)**0.5
+
+                    # print(x)
+
+                    if 0 not in vel_list:
+                        z = x / (abs(vel_list[0]) + abs(vel_list[1]))
+                        vel_list_fixed = [item *z for item in vel_list]
+                        self.player.set_velocity(vel_list_fixed)
+                    else:
+                        self.player.set_velocity(vel_list)
 
                     if event.key == pygame.K_SPACE:
                         self.player.attacking = True
@@ -328,8 +342,8 @@ class Game:
             ##item bar display
             self.items_menu.draw()
             self.counter += 1
-            self.screen.blit(pygame.transform.scale(self.bsurf, (1280, 720)),(0, 0))
-            #pygame.display.update((0, 0, 250, 250))
+            self.screen.blit(pygame.transform.scale(self.bsurf, (1280, 720)), (0, 0))
+            # pygame.display.update((0, 0, 250, 250))
             pygame.display.update()
 
         print("Exited the game loop. Game will quit...")

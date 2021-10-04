@@ -2,6 +2,7 @@ import pygame
 import os
 from weapon import Weapon
 from Entity import Entity
+import numpy as np
 
 
 class Player(pygame.sprite.Sprite):
@@ -182,12 +183,11 @@ class Player(pygame.sprite.Sprite):
         self.attacked = True
 
     def set_velocity(self, velocity):
-        # self.velocity[axis] = velocity
-        print("1: " + str(self.velocity))
-        self.velocity = [0, 0]
-        self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
-        print("2: " + str(self.velocity))
-        pass
+        self.velocity = velocity
+        # print(np.linalg.norm(self.velocity))
+        # if self.velocity != velocity
+        # self.velocity = [0, 0]
+        # self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
 
     def update(self):
         """
