@@ -27,10 +27,9 @@ class Player(pygame.sprite.Sprite):
         self.score = 0
         self.direction = 'RIGHT'
         self.player_moving = False
-        self.player_index = 0
+        self.player_index = 0 #animation frames
         # Player Attacking
         self.attacking = False
-        self.attack_range = pygame.Rect(0, 0, 0, 0)  # zmienione tymczasowo
         self.hasWeapon = True
         self.weapon = Weapon(self.game, 10, 'katana', 2, self.game.RED,
                              self.game.weapon_group)  # usuniete groups z self.game
@@ -38,9 +37,10 @@ class Player(pygame.sprite.Sprite):
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
         self.attacked = False
-        ########GUN PROPERTIES, Moze tymczasowo########
+        ########GUN PROPERTIES,########
         self.gun_length = 15
         self.gun_width = 5
+        #Animation loading
         self.load_animation('player/')
         # hitbox
         self.hitbox = self.rect_mask
@@ -127,32 +127,37 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
-    def attack(self, collision_obj):
-        """
 
-        :param collision_obj:
-        :type collision_obj:
-        :return:
-        :rtype:
-        """
-        if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
-            if self.direction == 'RIGHT':
-                self.attack_range = pygame.Rect(self.hitbox.x + self.hitbox.width, self.hitbox.y,
-                                                self.weapon.blade_length, self.hitbox.height)
-                self.attack_collision(collision_obj)
-            elif self.direction == 'LEFT':
-                self.attack_range = pygame.Rect(self.hitbox.x - self.weapon.blade_length, self.hitbox.y,
-                                                self.weapon.blade_length, self.hitbox.height)
-                self.attack_collision(collision_obj)
-            elif self.direction == 'UP':
-                self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y - self.weapon.blade_length,
-                                                self.hitbox.height,
-                                                self.weapon.blade_length)
-                self.attack_collision(collision_obj)
-            elif self.direction == 'DOWN':
-                self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y + self.hitbox.height, self.hitbox.height,
-                                                self.weapon.blade_length)
-                self.attack_collision(collision_obj)
+
+    def weapon_attack(self, enemy):#attacking enemy with sword/katan/kij
+        pass
+    # def attack(self, collision_obj):
+    #
+    #     """
+    #
+    #     :param collision_obj:
+    #     :type collision_obj:
+    #     :return:
+    #     :rtype:
+    #     """
+    #     if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
+    #         if self.direction == 'RIGHT':
+    #             self.attack_range = pygame.Rect(self.hitbox.x + self.hitbox.width, self.hitbox.y,
+    #                                             self.weapon.blade_length, self.hitbox.height)
+    #             self.attack_collision(collision_obj)
+    #         elif self.direction == 'LEFT':
+    #             self.attack_range = pygame.Rect(self.hitbox.x - self.weapon.blade_length, self.hitbox.y,
+    #                                             self.weapon.blade_length, self.hitbox.height)
+    #             self.attack_collision(collision_obj)
+    #         elif self.direction == 'UP':
+    #             self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y - self.weapon.blade_length,
+    #                                             self.hitbox.height,
+    #                                             self.weapon.blade_length)
+    #             self.attack_collision(collision_obj)
+    #         elif self.direction == 'DOWN':
+    #             self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y + self.hitbox.height, self.hitbox.height,
+    #                                             self.weapon.blade_length)
+    #             self.attack_collision(collision_obj)
 
     def attack_collision(self, collision_obj):  # do zmiany
         """
@@ -210,8 +215,8 @@ class Player(pygame.sprite.Sprite):
         # self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
-        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
+        pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):
         """
@@ -219,8 +224,6 @@ class Player(pygame.sprite.Sprite):
         :return:
         :rtype:
         """
-        if self.hasWeapon:
-            pygame.draw.rect(self.game.screen, self.weapon.color, self.attack_range)
 
         # start = pygame.math.Vector2(self.rect.midright)
         # mouse = pygame.mouse.get_pos()

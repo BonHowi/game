@@ -1,20 +1,13 @@
-import random
-import time
-import math
 import pygame
-from pygame.sprite import collide_rect
-
 from enemy import Enemy, EnemySlow
-from environment import Wall
 from maploader import MapLoader
 from player import Player
 from utils import PlayerInfo, FPSCounter
 from weapon import Weapon
 from bullet import Bullet
 from item_bar import Items_bar
-from operator import add
-from math import sqrt, pow
-from particles import Fire
+from random import randint
+from particles import Fire, DeathParticle
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -31,7 +24,7 @@ class Game:
         self.BLUE = (0, 0, 255)
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
-        self.myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        self.myfont = pygame.font.Font('font/Minecraft.ttf', 15)
         self.all_enemy = None
         self.all_environment = None
         self.all_wall = None
@@ -70,16 +63,9 @@ class Game:
         self.bullet_list = pygame.sprite.Group()
         self.weapon_group = pygame.sprite.Group()
 
-        ############WEAPONS############################################################
-        wp_spawn_x = self.SIZE[0] / 2
-        wp_spawn_y = self.SIZE[1] / 2 + 40
-        # self.sword = Weapon(self, 15, 'sword', 15, self.RED, self.all_environment)
         self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.weapon_group)
-        # self.kij = Weapon(self, 1, 'kij', 5, self.BLUE, self.all_environment)
-        # add weapons to the menu
 
-        ##########################################################################
-        self.screen = pygame.display.set_mode(self.SIZE)
+        self.screen = pygame.display.set_mode(self.SIZE, pygame.RESIZABLE)
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
@@ -98,8 +84,7 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.items_menu = Items_bar(self)
-        self.bg = pygame.image.load('floor/floor_brick.png').convert_alpha()
-        self.floor = pygame.image.load('floor/floor.png').convert_alpha()
+
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -141,22 +126,12 @@ class Game:
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.bsurf.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-            # if len(self.all_enemy) <= 0:
-            #     self.enemy_list.append(Enemy(self, 20, 150, self.BLUE, "Ryszard", self.all_enemy))
 
-            self.particles.append(Fire(self, 50, 25))
-            self.particles.append(Fire(self, 100, 25))
-            self.particles.append(Fire(self, 150, 25))
-            self.particles.append(Fire(self, 200, 25))
-            self.particles.append(Fire(self, 250, 25))
-            for particle in self.particles:
-                particle.draw()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-                    pressed = pygame.key.get_pressed()
-                    # print(pressed[pygame.K_w])
+
                     if event.key == pygame.K_w:
                         self.player.direction = 'UP'
                         self.player.velocity[1] = -self.player.speed * dt
@@ -173,52 +148,21 @@ class Game:
                         self.player.direction = 'RIGHT'
                         self.player.velocity[0] = self.player.speed * dt
 
-                    # constant_dt = 0.04
-                    # vel_up = [0, -self.player.speed * constant_dt]
-                    # vel_up = [i * pressed[pygame.K_w] for i in vel_up]
-                    # vel_down = [0, self.player.speed * constant_dt]
-                    # vel_down = [i * pressed[pygame.K_s] for i in vel_down]
-                    # vel_left = [-self.player.speed * constant_dt, 0]
-                    # vel_left = [i * pressed[pygame.K_a] for i in vel_left]
-                    # vel_right = [self.player.speed * constant_dt, 0]
-                    # vel_right = [i * pressed[pygame.K_d] for i in vel_right]
-                    # vel = zip(vel_up, vel_down, vel_left, vel_right)
-                    # vel_list = [sum(item) for item in vel]
-                    #
-                    # x = sqrt(pow(vel_list[0], 2) + pow(vel_list[1], 2))
-                    # x = (vel_list[0]**2 + vel_list[1]**2)**0.5
-
-                    # print(x)
-
-                    # if 0 not in vel_list:
-                    #     z = x / (abs(vel_list[0]) + abs(vel_list[1]))
-                    #     vel_list_fixed = [item * z for item in vel_list]
-                    #     self.player.set_velocity(vel_list_fixed)
-                    # else:
-                    #     self.player.set_velocity(vel_list)
-
                     if event.key == pygame.K_SPACE:
                         self.player.attacking = True
-                        # self.player.current_stamina = 0#zmienione
+
                     if event.key == pygame.K_r:
                         self.game_over()
                     if event.key == pygame.K_z:
                         pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
                     if event.key == pygame.K_1:
-                        self.player.assign_weapon(self.sword)
-                        self.items_menu.weapon = 'sword'
-                    if event.key == pygame.K_2:
                         self.player.assign_weapon(self.katana)
                         self.items_menu.weapon = 'katana'
-                    if event.key == pygame.K_3:
-                        self.player.assign_weapon(self.kij)
-                        self.items_menu.weapon = 'kij'
 
                 if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0],
                                     self.player.gun_point()[1])  # adding bullet at the end of rifle
-                    # self.all_environment.add(bullet)
                     self.bullet_list.add(bullet)
                     self.counter = 0
 
@@ -231,31 +175,23 @@ class Game:
                         self.player.player_moving = False
 
                     elif event.key == pygame.K_SPACE:
-                        self.player.attacking = False
+                        pass
+                        # self.player.attacking = False
 
             self.player.attacked = False
-            # TODO: wykminic jakis sposob na uzuskiwanie zespolenia predkosci z dodanych klawiszy
-            # if self.upaction:
-            #     predkosc[y] = 1
-            # else:
-            #     predkosc[y] = 0
-            # if self.downaction:
-            #     predkosc[y] = -1
-            # else:
-            #     predkosc[y] = 0
+
             for enemy in self.enemy_list:
                 enemy.move(dt)
-                self.player.attack(enemy)  # checking for attack
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
-
-                # enemy.rect.clamp_ip(self.screen_rect)
 
                 if enemy.hp > 0:
                     enemy.draw_health(self.screen)
                 else:
                     enemy.kill()
                     self.enemy_list.remove(enemy)
+
+                    self.particles.append(DeathParticle(self, *tuple(ti / 4 for ti in enemy.rect.center)))
 
             if self.player.attacked:
                 self.player.current_stamina = 0
@@ -267,27 +203,16 @@ class Game:
             self.all_player.update()
             self.bullet_list.update()
 
-            # CHECKING if player or player
-            # 's weapon collided with enemy (by masks, not rects)
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     pass
-                if pygame.sprite.collide_mask(self.player.weapon, enemy):
+                if pygame.sprite.collide_mask(self.player.weapon, enemy) and self.player.attacking:
                     enemy.hurt = True
-                # enemy.hp -= 10
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     pass
 
-            # Instead of using player.rect, player.hitbox is used
-
-            # Instead of using player.rect, player.hitbox is used
-
-            # def collided(self, sprite, other):
-            #     """Check if the hitbox of one sprite collides with rect of another sprite."""
-            #     return sprite.hitbox.colliderect(other.rect)
-            # Check for collision between player and wall
             collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
             for _ in collided_sprites_player:
                 velocity = [i * (-0.5) for i in self.player.old_velocity]  # how far from wall will you bounce
@@ -297,7 +222,6 @@ class Game:
                 self.player.update()
                 self.player.velocity = [0, 0]
 
-            # Check for collision between enemy and walls
             for enemy in self.all_enemy:
                 collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
                 for sprite in collided_sprites_enemy:
@@ -307,37 +231,9 @@ class Game:
                     enemy.velocity = [0, 0]
 
             for block in self.wall_list:
-
-                # Given our hitbox, we do not have to check collide_rect, cause
-                # it exclusively uses rect attribute of Sprite class
-
-                # if collide_rect(self.player, block):
-                #     velocity = [i * (-1) for i in self.player.old_velocity]
-                #     self.player.velocity = velocity
-                #     self.player.update()
-                #     self.player.velocity = [0, 0]
-
-                for bullet in self.bullet_list:  # shooting wall, bullet disapers
+                for bullet in self.bullet_list:
                     bullet.collision(block)
 
-                # for enemy in self.enemy_list:
-                #     if collide_rect(enemy, block):
-                #         velocity_en = [i * (-1) for i in enemy.old_velocity]
-                #         enemy.velocity = velocity_en
-                #         enemy.update()
-                #         enemy.velocity = [0, 0]
-            # for i in range(int(self.SIZE[0]/20)):
-            #     for x in range(int(self.SIZE[1]/10)):
-            #         pygame.draw.rect(self.screen, (102, 29, 102), (395,0,100,100))
-
-            # self.bullet_list.draw(self.screen)
-            # self.weapon_group.draw(self.screen)
-            for i in range(5):
-                self.screen.blit(self.bg, (self.bg.get_size()[0]* i, 0))
-            for i in range(5):
-                self.screen.blit(self.floor, (self.bg.get_size()[0] * i, 242))
-            for i in range(5):
-                self.screen.blit(self.floor, (self.bg.get_size()[0] * i, 242 + 219))
             self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
             self.all_enemy.draw(self.screen)
@@ -350,20 +246,21 @@ class Game:
                 bullet.draw()
 
             # ---------PARTICLE ANIMATION############
+
             for particle in self.particles:
                 particle.update()
-
+            for particle in self.particles:
+                particle.draw()
+            self.screen.blit(pygame.transform.scale(self.bsurf, (1200, 600)), (0, 0))
             ##########################################
             self.fps_counter.update()
             self.fps_counter.render()
             self.player_info.update()
             self.player_info.render()
 
-            ##item bar display
             self.items_menu.draw()
             self.counter += 1
-            self.screen.blit(pygame.transform.scale(self.bsurf, (1280, 720)), (0, 0))
-            # pygame.display.update((0, 0, 250, 250))
+
             pygame.display.update()
 
         print("Exited the game loop. Game will quit...")

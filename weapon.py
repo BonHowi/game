@@ -22,7 +22,7 @@ class Weapon(pygame.sprite.Sprite):
         self.angle = 0
         self.pivot = self.rect_mask.bottomleft
         self.offset = Vector2(4, -34)
-        self.angle_change_factor_start = 1
+        self.angle_change_factor_start = 1.75
         self.angle_change_factor = self.angle_change_factor_start
         self.is_finished = False
         self.test = 0
@@ -86,6 +86,7 @@ class Weapon(pygame.sprite.Sprite):
         """Rotate the image of the sprite around a pivot point."""
         if self.angle >= 90 or self.angle < 0:
             self.counter = self.counter * (-1)
+
         # Rotate the image.
         self.image = pygame.transform.rotozoom(self.original_image, -self.angle, 1)
         # Rotate the offset vector.
@@ -95,14 +96,14 @@ class Weapon(pygame.sprite.Sprite):
 
         self.hitbox = self.getMaskRect(self.image, *self.rect.topleft)
 
-        # self.angle_change_factor = self.angle_change_factor * 1.02
-        #
-        # if not 0 > -self.angle > -90:
-        #     self.angle_change_factor = self.angle_change_factor_start
-        #     self.angle = 0
-        # self.angle -= self.angle_change_factor * self.counter
+        self.angle_change_factor = self.angle_change_factor * 1.02
+
+        if not 0 > -self.angle > -90:
+            self.angle_change_factor = self.angle_change_factor_start
+            self.angle = 0
+        self.angle -= self.angle_change_factor * self.counter
         '''Important to update mask'''
-        # self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         """
@@ -110,17 +111,18 @@ class Weapon(pygame.sprite.Sprite):
         :return:
         :rtype:
         """
-        if not self.is_finished:
-            self.rotate()
-        self.mask = pygame.mask.from_surface(self.image)
-        # self.rect.bottomleft = self.game.player.hitbox.topright
-        # self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
-        #
-        # dx = self.rect_mask.x - self.game.player.hitbox.topright[0]
-        # self.rect_mask.x -= dx
-        # self.rect.x -= dx
-        # self.hitbox = self.rect_mask
-        # self.mask = pygame.mask.from_surface(self.image)
+        # if not self.is_finished:
+        #     self.rotate()
+
+        ####CODE below: Sword sticks to player, no rotation
+        #self.mask = pygame.mask.from_surface(self.image)
+        self.rect.bottomleft = self.game.player.hitbox.topright - self.offset
+        self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
+
+        dx = self.rect_mask.x - self.game.player.hitbox.topright[0]
+        self.rect_mask.x -= dx
+        self.rect.x -= dx
+        self.hitbox = self.rect_mask
 
 
         #pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)

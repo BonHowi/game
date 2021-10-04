@@ -21,6 +21,8 @@ class PlayerInfo:
         self.damage_text_rect = None
         self.time_text_rect = None
         self.enemy_count_text_rect = None
+        self.score_img = pygame.image.load('score.png')
+        self.score_img = pygame.transform.scale(self.score_img, (200, 100))
 
     def render(self):
         """
@@ -28,7 +30,8 @@ class PlayerInfo:
         :return:
         :rtype:
         """
-        self.game.screen.blit(self.coordinates, (0, 0))
+        self.game.screen.blit(self.score_img, (0, 0))
+        self.game.screen.blit(self.coordinates, (25, 25))
         self.game.screen.blit(self.hp_text, self.hp_text_rect)
         self.game.screen.blit(self.weapon_text, self.weapon_text_rect)
         self.game.screen.blit(self.damage_text, self.damage_text_rect)
@@ -42,7 +45,7 @@ class PlayerInfo:
         :return:
         :rtype:
         """
-        self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 0, 0))
+        self.coordinates = self.game.myfont.render('SCORE: ' + str(self.game.player.score), False, (255, 255, 255))
         self.hp_text = self.game.myfont.render("HP: " + str(self.game.player.hp),
                                                False, self.game.GREEN)
         self.weapon_text = self.game.myfont.render("Weapon: " + str(self.game.player.weapon.name),

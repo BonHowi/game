@@ -51,6 +51,7 @@ class WallHitParticle(Particle):
 class Fire(Particle):
     '''Besides some calculations and magic variables, there is a bsurf Surface in game class, which serves as screen to display fire plarticles,
     it is 4x times smaller than default window, but during blitting, it is resized to window size, as to achieve pixelated fire)'''
+
     def __init__(self, game, x, y):
         super().__init__(game, x, y)
         self.color = ((255, 255, 0),
@@ -61,7 +62,7 @@ class Fire(Particle):
                       (61, 38, 48))
         self.maxlife = random.randint(13, 27)
         self.life = self.maxlife
-        self.sin = random.randint(-10, 10) / 7 # ???? XD
+        self.sin = random.randint(-10, 10) / 7  # ???? XD
         self.sinr = random.randint(5, 10)
         self.radius = random.randint(0, 2)
 
@@ -77,7 +78,7 @@ class Fire(Particle):
     def update(self):
         if self.counter == 4:
             self.counter = 0;
-            if self.j > 360: # Angle
+            if self.j > 360:  # Angle
                 self.j = 0
 
             self.life -= 1
@@ -87,7 +88,7 @@ class Fire(Particle):
             self.i = int((self.life / self.maxlife) * 6)
 
             self.y -= 0.7  # rise
-            self.x += ((self.sin * sin(self.j / self.sinr)) / 20)   # spread
+            self.x += ((self.sin * sin(self.j / self.sinr)) / 20)  # spread
 
             if not random.randint(0, 5):
                 self.radius += 0.2  # circle radius, set to 10 for big bang
@@ -106,6 +107,7 @@ class Fire(Particle):
     def draw(self):
 
         alpha = 255
+
         pygame.draw.circle(self.game.bsurf, self.color[self.i] + (alpha,), (self.draw_x, self.draw_y), self.radius, 0)
         if self.i == 0:
             pygame.draw.circle(self.game.bsurf, (0, 0, 0, 0), (self.draw_x + random.randint(-1, 1), self.draw_y - 4),
@@ -114,3 +116,21 @@ class Fire(Particle):
             pygame.draw.circle(self.game.bsurf, self.color[self.i - 1] + (alpha,),
                                (self.draw_x + random.randint(-1, 1), self.draw_y - 3),
                                self.radius / 1.5, 0)
+
+
+class DeathParticle(Particle):
+    def __init__(self, game, x, y):
+        super().__init__(game, x, y)
+        self.color = (192,192,192)
+        self.radius = random.randint(5, 10)
+
+    def update(self):
+        self.x += random.randint(-1, 1)
+        self.y += random.randint(-1, 1)
+        self.radius -= 0.15
+        if self.radius <= 0:
+            self.game.particles.remove(self)
+
+    def draw(self):
+        pygame.draw.circle(self.game.bsurf, self.color, (self.x, self.y), self.radius)
+        pygame.draw.circle(self.game.bsurf, (0, 0, 0, 0), (self.x + random.randint(-1, 1), self.y+ random.randint(-1, 1)), self.radius)
