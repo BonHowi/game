@@ -2,7 +2,7 @@ import pygame
 import os
 from weapon import Weapon
 from Entity import Entity
-import numpy as np
+#import numpy as np
 
 
 class Player(pygame.sprite.Sprite):

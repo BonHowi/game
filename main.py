@@ -157,40 +157,45 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     pressed = pygame.key.get_pressed()
                     # print(pressed[pygame.K_w])
-                    if pressed[pygame.K_w]:
+                    if event.key == pygame.K_w:
                         self.player.direction = 'UP'
+                        self.player.velocity[1] = -self.player.speed * dt
 
-                    if pressed[pygame.K_s]:
+                    if event.key == pygame.K_s:
                         self.player.direction = 'DOWN'
+                        self.player.velocity[1] = self.player.speed * dt
 
-                    if pressed[pygame.K_a]:
+                    if event.key == pygame.K_a:
                         self.player.direction = 'LEFT'
+                        self.player.velocity[0] = -self.player.speed * dt
 
-                    if pressed[pygame.K_d]:
+                    if event.key == pygame.K_d:
                         self.player.direction = 'RIGHT'
-                    constant_dt = 0.04
-                    vel_up = [0, -self.player.speed * constant_dt]
-                    vel_up = [i * pressed[pygame.K_w] for i in vel_up]
-                    vel_down = [0, self.player.speed * constant_dt]
-                    vel_down = [i * pressed[pygame.K_s] for i in vel_down]
-                    vel_left = [-self.player.speed * constant_dt, 0]
-                    vel_left = [i * pressed[pygame.K_a] for i in vel_left]
-                    vel_right = [self.player.speed * constant_dt, 0]
-                    vel_right = [i * pressed[pygame.K_d] for i in vel_right]
-                    vel = zip(vel_up, vel_down, vel_left, vel_right)
-                    vel_list = [sum(item) for item in vel]
+                        self.player.velocity[0] = self.player.speed * dt
 
-                    x = sqrt(pow(vel_list[0], 2) + pow(vel_list[1], 2))
+                    # constant_dt = 0.04
+                    # vel_up = [0, -self.player.speed * constant_dt]
+                    # vel_up = [i * pressed[pygame.K_w] for i in vel_up]
+                    # vel_down = [0, self.player.speed * constant_dt]
+                    # vel_down = [i * pressed[pygame.K_s] for i in vel_down]
+                    # vel_left = [-self.player.speed * constant_dt, 0]
+                    # vel_left = [i * pressed[pygame.K_a] for i in vel_left]
+                    # vel_right = [self.player.speed * constant_dt, 0]
+                    # vel_right = [i * pressed[pygame.K_d] for i in vel_right]
+                    # vel = zip(vel_up, vel_down, vel_left, vel_right)
+                    # vel_list = [sum(item) for item in vel]
+                    #
+                    # x = sqrt(pow(vel_list[0], 2) + pow(vel_list[1], 2))
                     # x = (vel_list[0]**2 + vel_list[1]**2)**0.5
 
                     # print(x)
 
-                    if 0 not in vel_list:
-                        z = x / (abs(vel_list[0]) + abs(vel_list[1]))
-                        vel_list_fixed = [item * z for item in vel_list]
-                        self.player.set_velocity(vel_list_fixed)
-                    else:
-                        self.player.set_velocity(vel_list)
+                    # if 0 not in vel_list:
+                    #     z = x / (abs(vel_list[0]) + abs(vel_list[1]))
+                    #     vel_list_fixed = [item * z for item in vel_list]
+                    #     self.player.set_velocity(vel_list_fixed)
+                    # else:
+                    #     self.player.set_velocity(vel_list)
 
                     if event.key == pygame.K_SPACE:
                         self.player.attacking = True
