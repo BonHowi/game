@@ -62,9 +62,6 @@ class Game:
         self.all_player = pygame.sprite.Group()
         self.bullet_list = pygame.sprite.Group()
         self.weapon_group = pygame.sprite.Group()
-
-        self.katana = Weapon(self, 25, 'katana', 36, self.KATANA_COLOR, self.weapon_group)
-
         self.screen = pygame.display.set_mode(self.SIZE, pygame.RESIZABLE)
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
@@ -157,8 +154,12 @@ class Game:
                         pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
                     if event.key == pygame.K_1:
-                        self.player.assign_weapon(self.katana)
-                        self.items_menu.weapon = 'katana'
+                        if self.player.weapon.name !='katana':
+                            self.player.assign_weapon(self.katana)
+                            self.items_menu.weapon = 'katana'
+                    if event.key == pygame.K_2:
+                         self.weapon_group.sprites()
+
 
                 if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0],
@@ -190,7 +191,6 @@ class Game:
                 else:
                     enemy.kill()
                     self.enemy_list.remove(enemy)
-
                     self.particles.append(DeathParticle(self, *tuple(ti / 4 for ti in enemy.rect.center)))
 
             if self.player.attacked:
@@ -206,7 +206,7 @@ class Game:
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     pass
-                if pygame.sprite.collide_mask(self.player.weapon, enemy) and self.player.attacking:
+                if pygame.sprite.collide_mask(self.player.weapon, enemy):# and self.player.attacking:
                     enemy.hurt = True
 
             for enemy in self.enemy_list:
@@ -236,6 +236,7 @@ class Game:
 
             self.weapon_group.draw(self.screen)
             self.all_environment.draw(self.screen)
+
             self.all_enemy.draw(self.screen)
 
             self.all_player.draw(self.screen)

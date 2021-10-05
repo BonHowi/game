@@ -2,7 +2,9 @@ import pygame
 import os
 from weapon import Weapon
 from Entity import Entity
-#import numpy as np
+
+
+# import numpy as np
 
 
 class Player(pygame.sprite.Sprite):
@@ -27,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.score = 0
         self.direction = 'RIGHT'
         self.player_moving = False
-        self.player_index = 0 #animation frames
+        self.player_index = 0  # animation frames
         # Player Attacking
         self.attacking = False
         self.hasWeapon = True
@@ -40,10 +42,11 @@ class Player(pygame.sprite.Sprite):
         ########GUN PROPERTIES,########
         self.gun_length = 15
         self.gun_width = 5
-        #Animation loading
+        # Animation loading
         self.load_animation('player/')
         # hitbox
         self.hitbox = self.rect_mask
+        self.dupa = True
 
     def getMaskRect(self, surf, top=0, left=0):
         """
@@ -127,38 +130,6 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
-
-
-    def weapon_attack(self, enemy):#attacking enemy with sword/katan/kij
-        pass
-    # def attack(self, collision_obj):
-    #
-    #     """
-    #
-    #     :param collision_obj:
-    #     :type collision_obj:
-    #     :return:
-    #     :rtype:
-    #     """
-    #     if self.attacking and self.hasWeapon and self.current_stamina >= 1000:
-    #         if self.direction == 'RIGHT':
-    #             self.attack_range = pygame.Rect(self.hitbox.x + self.hitbox.width, self.hitbox.y,
-    #                                             self.weapon.blade_length, self.hitbox.height)
-    #             self.attack_collision(collision_obj)
-    #         elif self.direction == 'LEFT':
-    #             self.attack_range = pygame.Rect(self.hitbox.x - self.weapon.blade_length, self.hitbox.y,
-    #                                             self.weapon.blade_length, self.hitbox.height)
-    #             self.attack_collision(collision_obj)
-    #         elif self.direction == 'UP':
-    #             self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y - self.weapon.blade_length,
-    #                                             self.hitbox.height,
-    #                                             self.weapon.blade_length)
-    #             self.attack_collision(collision_obj)
-    #         elif self.direction == 'DOWN':
-    #             self.attack_range = pygame.Rect(self.hitbox.x, self.hitbox.y + self.hitbox.height, self.hitbox.height,
-    #                                             self.weapon.blade_length)
-    #             self.attack_collision(collision_obj)
-
     def attack_collision(self, collision_obj):  # do zmiany
         """
 
@@ -212,9 +183,11 @@ class Player(pygame.sprite.Sprite):
             self.current_stamina += 10
 
         self.attacked = False
-        # self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 25, 37, 50)
+
+
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
+
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 

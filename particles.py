@@ -123,13 +123,18 @@ class DeathParticle(Particle):
         super().__init__(game, x, y)
         self.color = (192,192,192)
         self.radius = random.randint(5, 10)
+        self.life = random.randint(30, 50)
+        self.counter = 0# to slow down animation speed
 
     def update(self):
         self.x += random.randint(-1, 1)
         self.y += random.randint(-1, 1)
-        self.radius -= 0.15
-        if self.radius <= 0:
+        self.radius += 0.05
+        self.life -= 1
+        if self.life <=0:
             self.game.particles.remove(self)
+        # if self.radius <= 0:
+        #     self.game.particles.remove(self)
 
     def draw(self):
         pygame.draw.circle(self.game.bsurf, self.color, (self.x, self.y), self.radius)
