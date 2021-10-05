@@ -113,17 +113,15 @@ class Game:
     def run_game(self):
         self.init_all()
         running = True
-        pygame.key.set_repeat(10, 10)
 
         while running:
-
+        
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.bsurf.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -205,7 +203,7 @@ class Game:
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
-                    pass
+                    self.player.hp -= 10
                 if pygame.sprite.collide_mask(self.player.weapon, enemy):# and self.player.attacking:
                     enemy.hurt = True
 

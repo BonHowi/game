@@ -97,6 +97,7 @@ class Player(pygame.sprite.Sprite):
             return False
 
     def animation(self):
+        '''Instead of loading animation for left/right, we can load for one, and then flip(image.flip()) the image'''
         """
 
         :return:
@@ -107,13 +108,17 @@ class Player(pygame.sprite.Sprite):
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
+
                 self.image = self.animation_database["WALK_LEFT"][int(self.player_index)]
 
             elif self.direction == 'UP':
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
 
             elif self.direction == "RIGHT":
-                self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
+                self.image = pygame.transform.flip(self.animation_database["WALK_LEFT"][int(self.player_index)], True,
+                                                   False)
+
+                # self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
 
             elif self.direction == "DOWN":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
@@ -130,6 +135,8 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "DOWN":
                 self.image = self.animation_database["IDLE_RIGHT"][int(self.player_index)]
 
+    def weapon_attack(self, enemy):
+        pass
     def attack_collision(self, collision_obj):  # do zmiany
         """
 
@@ -184,14 +191,14 @@ class Player(pygame.sprite.Sprite):
 
         self.attacked = False
 
-
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
 
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
-    def render(self):
+    def render(self):# Render weapon
+
         """
 
         :return:

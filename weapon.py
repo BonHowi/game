@@ -20,8 +20,8 @@ class Weapon(pygame.sprite.Sprite):
         self.game = game
         self.load_image()
         self.angle = 0
-        self.offset = Vector2(4, -34)
-        self.angle_change_factor = 1.75
+        self.offset = Vector2(6, -34)
+        self.angle_change_factor = 3.5 * 1.5
 
     def getMaskRect(self, surf, top=0, left=0):
 
@@ -53,8 +53,8 @@ class Weapon(pygame.sprite.Sprite):
 
     def rotate(self):
         """Rotate the image of the sprite around a pivot point."""
-
-        if self.angle >= 90 or self.angle < 0:
+        
+        if self.angle >= 180 or self.angle < 0:
             self.game.player.attacking = False
             self.angle = 0
             self.image = self.original_image.copy()
@@ -67,7 +67,7 @@ class Weapon(pygame.sprite.Sprite):
             offset_rotated = self.offset.rotate(self.angle)
             # Create a new rect with the center of the sprite + the offset.
             self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + offset_rotated)
-
+            self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
             # Update angle
             self.angle += self.angle_change_factor
             # Update mask
@@ -80,10 +80,16 @@ class Weapon(pygame.sprite.Sprite):
 
         ####CODE below: Sword sticks to player, no rotation
         else:
+
             self.image = self.original_image.copy()
-            self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + self.offset)  # offset to fit as close as possible
+            if self.game.player.direction == "RIGHT":
+                self.rect = self.image.get_rect(center=self.game.player.hitbox.midright + self.offset)  # offset to fit as close as possible
+            elif self.game.player.direction == "LEFT":
+                offset_new = self.offset + [-10, 0]
+                self.rect = self.image.get_rect(center=self.game.player.hitbox.midleft + offset_new)  # offset to fit as close as possible
+
             self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
             self.mask = pygame.mask.from_surface(self.image)
 
-        pygame.draw.rect(self.game.screen, self.game.RED, self.hitbox, 1)
+        pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, 1)
         pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
