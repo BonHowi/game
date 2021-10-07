@@ -8,6 +8,8 @@ from bullet import Bullet
 from item_bar import Items_bar
 from random import randint
 from particles import Fire, DeathParticle
+from operator import add
+from math import sqrt, pow
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -115,33 +117,50 @@ class Game:
         running = True
 
         while running:
-        
+
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.bsurf.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_w]:
+                self.player.direction = 'UP'
+
+            if pressed[pygame.K_s]:
+                self.player.direction = 'DOWN'
+
+            if pressed[pygame.K_a]:
+                self.player.direction = 'LEFT'
+
+            if pressed[pygame.K_d]:
+                self.player.direction = 'RIGHT'
+
+            constant_dt = 0.06
+            vel_up = [0, -self.player.speed * constant_dt]
+            vel_up = [i * pressed[pygame.K_w] for i in vel_up]
+            vel_down = [0, self.player.speed * constant_dt]
+            vel_down = [i * pressed[pygame.K_s] for i in vel_down]
+            vel_left = [-self.player.speed * constant_dt, 0]
+            vel_left = [i * pressed[pygame.K_a] for i in vel_left]
+            vel_right = [self.player.speed * constant_dt, 0]
+            vel_right = [i * pressed[pygame.K_d] for i in vel_right]
+            vel = zip(vel_up, vel_down, vel_left, vel_right)
+            vel_list = [sum(item) for item in vel]
+
+            x = sqrt(pow(vel_list[0], 2) + pow(vel_list[1], 2))
+
+            if 0 not in vel_list:
+                z = x / (abs(vel_list[0]) + abs(vel_list[1]))
+                vel_list_fixed = [item * z for item in vel_list]
+                self.player.set_velocity(vel_list_fixed)
+            else:
+                self.player.set_velocity(vel_list)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN:
-
-                    if event.key == pygame.K_w:
-                        self.player.direction = 'UP'
-                        self.player.velocity[1] = -self.player.speed * dt
-
-                    if event.key == pygame.K_s:
-                        self.player.direction = 'DOWN'
-                        self.player.velocity[1] = self.player.speed * dt
-
-                    if event.key == pygame.K_a:
-                        self.player.direction = 'LEFT'
-                        self.player.velocity[0] = -self.player.speed * dt
-
-                    if event.key == pygame.K_d:
-                        self.player.direction = 'RIGHT'
-                        self.player.velocity[0] = self.player.speed * dt
 
                     if event.key == pygame.K_SPACE:
                         self.player.attacking = True
@@ -152,12 +171,11 @@ class Game:
                         pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
                     if event.key == pygame.K_1:
-                        if self.player.weapon.name !='katana':
+                        if self.player.weapon.name != 'katana':
                             self.player.assign_weapon(self.katana)
                             self.items_menu.weapon = 'katana'
                     if event.key == pygame.K_2:
-                         self.weapon_group.sprites()
-
+                        self.weapon_group.sprites()
 
                 if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
                     bullet = Bullet(self, self.player.gun_point()[0],
@@ -204,7 +222,7 @@ class Game:
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     self.player.hp -= 10
-                if pygame.sprite.collide_mask(self.player.weapon, enemy):# and self.player.attacking:
+                if pygame.sprite.collide_mask(self.player.weapon, enemy):  # and self.player.attacking:
                     enemy.hurt = True
 
             for enemy in self.enemy_list:
