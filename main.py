@@ -157,43 +157,28 @@ class Game:
                 self.player.set_velocity(vel_list_fixed)
             else:
                 self.player.set_velocity(vel_list)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.KEYDOWN:
 
-                    if event.key == pygame.K_SPACE:
-                        self.player.attacking = True
+            if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
+                bullet = Bullet(self, self.player.gun_point()[0],
+                                self.player.gun_point()[1])  # adding bullet at the end of rifle
+                self.bullet_list.add(bullet)
+                self.counter = 0
+            if pressed[pygame.K_SPACE]:
+                self.player.attacking = True
+            if pressed[pygame.K_r]:
+                self.game_over()
+            if pressed[pygame.K_z]:
+                pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
-                    if event.key == pygame.K_r:
-                        self.game_over()
-                    if event.key == pygame.K_z:
-                        pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
+            if pressed[pygame.K_1]:
+                if self.player.weapon.name != 'katana':
+                    self.player.assign_weapon(self.katana)
+                    self.items_menu.weapon = 'katana'
+            if pressed[pygame.K_2]:
+                self.weapon_group.sprites()
 
-                    if event.key == pygame.K_1:
-                        if self.player.weapon.name != 'katana':
-                            self.player.assign_weapon(self.katana)
-                            self.items_menu.weapon = 'katana'
-                    if event.key == pygame.K_2:
-                        self.weapon_group.sprites()
-
-                if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
-                    bullet = Bullet(self, self.player.gun_point()[0],
-                                    self.player.gun_point()[1])  # adding bullet at the end of rifle
-                    self.bullet_list.add(bullet)
-                    self.counter = 0
-
-                elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_w or event.key == pygame.K_s:
-                        self.player.velocity[1] = 0
-                        self.player.player_moving = False  # changed from direction
-                    elif event.key == pygame.K_a or event.key == pygame.K_d:
-                        self.player.velocity[0] = 0
-                        self.player.player_moving = False
-
-                    elif event.key == pygame.K_SPACE:
-                        pass
-                        # self.player.attacking = False
+            if pressed[pygame.K_ESCAPE]:
+                running = False
 
             self.player.attacked = False
 
@@ -280,6 +265,7 @@ class Game:
 
             pygame.display.update()
 
+        pygame.quit()
         print("Exited the game loop. Game will quit...")
         quit()
 
