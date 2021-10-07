@@ -17,6 +17,7 @@ print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
 class Game:
     def __init__(self):
+        self.counter = 0
         self.FPS = 60
         self.SIZE = (1200, 600)
         self.BLACK = (0, 0, 0)
@@ -72,7 +73,6 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-        self.counter = 0
         self.map = MapLoader(self)
         self.enemy_list = []
         for _ in range(1):
@@ -124,6 +124,10 @@ class Game:
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.bsurf.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_w]:
                 self.player.direction = 'UP'

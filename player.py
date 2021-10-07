@@ -166,6 +166,7 @@ class Player(pygame.sprite.Sprite):
         self.attacked = True
 
     def set_velocity(self, velocity):
+        self.old_velocity = self.velocity
         self.velocity = velocity
         # print(np.linalg.norm(self.velocity))
         # if self.velocity != velocity
