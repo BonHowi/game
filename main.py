@@ -30,9 +30,6 @@ class Game:
         self.all_wall = None
         self.all_player = None
         self.player = None
-        self.sword = None
-        self.katana = None
-        self.kij = None
         self.screen = None
         self.clock = None
         self.screen_rect = None
@@ -90,25 +87,14 @@ class Game:
         text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-    def game_over(self):
-        self.init_all()
-        pygame.display.flip()
-        self.run_game()
-
     def collided(self, sprite, other):
         """Check if the hitbox of one sprite collides with rect of another sprite."""
         return sprite.hitbox.colliderect(other.rect)
 
-    def collided2(self, sprite, other):
-        """Check if the hitbox of one sprite collides with rect of another sprite."""
-        return sprite.hitbox.colliderect(other.hitbox)
-
-    def get_mask_rect(self, surf, top=0, left=0):
-        surf_mask = pygame.mask.from_surface(surf)
-        rect_list = surf_mask.get_bounding_rects()
-        surf_mask_rect = rect_list[0].unionall(rect_list)
-        surf_mask_rect.move_ip(top, left)
-        return surf_mask_rect
+    def game_over(self):
+        self.init_all()
+        pygame.display.flip()
+        self.run_game()
 
     def update_groups(self):
         self.all_enemy.update()
@@ -117,6 +103,7 @@ class Game:
         self.all_player.update()
         self.bullet_list.update()
         self.weapon_group.update()
+
     def draw_groups(self):
         self.weapon_group.draw(self.screen)
         self.all_environment.draw(self.screen)
@@ -159,7 +146,7 @@ class Game:
         else:
             self.player.set_velocity(vel_list)
 
-        if pygame.mouse.get_pressed()[0] and self.counter > 60:  # strzelanie nabojami
+        if pygame.mouse.get_pressed()[0] and self.counter > 60:
             bullet = Bullet(self, self.player.gun_point()[0],
                             self.player.gun_point()[1])  # adding bullet at the end of rifle
             self.bullet_list.add(bullet)
@@ -168,12 +155,9 @@ class Game:
             self.player.attacking = True
         if pressed[pygame.K_r]:
             self.game_over()
-        if pressed[pygame.K_z]:
-            pygame.Surface.blit(pygame.transform.scale(self.player.image, (100, 100)), self.screen)
 
         if pressed[pygame.K_1]:
             if self.player.weapon.name != 'katana':
-                self.player.assign_weapon(self.katana)
                 self.items_menu.weapon = 'katana'
         if pressed[pygame.K_2]:
             self.weapon_group.sprites()
@@ -206,7 +190,7 @@ class Game:
             self.input()
             self.player.attacked = False
 
-            for enemy in self.enemy_list:
+            for enemy in self.enemy_list:  # Why not self.all_enemy???
                 enemy.move(dt)
                 for bullet in self.bullet_list:
                     bullet.collision_enemy(enemy)
@@ -219,24 +203,19 @@ class Game:
 
             if self.player.attacked:
                 self.player.current_stamina = 0
+
             # Updates elements in groups, see function
             self.update_groups()
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     self.player.hp -= 10
-                if pygame.sprite.collide_mask(self.player.weapon, enemy):  # and self.player.attacking:
+                if pygame.sprite.collide_mask(self.player.weapon, enemy):
                     enemy.hurt = True
-
-            for enemy in self.enemy_list:
-                if pygame.sprite.collide_mask(enemy, self.player):
-                    pass
 
             collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
             for _ in collided_sprites_player:
-                velocity = [i * (-0.5) for i in self.player.old_velocity]  # how far from wall will you bounce
                 velocity = [i * (-0.25) for i in self.player.old_velocity]  # how far from wall will you bounce
-
                 self.player.velocity = velocity
                 self.player.update()
                 self.player.velocity = [0, 0]
@@ -252,7 +231,6 @@ class Game:
             for block in self.wall_list:
                 for bullet in self.bullet_list:
                     bullet.collision(block)
-
 
             self.draw_groups()
             # Update and draw particles,
