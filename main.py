@@ -172,6 +172,22 @@ class Game:
         for particle in self.particles:
             particle.draw()
 
+    def entity_wall_collision(self):
+        collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
+        for _ in collided_sprites_player:
+            velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
+            self.player.velocity = velocity
+            self.player.update()
+            self.player.velocity = [0, 0]
+
+        for enemy in self.all_enemy:
+            collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
+            for _ in collided_sprites_enemy:
+                velocity_en = [i * (-1) for i in enemy.old_velocity]
+                enemy.velocity = velocity_en
+                enemy.update()
+                enemy.velocity = [0, 0]
+
     def run_game(self):
         self.init_all()
 
@@ -206,27 +222,14 @@ class Game:
 
             # Updates elements in groups, see function
             self.update_groups()
+            # Detects collision of enemies and player with walls
+            self.entity_wall_collision()
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     self.player.hp -= 10
                 if pygame.sprite.collide_mask(self.player.weapon, enemy):
                     enemy.hurt = True
-
-            collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
-            for _ in collided_sprites_player:
-                velocity = [i * (-0.25) for i in self.player.old_velocity]  # how far from wall will you bounce
-                self.player.velocity = velocity
-                self.player.update()
-                self.player.velocity = [0, 0]
-
-            for enemy in self.all_enemy:
-                collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
-                for _ in collided_sprites_enemy:
-                    velocity_en = [i * (-1) for i in enemy.old_velocity]
-                    enemy.velocity = velocity_en
-                    enemy.update()
-                    enemy.velocity = [0, 0]
 
             for block in self.wall_list:
                 for bullet in self.bullet_list:
