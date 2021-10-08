@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         self.dupa = True
 
     def getMaskRect(self, surf, top=0, left=0):
-        """
+        """Returns minimal bounding rectangle of an image
 
         :param surf:
         :type surf:
@@ -67,13 +67,14 @@ class Player(pygame.sprite.Sprite):
         return surf_mask_rect
 
     def load_animation(self, path):
-        """
+        """Loads animation frames to dictionary
 
         :param path:
         :type path:
         :return:
         :rtype:
         """
+        # Lists all the subdirectories in specified path
         animation_states = os.listdir(path)
         for state in animation_states:
             substates = os.listdir(path + state)
@@ -86,7 +87,7 @@ class Player(pygame.sprite.Sprite):
                 self.animation_database[key].append(animation_image)
 
     def moving(self):
-        """
+        """Player movement detection
 
         :return:
         :rtype:
@@ -97,33 +98,25 @@ class Player(pygame.sprite.Sprite):
             return False
 
     def animation(self):
-        '''Instead of loading animation for left/right, we can load for one, and then flip(image.flip()) the image'''
         """
 
         :return:
         :rtype:
         """
         if self.moving():
-            self.player_index += 1.0 / 15  # how fast animation changes
-            if self.player_index >= 4:
+            self.player_index += 1.0 / 15  # change factor of animation
+            if self.player_index >= 4: # 4 frames per movement
                 self.player_index = 0
             if self.direction == 'LEFT':
-
                 self.image = self.animation_database["WALK_LEFT"][int(self.player_index)]
-
             elif self.direction == 'UP':
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
             elif self.direction == "RIGHT":
-                self.image = pygame.transform.flip(self.animation_database["WALK_LEFT"][int(self.player_index)], True,
-                                                   False)
-
-                # self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
+                self.image = pygame.transform.flip(self.animation_database["WALK_LEFT"][int(self.player_index)], True,False)
             elif self.direction == "DOWN":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
         else:  # if idle
-            self.player_index += 1.0 / 15  # how fast animation changes
+            self.player_index += 1.0 / 15
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
@@ -137,6 +130,7 @@ class Player(pygame.sprite.Sprite):
 
     def weapon_attack(self, enemy):
         pass
+
     def attack_collision(self, collision_obj):  # do zmiany
         """
 
@@ -174,7 +168,7 @@ class Player(pygame.sprite.Sprite):
         # self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
 
     def update(self):
-        """
+        """Update state of the player
 
         :return:
         :rtype:
@@ -198,9 +192,8 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
-    def render(self):# Render weapon
-
-        """
+    def render(self):  # Render weapon
+        """Render player's gun
 
         :return:
         :rtype:
@@ -212,7 +205,7 @@ class Player(pygame.sprite.Sprite):
 
         # pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
-    def gun_point(self):  # zmienic, bo brzydko
+    def gun_point(self):
         """
 
         :return:
