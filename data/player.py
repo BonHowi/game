@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
                                    "WALK_RIGHT": []}
 
         self.image_size = (75, 75)
-        self.image = pygame.image.load("player/idle/right_idle0.png").convert_alpha()
+        self.image = pygame.image.load("../assets/player/idle/right_idle0.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.mask.get_rect(center=self.game.screen.get_rect().center)
@@ -46,7 +46,7 @@ class Player(pygame.sprite.Sprite):
         self.gun_length = 15
         self.gun_width = 5
         # Animation loading
-        self.load_animation('player/')
+        self.load_animation('../assets/player/')
         # hitbox
         self.hitbox = self.rect_mask
 

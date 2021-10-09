@@ -32,7 +32,7 @@ class Weapon(pygame.sprite.Sprite):
 
     def load_image(self):  # Change name of the function
         """Load weapon image and initialize instance variables"""
-        self.original_image = pygame.image.load('weapon/' + self.name + '.png')
+        self.original_image = pygame.image.load('../assets/weapon/' + self.name + '.png')
         self.original_image = pygame.transform.scale(self.original_image, (75, 75))
         self.mask = pygame.mask.from_surface(self.original_image)
         self.rect = self.mask.get_rect()

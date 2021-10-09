@@ -7,7 +7,9 @@ from bullet import Bullet
 from item_bar import Items_bar
 from particles import DeathParticle
 from math import sqrt, pow
+import sys
 
+sys.path.insert(0, 'C:/Users/Adam/Documents/GitHub/game/data/assets')
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
@@ -24,7 +26,7 @@ class Game:
         self.BLUE = (0, 0, 255)
         self.BROWN = (185, 100, 0)
         self.KATANA_COLOR = (169, 169, 169)
-        self.myfont = pygame.font.Font('font/Minecraft.ttf', 15)
+        self.myfont = pygame.font.Font('../assets/font/Minecraft.ttf', 15)
         self.all_enemy = None
         self.all_environment = None
         self.all_wall = None
@@ -115,6 +117,9 @@ class Game:
             bullet.draw()
 
     def input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_w]:
             self.player.direction = 'UP'
@@ -199,9 +204,7 @@ class Game:
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
+
             # Get the input from the player
             self.input()
             self.player.attacked = False
