@@ -1,5 +1,6 @@
 import pygame
 from pygame.math import Vector2
+from utils import get_mask_rect
 
 
 class Weapon(pygame.sprite.Sprite):
@@ -22,21 +23,13 @@ class Weapon(pygame.sprite.Sprite):
         self.offset = Vector2(6, -34)
         self.angle_change_factor = 3.5 * 1.5
 
-    def get_mask_rect(self, surf, top=0, left=0):
-        """Returns minimal bounding rectangle around image"""
-        surf_mask = pygame.mask.from_surface(surf)
-        rect_list = surf_mask.get_bounding_rects()
-        surf_mask_rect = rect_list[0].unionall(rect_list)
-        surf_mask_rect.move_ip(top, left)
-        return surf_mask_rect
-
     def load_image(self):  # Change name of the function
         """Load weapon image and initialize instance variables"""
         self.original_image = pygame.image.load('../assets/weapon/' + self.name + '.png')
         self.original_image = pygame.transform.scale(self.original_image, (75, 75))
         self.mask = pygame.mask.from_surface(self.original_image)
         self.rect = self.mask.get_rect()
-        self.rect_mask = self.get_mask_rect(self.original_image, *self.rect.topleft)
+        self.rect_mask = get_mask_rect(self.original_image, *self.rect.topleft)
         self.hitbox = self.rect_mask
         self.image = self.original_image
 
@@ -51,7 +44,7 @@ class Weapon(pygame.sprite.Sprite):
             pass
 
     def rotate(self):
-        """Rotate the image of the sprite around a pivot point."""
+        """Rotate the image around a pivot point."""
 
         # Termination condition
         if self.angle >= 180 or self.angle < 0:
@@ -60,7 +53,7 @@ class Weapon(pygame.sprite.Sprite):
             self.image = self.original_image.copy()
             self.rect = self.image.get_rect(
                 center=self.game.player.hitbox.midright + self.offset)  # offset to fit as close as possible
-            self.rect_mask = self.get_mask_rect(self.image, *self.rect.topleft)
+            self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
         else:
             # Different angle and position, depending on player's direction
             if self.game.player.direction in ("RIGHT", "UP", "DOWN"):
@@ -76,7 +69,7 @@ class Weapon(pygame.sprite.Sprite):
             # Create a new rect with the center of the sprite + the offset.
             self.rect = self.image.get_rect(center=position + offset_rotated)
 
-            self.rect_mask = self.get_mask_rect(self.image, *self.rect.topleft)
+            self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
             # Update angle
             self.angle += self.angle_change_factor
             # Update mask
@@ -99,7 +92,7 @@ class Weapon(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(
                     center=self.game.player.hitbox.midleft + offset_new)
 
-            self.rect_mask = self.get_mask_rect(self.image, *self.rect.topleft)
+            self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
             self.mask = pygame.mask.from_surface(self.image)
         # Draw hitbox and rect
         # pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, 1)
