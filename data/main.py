@@ -263,6 +263,7 @@ class Game:
 
             self.draw_groups()
             # Player Shadow
+            """dupa chuj w cyce"""
             shadow = pygame.Surface((50, 30))
             shadow.set_alpha(127)
             shadow.fill((151, 237, 97))
