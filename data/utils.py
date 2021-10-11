@@ -1,6 +1,23 @@
 import pygame
 
 
+
+
+
+def collided2(sprite, other):
+    """Check if the hitbox of one sprite collides with rect of another sprite."""
+    return sprite.hitbox.colliderect(other.hitbox)
+
+
+def get_mask_rect(surf, top=0, left=0):
+    """Returns minimal bounding rectangle of an image"""
+    surf_mask = pygame.mask.from_surface(surf)
+    rect_list = surf_mask.get_bounding_rects()
+    surf_mask_rect = rect_list[0].unionall(rect_list)
+    surf_mask_rect.move_ip(top, left)
+    return surf_mask_rect
+
+
 class PlayerInfo:
     def __init__(self, game, pos):
         self.game = game
@@ -21,7 +38,7 @@ class PlayerInfo:
         self.damage_text_rect = None
         self.time_text_rect = None
         self.enemy_count_text_rect = None
-        self.score_img = pygame.image.load('score.png')
+        self.score_img = pygame.image.load('../assets/score.png')
         self.score_img = pygame.transform.scale(self.score_img, (200, 100))
 
     def render(self):

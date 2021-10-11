@@ -22,22 +22,17 @@ class Items_bar(pygame.sprite.Sprite):
         :return:
         :rtype:
         """
-        # pygame.draw.rect(self.game.screen, self.game.WHITE, (20, 540, 50, 50))
-
-        sword_image = pygame.image.load("weapon/sword.png")
+        sword_image = pygame.image.load("../assets/weapon/sword.png")
         sword_image = pygame.transform.scale(sword_image, (70, 70))
         self.game.screen.blit(sword_image, (90, 500))
 
-        kij_image = pygame.image.load("weapon/kij.png")
+        kij_image = pygame.image.load("../assets/weapon/kij.png")
         kij_image = pygame.transform.scale(kij_image, (70, 70))
         self.game.screen.blit(kij_image, (50, 500))
 
-        katana_image = pygame.image.load("weapon/katana.png")
+        katana_image = pygame.image.load("../assets/weapon/katana.png")
         katana_image = pygame.transform.scale(katana_image, (100, 100))
         self.game.screen.blit(katana_image, (-10, 500))
-
-        # pygame.draw.rect(self.game.screen, self.game.BLUE, (80, 540, 50, 50))
-        # pygame.draw.rect(self.game.screen, self.game.BLACK, (140, 540, 50, 50))
 
         if self.weapon == 'katana':
             katana_image = pygame.image.load("weapon/katana_picked.png")

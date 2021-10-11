@@ -12,7 +12,7 @@ class MapLoader:
         self.create_map_env()
 
     def load_map(self):
-        with open('maps/map1.txt') as file:
+        with open('../maps/map1.txt') as file:
             self.map = [list(line)[:-1] for line in file.readlines()]
         self.map.reverse()
         for idx, element in enumerate(self.map):

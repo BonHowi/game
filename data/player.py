@@ -1,6 +1,9 @@
 import pygame
 import os
+
+import utils
 from weapon import Weapon
+from utils import get_mask_rect
 from Entity import Entity
 
 
@@ -17,11 +20,11 @@ class Player(pygame.sprite.Sprite):
                                    "WALK_RIGHT": []}
 
         self.image_size = (75, 75)
-        self.image = pygame.image.load("player/idle/right_idle0.png")
+        self.image = pygame.image.load("../assets/player/idle/right_idle0.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.mask.get_rect(center=self.game.screen.get_rect().center)
-        self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)  # Get rect of some size as 'image'.
+        self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)  # Get rect of some size as 'image'.
         self.velocity = [0, 0]
         self.old_velocity = [0, 0]
         self.speed = 100
@@ -43,37 +46,19 @@ class Player(pygame.sprite.Sprite):
         self.gun_length = 15
         self.gun_width = 5
         # Animation loading
-        self.load_animation('player/')
+        self.load_animation('../assets/player/')
         # hitbox
         self.hitbox = self.rect_mask
-        self.dupa = True
-
-    def getMaskRect(self, surf, top=0, left=0):
-        """
-
-        :param surf:
-        :type surf:
-        :param top:
-        :type top:
-        :param left:
-        :type left:
-        :return:
-        :rtype:
-        """
-        surf_mask = pygame.mask.from_surface(surf)
-        rect_list = surf_mask.get_bounding_rects()
-        surf_mask_rect = rect_list[0].unionall(rect_list)
-        surf_mask_rect.move_ip(top, left)
-        return surf_mask_rect
 
     def load_animation(self, path):
-        """
+        """Loads animation frames to dictionary
 
         :param path:
         :type path:
         :return:
         :rtype:
         """
+        # Lists all the subdirectories in specified path
         animation_states = os.listdir(path)
         for state in animation_states:
             substates = os.listdir(path + state)
@@ -86,7 +71,7 @@ class Player(pygame.sprite.Sprite):
                 self.animation_database[key].append(animation_image)
 
     def moving(self):
-        """
+        """Player movement detection
 
         :return:
         :rtype:
@@ -97,33 +82,26 @@ class Player(pygame.sprite.Sprite):
             return False
 
     def animation(self):
-        '''Instead of loading animation for left/right, we can load for one, and then flip(image.flip()) the image'''
         """
 
         :return:
         :rtype:
         """
         if self.moving():
-            self.player_index += 1.0 / 15  # how fast animation changes
-            if self.player_index >= 4:
+            self.player_index += 1.0 / 15  # change factor of animation
+            if self.player_index >= 4:  # 4 frames per movement
                 self.player_index = 0
             if self.direction == 'LEFT':
-
                 self.image = self.animation_database["WALK_LEFT"][int(self.player_index)]
-
             elif self.direction == 'UP':
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
             elif self.direction == "RIGHT":
                 self.image = pygame.transform.flip(self.animation_database["WALK_LEFT"][int(self.player_index)], True,
                                                    False)
-
-                # self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
-
             elif self.direction == "DOWN":
                 self.image = self.animation_database["WALK_RIGHT"][int(self.player_index)]
         else:  # if idle
-            self.player_index += 1.0 / 15  # how fast animation changes
+            self.player_index += 1.0 / 15
             if self.player_index >= 4:
                 self.player_index = 0
             if self.direction == 'LEFT':
@@ -137,6 +115,7 @@ class Player(pygame.sprite.Sprite):
 
     def weapon_attack(self, enemy):
         pass
+
     def attack_collision(self, collision_obj):  # do zmiany
         """
 
@@ -174,7 +153,7 @@ class Player(pygame.sprite.Sprite):
         # self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
 
     def update(self):
-        """
+        """Update state of the player
 
         :return:
         :rtype:
@@ -198,9 +177,8 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
-    def render(self):# Render weapon
-
-        """
+    def render(self):  # Render weapon
+        """Render player's gun
 
         :return:
         :rtype:
@@ -212,7 +190,7 @@ class Player(pygame.sprite.Sprite):
 
         # pygame.draw.lines(self.game.screen, (255, 255, 255), False, (start, end), width=self.gun_width)
 
-    def gun_point(self):  # zmienic, bo brzydko
+    def gun_point(self):
         """
 
         :return:

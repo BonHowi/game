@@ -50,7 +50,7 @@ class Enemy(pygame.sprite.Sprite):
         self.color = color
         enemy_side = int(self.set_side())
         self.image_size = (15 * enemy_side, 15 * enemy_side)
-        self.image = pygame.image.load("goblin/idle/right_idle0.png").convert_alpha()
+        self.image = pygame.image.load("../assets/goblin/idle/right_idle0.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.mask.get_rect()
@@ -62,7 +62,7 @@ class Enemy(pygame.sprite.Sprite):
         self.priority = 100
         self.step = 400
         self.direction = "UP"
-        self.load_animation('goblin/')
+        self.load_animation('../assets/goblin/')
         self.hitbox = None
         self.hurt = False
         self.counter = 0
