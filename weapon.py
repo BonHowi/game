@@ -21,7 +21,7 @@ class Weapon(pygame.sprite.Sprite):
         self.load_image()
         self.angle = 0
         self.offset = Vector2(6, -34)
-        self.angle_change_factor = 3.5 * 1.5
+        self.angle_change_factor = 8.5 * 1.5
 
     def getMaskRect(self, surf, top=0, left=0):
 
