@@ -51,6 +51,7 @@ class Game:
         self.flame = None
         self.particle_surface = None
         self.running = True
+        self.zoom_level = 1.0
 
     def init_all(self):
         self.wall_list = []
@@ -72,7 +73,7 @@ class Game:
         self.player_info = PlayerInfo(self, (800, 10))
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(1):
+        for _ in range(0):
             self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -160,6 +161,12 @@ class Game:
             self.player.attacking = True
         if pressed[pygame.K_r]:
             self.game_over()
+        if pressed[pygame.K_q]:
+            self.zoom_level += 0.01
+            print(self.zoom_level)
+        if pressed[pygame.K_e]:
+            self.zoom_level -= 0.01
+            print(self.zoom_level)
 
         if pressed[pygame.K_1]:
             if self.player.weapon.name != 'katana':
@@ -193,8 +200,16 @@ class Game:
                 enemy.update()
                 enemy.velocity = [0, 0]
 
+    def main_menu(self):
+        pass
+
     def run_game(self):
         self.init_all()
+
+        sky = pygame.Surface((1200, 200))
+        cloud = pygame.image.load('../assets/various_pngs/cloud1.png').convert_alpha()
+        cloud = pygame.transform.scale(cloud, (150, 150))
+
 
         while self.running:
 
@@ -202,8 +217,16 @@ class Game:
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
+            self.screen.fill((151, 237, 97))
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
+            sky.fill((146, 202, 255))
+            sky.blit(cloud, (500 + int(self.counter/5), 45))
+            sky.blit(cloud, (250+ int(self.counter/5), 10))
+            sky.blit(cloud, (750+ int(self.counter/5), 45))
+            sky.blit(cloud, (1000+ int(self.counter/5), 10))
+            sky.blit(cloud, (0+ int(self.counter/5), 45))
+            self.screen.blit(sky, (0, 0))
 
             # Get the input from the player
             self.input()
@@ -239,6 +262,13 @@ class Game:
                     bullet.collision(block)
 
             self.draw_groups()
+            # Player Shadow
+            shadow = pygame.Surface((50, 30))
+            shadow.set_alpha(127)
+            shadow.fill((151, 237, 97))
+            pygame.draw.ellipse(self.screen, (0, 0, 0), (*self.player.hitbox.bottomleft, 50, 30))
+            self.screen.blit(shadow, self.player.hitbox.bottomleft)
+
             # Update and draw particles,
             self.update_particles()
             self.draw_particles()

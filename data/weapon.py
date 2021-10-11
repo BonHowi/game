@@ -18,15 +18,17 @@ class Weapon(pygame.sprite.Sprite):
         self.rect_mask = None
         self.hitbox = None
         self.game = game
+        self.image_size = (75, 75)
         self.load_image()
         self.angle = 0
         self.offset = Vector2(6, -34)
         self.angle_change_factor = 3.5 * 1.5
 
+
     def load_image(self):  # Change name of the function
         """Load weapon image and initialize instance variables"""
         self.original_image = pygame.image.load('../assets/weapon/' + self.name + '.png')
-        self.original_image = pygame.transform.scale(self.original_image, (75, 75))
+        self.original_image = pygame.transform.scale(self.original_image, self.image_size)
         self.mask = pygame.mask.from_surface(self.original_image)
         self.rect = self.mask.get_rect()
         self.rect_mask = get_mask_rect(self.original_image, *self.rect.topleft)
@@ -43,9 +45,12 @@ class Weapon(pygame.sprite.Sprite):
         if self.rect_mask.colliderect(enemy.hitbox):
             pass
 
+    def update_weapon_size(self):
+        self.image_size = (75, 75)
+        self.image_size = tuple(int(self.game.zoom_level * x) for x in self.image_size)
+
     def rotate(self):
         """Rotate the image around a pivot point."""
-
         # Termination condition
         if self.angle >= 180 or self.angle < 0:
             self.game.player.attacking = False
@@ -92,6 +97,7 @@ class Weapon(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(
                     center=self.game.player.hitbox.midleft + offset_new)
 
+            self.image = pygame.transform.scale(self.image, self.image_size)
             self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
             self.mask = pygame.mask.from_surface(self.image)
         # Draw hitbox and rect
