@@ -24,6 +24,8 @@ class Weapon(pygame.sprite.Sprite):
         self.angle = 0
         self.offset = Vector2(0, -50)
         self.angle_change_factor = 8.5 * 1.5
+        self.counter = 0
+        self.swing_side = 1
 
     def load_image(self):  # Change name of the function
         """Load weapon image and initialize instance variables"""
@@ -91,19 +93,17 @@ class Weapon(pygame.sprite.Sprite):
         mx, my = pygame.mouse.get_pos()
         dx = mx - self.game.player.hitbox.centerx
         dy = my - self.game.player.hitbox.centery
-        #dx = mx - self.rect.centerx
-       # dy = my - self.rect.centery
-        self.angle = (180 / math.pi) * math.atan2(-dy, dx)
-        pygame.draw.line(self.game.screen, (255, 255, 255), (mx, my), self.game.player.hitbox.center, 3)
-        if self.game.player.attacking:
-            pass
-        angle = self.angle
-        print(angle)
+        if self.swing_side == 1:
+            self.angle = (180 / math.pi) * math.atan2(-self.swing_side * dy, dx)
+        else:
+            self.angle = (180 / math.pi) * math.atan2(self.swing_side * dy, dx) - 200
+
+
         position = self.game.player.hitbox.center
         # Rotate the image.
-        self.image = pygame.transform.rotozoom(self.original_image, angle, 1)
+        self.image = pygame.transform.rotozoom(self.original_image, self.angle, 1)
         # Rotate the offset vector.
-        offset_rotated = self.offset.rotate(-angle)
+        offset_rotated = self.offset.rotate(-self.angle)
         # Create a new rect with the center of the sprite + the offset.
         self.rect = self.image.get_rect(center=position + offset_rotated)
 
@@ -112,10 +112,32 @@ class Weapon(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
+
         """Update weapon position and state"""
         # If player attacks with weapon, it rotates
+        if self.counter == 10:
+            self.game.player.attacking = False
+            self.game.player.attacked = True
+            self.counter = 0
 
-        self.rotate()
+        if self.game.player.attacking and self.counter <= 10:
+            self.angle += 10 * self.swing_side
+            angle = self.angle
+            angle *= self.swing_side
+            position = self.game.player.hitbox.center
+            # Rotate the image.
+            self.image = pygame.transform.rotozoom(self.original_image, self.angle, 1)
+            # Rotate the offset vector.
+            offset_rotated = self.offset.rotate(-self.angle)
+            # Create a new rect with the center of the sprite + the offset.
+            self.rect = self.image.get_rect(center=position + offset_rotated)
+            self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
+            # Update mask
+            self.mask = pygame.mask.from_surface(self.image)
+            self.counter += 0.5
+
+        else:
+            self.rotate()
 
         # else, it just follows the player
         # else:
@@ -135,5 +157,5 @@ class Weapon(pygame.sprite.Sprite):
         #     self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
         #     self.mask = pygame.mask.from_surface(self.image)
         # Draw hitbox and rect
-        pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, 1)
-        pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)
+        # pygame.draw.rect(self.game.screen, self.game.RED, self.rect_mask, 1)
+        # pygame.draw.rect(self.game.screen, self.game.GREEN, self.rect, 1)

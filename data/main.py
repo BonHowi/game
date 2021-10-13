@@ -156,10 +156,13 @@ class Game:
 
         if pygame.mouse.get_pressed()[0] and self.counter > 60:
             self.player.attacking = True
+            self.player.attacked = True
+           # self.player.weapon.counter = 0
+            self.player.weapon.swing_side *= (-1)#self.player.weapon.swing_side * (-1) + 1
             # bullet = Bullet(self, self.player.gun_point()[0],
             #                 self.player.gun_point()[1])  # adding bullet at the end of rifle
             # self.bullet_list.add(bullet)
-            # self.counter = 0
+            self.counter = 0
         if pressed[pygame.K_SPACE]:
             self.player.attacking = True
         if pressed[pygame.K_r]:
@@ -211,7 +214,6 @@ class Game:
 
         while self.running:
 
-
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
@@ -223,7 +225,6 @@ class Game:
 
             # Get the input from the player
             self.input()
-            self.player.attacked = False
 
             for enemy in self.enemy_list:  # Why not self.all_enemy???
                 enemy.move(dt)
@@ -268,7 +269,7 @@ class Game:
             self.player_info.render()
 
             # Draw eq
-            self.items_menu.draw()
+            #self.items_menu.draw()
             self.counter += 1
 
             pygame.display.update()

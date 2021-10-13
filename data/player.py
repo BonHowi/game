@@ -180,11 +180,10 @@ class Player(pygame.sprite.Sprite):
         if self.current_stamina < self.max_stamina:
             self.current_stamina += 10
 
-        self.attacked = False
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
-        pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
+        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):  # Render weapon
         """Render player's gun
