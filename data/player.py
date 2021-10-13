@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
         # Player Attacking
         self.attacking = False
         self.hasWeapon = True
-        self.weapon = Weapon(self.game, 10, 'katana', 2, self.game.RED,
+        self.weapon = Weapon(self.game, 10, 'sword', 2, self.game.RED,
                              self.game.weapon_group)  # usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000

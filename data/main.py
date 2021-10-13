@@ -5,7 +5,7 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from bullet import Bullet
 from item_bar import Items_bar
-from particles import DeathParticle
+from particles import DeathParticle, Fire
 from math import sqrt, pow
 import sys
 
@@ -108,10 +108,12 @@ class Game:
         self.weapon_group.update()
 
     def draw_groups(self):
-        self.weapon_group.draw(self.screen)
+
         self.all_environment.draw(self.screen)
         self.all_enemy.draw(self.screen)
+
         self.all_player.draw(self.screen)
+        self.weapon_group.draw(self.screen)
         self.all_wall.draw(self.screen)
         self.player.render()
         for bullet in self.bullet_list:
@@ -153,10 +155,11 @@ class Game:
             self.player.set_velocity(vel_list)
 
         if pygame.mouse.get_pressed()[0] and self.counter > 60:
-            bullet = Bullet(self, self.player.gun_point()[0],
-                            self.player.gun_point()[1])  # adding bullet at the end of rifle
-            self.bullet_list.add(bullet)
-            self.counter = 0
+            self.player.attacking = True
+            # bullet = Bullet(self, self.player.gun_point()[0],
+            #                 self.player.gun_point()[1])  # adding bullet at the end of rifle
+            # self.bullet_list.add(bullet)
+            # self.counter = 0
         if pressed[pygame.K_SPACE]:
             self.player.attacking = True
         if pressed[pygame.K_r]:
@@ -206,27 +209,17 @@ class Game:
     def run_game(self):
         self.init_all()
 
-        sky = pygame.Surface((1200, 200))
-        cloud = pygame.image.load('../assets/various_pngs/cloud1.png').convert_alpha()
-        cloud = pygame.transform.scale(cloud, (150, 150))
-
-
         while self.running:
+
 
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
-            self.screen.fill((151, 237, 97))
+            self.screen.fill((0, 0, 0))
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-            sky.fill((146, 202, 255))
-            sky.blit(cloud, (500 + int(self.counter/5), 45))
-            sky.blit(cloud, (250+ int(self.counter/5), 10))
-            sky.blit(cloud, (750+ int(self.counter/5), 45))
-            sky.blit(cloud, (1000+ int(self.counter/5), 10))
-            sky.blit(cloud, (0+ int(self.counter/5), 45))
-            self.screen.blit(sky, (0, 0))
+
 
             # Get the input from the player
             self.input()
@@ -262,13 +255,6 @@ class Game:
                     bullet.collision(block)
 
             self.draw_groups()
-            # Player Shadow
-            """dupa chuj w cyce"""
-            shadow = pygame.Surface((50, 30))
-            shadow.set_alpha(127)
-            shadow.fill((151, 237, 97))
-            pygame.draw.ellipse(self.screen, (0, 0, 0), (*self.player.hitbox.bottomleft, 50, 30))
-            self.screen.blit(shadow, self.player.hitbox.bottomleft)
 
             # Update and draw particles,
             self.update_particles()
