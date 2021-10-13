@@ -166,7 +166,8 @@ class Player(pygame.sprite.Sprite):
         self.animation()
         # Code below: Demonstrating zooming
         self.player_size()
-        self.image = pygame.transform.scale(self.image, self.image_size)
+        if self.image_size > (10, 10):
+            self.image = pygame.transform.scale(self.image, self.image_size)
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
 
