@@ -47,7 +47,7 @@ class Game:
         self.items_menu = None
         self.bg = None
         self.floor = None
-        self.entity_size = (75, 75)  # size of the characters(player, enemy)
+        self.entity_size = (64, 64)  # size of the characters(player, enemy)
         self.flame = None
         self.particle_surface = None
         self.running = True
@@ -73,7 +73,7 @@ class Game:
         self.player_info = PlayerInfo(self, (800, 10))
         self.map = MapLoader(self)
         self.enemy_list = []
-        for _ in range(0):
+        for _ in range(2):
             self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -154,7 +154,7 @@ class Game:
         else:
             self.player.set_velocity(vel_list)
 
-        if pygame.mouse.get_pressed()[0] and self.counter > 60:
+        if pygame.mouse.get_pressed()[0] and self.counter > 30:
             self.player.attacking = True
             self.player.attacked = True
            # self.player.weapon.counter = 0
@@ -250,6 +250,7 @@ class Game:
                     self.player.hp -= 10
                 if pygame.sprite.collide_mask(self.player.weapon, enemy):
                     enemy.hurt = True
+                    enemy.hp -= self.player.weapon.damage
 
             for block in self.wall_list:
                 for bullet in self.bullet_list:

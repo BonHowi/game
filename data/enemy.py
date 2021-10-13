@@ -127,7 +127,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.counter >= 4:
             self.hurt = False
             self.counter = 0
-        if self.hurt and self.counter < 4:  # if hurt
+        if self.hurt and self.counter <= 4:  # if hurt
             if self.player_index >= 4:
                 self.player_index = 0
             self.image = self.animation_database["HURT_RIGHT"][2]  # just the red animation

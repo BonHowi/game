@@ -38,7 +38,6 @@ class Weapon(pygame.sprite.Sprite):
         self.image = self.original_image
 
     def collision(self, collision_obj):
-
         if self.rect_mask.colliderect(collision_obj.rect):
             collision_obj.assign_weapon(self)  # if collided, assigning weapon to player
 
@@ -94,10 +93,9 @@ class Weapon(pygame.sprite.Sprite):
         dx = mx - self.game.player.hitbox.centerx
         dy = my - self.game.player.hitbox.centery
         if self.swing_side == 1:
-            self.angle = (180 / math.pi) * math.atan2(-self.swing_side * dy, dx)
+            self.angle = (180 / math.pi) * math.atan2(-self.swing_side * dy, dx) - 90
         else:
             self.angle = (180 / math.pi) * math.atan2(self.swing_side * dy, dx) - 200
-
 
         position = self.game.player.hitbox.center
         # Rotate the image.
@@ -112,7 +110,6 @@ class Weapon(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
-
         """Update weapon position and state"""
         # If player attacks with weapon, it rotates
         if self.counter == 10:
@@ -120,6 +117,7 @@ class Weapon(pygame.sprite.Sprite):
             self.game.player.attacked = True
             self.counter = 0
 
+        # Animation/mask hitbox
         if self.game.player.attacking and self.counter <= 10:
             self.angle += 10 * self.swing_side
             angle = self.angle

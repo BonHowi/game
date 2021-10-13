@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
                                    "WALK_LEFT": [],
                                    "WALK_RIGHT": []}
 
-        self.image_size = (75, 75)
+        self.image_size = (64, 64)
         self.image = pygame.image.load("../assets/player/idle/right_idle0.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, self.image_size)
         self.mask = pygame.mask.from_surface(self.image)
@@ -182,8 +182,8 @@ class Player(pygame.sprite.Sprite):
 
         self.hitbox = self.rect_mask
         self.rect.midbottom = self.hitbox.midbottom
-        #pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
-        #pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
+        pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):  # Render weapon
         """Render player's gun
