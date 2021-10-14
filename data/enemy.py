@@ -131,7 +131,7 @@ class Enemy(pygame.sprite.Sprite):
             if self.player_index >= 4:
                 self.player_index = 0
             self.image = self.animation_database["HURT_RIGHT"][2]  # just the red animation
-            self.player_index += 0.035
+            #self.player_index += 0.035
             self.counter += 0.2
 
         elif self.moving():  # if moving
@@ -169,22 +169,27 @@ class Enemy(pygame.sprite.Sprite):
         return enemy_side
 
     def spawn(self):
-        """
-
-        :return:
-        :rtype:
-        """
-        spawned = False
-        while not spawned:
-            spawn_point = self.game.map.spawn_points[random.randint(0, len(self.game.map.spawn_points) - 1)]
-            if spawn_point[1]:
-                spawn_point_y = spawn_point[0]
-                spawn_point_x = spawn_point[1][random.randint(0, len(spawn_point[1]) - 1)]
-                self.rect.x = spawn_point_x
-                self.rect.y = spawn_point_y
-                self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
-                self.hitbox = self.rect_mask
-                spawned = True
+        self.rect.x = 250
+        self.rect.y = 100
+        self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
+        self.hitbox = self.rect_mask
+        # """
+        #
+        # :return:
+        # :rtype:
+        # """
+        # spawned = False
+        # while not spawned:
+        #     spawn_point = self.game.map.spawn_points[random.randint(0, len(self.game.map.spawn_points) - 1)]
+        #     if spawn_point[1]:
+        #         spawn_point_y = spawn_point[0]
+        #         spawn_point_x = spawn_point[1][random.randint(0, len(spawn_point[1]) - 1)]
+        #         self.rect.x = spawn_point_x
+        #         self.rect.y = spawn_point_y
+        #
+        #         self.rect_mask = self.getMaskRect(self.image, *self.rect.topleft)
+        #         self.hitbox = self.rect_mask
+        #         spawned = True
 
     def update(self):
         """
@@ -194,11 +199,8 @@ class Enemy(pygame.sprite.Sprite):
         """
 
         self.animation()
-
         self.hitbox = pygame.Rect(self.rect.x + 19, self.rect.y + 26, 37, 52)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect_mask, 1)
-        pygame.draw.rect(self.game.screen, (0, 255, 0), self.hitbox, 1)
+
 
     def move(self, dtick):
         """
@@ -263,8 +265,7 @@ class Enemy(pygame.sprite.Sprite):
         :return:
         :rtype:
         """
-        if self.rect.colliderect(collided):
-            self.image.fill(self.game.RED)
+        pass
 
     def draw_health(self, surf):
         """

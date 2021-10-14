@@ -153,7 +153,7 @@ class Player(pygame.sprite.Sprite):
         # self.velocity = [sum(x) for x in zip(self.velocity, velocity)]
 
     def player_size(self):
-        self.image_size = (75, 75)
+        self.image_size = (64, 64)
         self.image_size = tuple(int(self.game.zoom_level * x) for x in self.image_size)
 
     def update(self):
@@ -166,9 +166,8 @@ class Player(pygame.sprite.Sprite):
         self.animation()
         # Code below: Demonstrating zooming
         self.player_size()
-        if self.image_size > (10, 10):
-            self.image = pygame.transform.scale(self.image, self.image_size)
-        self.rect = self.image.get_rect()
+
+        #self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect.clamp_ip(self.game.screen_rect)
@@ -177,11 +176,11 @@ class Player(pygame.sprite.Sprite):
         self.rect_mask.clamp_ip(self.game.screen_rect)
         self.rect_mask.move_ip(*self.velocity)
 
-        if self.current_stamina < self.max_stamina:
-            self.current_stamina += 10
-
         self.hitbox = self.rect_mask
-        self.rect.midbottom = self.hitbox.midbottom
+        self.hitbox.midbottom = self.rect.midbottom
+        #self.rect.midbottom = self.hitbox.midbottom
+
+        print(self.rect.y)
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 

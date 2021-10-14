@@ -93,7 +93,7 @@ class Weapon(pygame.sprite.Sprite):
         dx = mx - self.game.player.hitbox.centerx
         dy = my - self.game.player.hitbox.centery
         if self.swing_side == 1:
-            self.angle = (180 / math.pi) * math.atan2(-self.swing_side * dy, dx) - 90
+            self.angle = (180 / math.pi) * math.atan2(-self.swing_side * dy, dx)
         else:
             self.angle = (180 / math.pi) * math.atan2(self.swing_side * dy, dx) - 200
 
@@ -119,9 +119,8 @@ class Weapon(pygame.sprite.Sprite):
 
         # Animation/mask hitbox
         if self.game.player.attacking and self.counter <= 10:
-            self.angle += 10 * self.swing_side
-            angle = self.angle
-            angle *= self.swing_side
+            self.angle += 20 * self.swing_side
+
             position = self.game.player.hitbox.center
             # Rotate the image.
             self.image = pygame.transform.rotozoom(self.original_image, self.angle, 1)
@@ -132,10 +131,11 @@ class Weapon(pygame.sprite.Sprite):
             self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
             # Update mask
             self.mask = pygame.mask.from_surface(self.image)
-            self.counter += 0.5
+            self.counter += 1
 
         else:
             self.rotate()
+            self.game.player.attacked = True
 
         # else, it just follows the player
         # else:

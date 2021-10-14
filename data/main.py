@@ -8,6 +8,7 @@ from item_bar import Items_bar
 from particles import DeathParticle, Fire
 from math import sqrt, pow
 import sys
+from map import Spritesheet, Tile, TileMap
 
 sys.path.insert(0, 'C:/Users/Adam/Documents/GitHub/game/data/assets')
 successes, failures = pygame.init()
@@ -55,7 +56,6 @@ class Game:
 
     def init_all(self):
         self.wall_list = []
-
         self.all_enemy = pygame.sprite.Group()
         self.all_environment = pygame.sprite.Group()
         self.all_wall = pygame.sprite.Group()
@@ -71,9 +71,10 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-        self.map = MapLoader(self)
+        ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
+        self.map = TileMap(self, '../maps/map2.csv', ss)
         self.enemy_list = []
-        for _ in range(2):
+        for _ in range(1):
             self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
         for _ in range(0):
             self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
@@ -81,7 +82,8 @@ class Game:
             self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
 
         self.items_menu = Items_bar(self)
-
+        self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
+        self.bg.fill((0, 0, 0, 100))
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -156,9 +158,9 @@ class Game:
 
         if pygame.mouse.get_pressed()[0] and self.counter > 30:
             self.player.attacking = True
-            self.player.attacked = True
-           # self.player.weapon.counter = 0
-            self.player.weapon.swing_side *= (-1)#self.player.weapon.swing_side * (-1) + 1
+            self.player.attacked = False
+            # self.player.weapon.counter = 0
+            self.player.weapon.swing_side *= (-1)  # self.player.weapon.swing_side * (-1) + 1
             # bullet = Bullet(self, self.player.gun_point()[0],
             #                 self.player.gun_point()[1])  # adding bullet at the end of rifle
             # self.bullet_list.add(bullet)
@@ -191,20 +193,28 @@ class Game:
             particle.draw()
 
     def entity_wall_collision(self):
-        collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
-        for _ in collided_sprites_player:
-            velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
-            self.player.velocity = velocity
-            self.player.update()
-            self.player.velocity = [0, 0]
 
-        for enemy in self.all_enemy:
-            collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
-            for _ in collided_sprites_enemy:
-                velocity_en = [i * (-1) for i in enemy.old_velocity]
-                enemy.velocity = velocity_en
-                enemy.update()
-                enemy.velocity = [0, 0]
+        for wall in self.wall_list:
+            if self.player.rect.collidepoint(wall.rect.midtop):
+                self.player.rect.y = wall.rect.y - 64
+                #self.player.hitbox.y = wall.rect.y - 64
+
+        # collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
+        # for _ in collided_sprites_player:
+        #     pass
+
+            # velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
+            # self.player.velocity = velocity
+            # self.player.update()
+            # self.player.velocity = [0, 0]
+
+        # for enemy in self.all_enemy:
+        #     collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
+        #     for _ in collided_sprites_enemy:
+        #         velocity_en = [i * (-1) for i in enemy.old_velocity]
+        #         enemy.velocity = velocity_en
+        #         enemy.update()
+        #         enemy.velocity = [0, 0]
 
     def main_menu(self):
         pass
@@ -213,7 +223,6 @@ class Game:
         self.init_all()
 
         while self.running:
-
             dt = self.clock.tick(60)
             dt = dt / 400
             self.last_shot = pygame.time.get_ticks()
@@ -221,8 +230,7 @@ class Game:
             self.screen.fill((0, 0, 0))
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
-
-
+            self.map.draw_map(self.screen)
             # Get the input from the player
             self.input()
 
@@ -237,24 +245,20 @@ class Game:
                     self.enemy_list.remove(enemy)
                     self.particles.append(DeathParticle(self, *tuple(ti / 4 for ti in enemy.rect.center)))
 
-            if self.player.attacked:
-                self.player.current_stamina = 0
-
             # Updates elements in groups, see function
+
             self.update_groups()
-            # Detects collision of enemies and player with walls
             self.entity_wall_collision()
+
+            # Detects collision of enemies and player with walls
+
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
                     self.player.hp -= 10
-                if pygame.sprite.collide_mask(self.player.weapon, enemy):
+                if pygame.sprite.collide_mask(self.player.weapon, enemy) and self.player.attacking:
                     enemy.hurt = True
                     enemy.hp -= self.player.weapon.damage
-
-            for block in self.wall_list:
-                for bullet in self.bullet_list:
-                    bullet.collision(block)
 
             self.draw_groups()
 
@@ -263,15 +267,8 @@ class Game:
             self.draw_particles()
             self.screen.blit(pygame.transform.scale(self.particle_surface, (1200, 600)), (0, 0))
 
-            # Update and render HUD
-            self.fps_counter.update()
-            self.fps_counter.render()
-            self.player_info.update()
-            self.player_info.render()
-
-            # Draw eq
-            #self.items_menu.draw()
             self.counter += 1
+            self.screen.blit(self.bg, (0,0))
 
             pygame.display.update()
 
