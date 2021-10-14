@@ -156,6 +156,13 @@ class Player(pygame.sprite.Sprite):
         self.image_size = (64, 64)
         self.image_size = tuple(int(self.game.zoom_level * x) for x in self.image_size)
 
+    def wall_collision(self):
+        for wall in self.game.wall_list:
+            test_rect = self.hitbox.move(*self.velocity)
+            if wall.rect.collidepoint(test_rect.midbottom) or wall.rect.collidepoint(
+                    test_rect.bottomleft) or wall.rect.collidepoint(test_rect.bottomright):
+                self.velocity = [0, 0]
+
     def update(self):
         """Update state of the player
 
@@ -167,20 +174,15 @@ class Player(pygame.sprite.Sprite):
         # Code below: Demonstrating zooming
         self.player_size()
 
-        #self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-
-        self.rect.clamp_ip(self.game.screen_rect)
+        # If players velocity will result in collision, change velocity to zero
+        self.wall_collision()
         self.rect.move_ip(*self.velocity)
-
-        self.rect_mask.clamp_ip(self.game.screen_rect)
         self.rect_mask.move_ip(*self.velocity)
 
         self.hitbox = self.rect_mask
         self.hitbox.midbottom = self.rect.midbottom
-        #self.rect.midbottom = self.hitbox.midbottom
 
-        print(self.rect.y)
         pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 

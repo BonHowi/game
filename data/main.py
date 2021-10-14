@@ -83,7 +83,7 @@ class Game:
 
         self.items_menu = Items_bar(self)
         self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
-        self.bg.fill((0, 0, 0, 100))
+        self.bg.fill((0, 0, 0, 50))
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -104,8 +104,9 @@ class Game:
     def update_groups(self):
         self.all_enemy.update()
         self.all_environment.update()
-        self.all_wall.update()
         self.all_player.update()
+        self.all_wall.update()
+
         self.bullet_list.update()
         self.weapon_group.update()
 
@@ -193,11 +194,16 @@ class Game:
             particle.draw()
 
     def entity_wall_collision(self):
-
         for wall in self.wall_list:
-            if self.player.rect.collidepoint(wall.rect.midtop):
-                self.player.rect.y = wall.rect.y - 64
+            if self.player.hitbox.colliderect(wall.rect):
+                self.player.velocity = [0, 0]
+                self.player.update()
+                #self.player.velocity = [-1 * i for i in self.player.velocity]
+                #self.player.rect.move_ip(*self.player.velocity)
                 #self.player.hitbox.y = wall.rect.y - 64
+            # if self.player.rect.collidepoint(wall.rect.midbottom):
+            #     self.player.rect.y = wall.rect.y + 64
+            #     print(self.counter)
 
         # collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
         # for _ in collided_sprites_player:
@@ -247,9 +253,9 @@ class Game:
 
             # Updates elements in groups, see function
 
-            self.update_groups()
-            self.entity_wall_collision()
 
+            self.update_groups()
+            #self.entity_wall_collision()
             # Detects collision of enemies and player with walls
 
 
