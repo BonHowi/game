@@ -27,7 +27,6 @@ class Game:
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.BROWN = (185, 100, 0)
-        self.KATANA_COLOR = (169, 169, 169)
         self.myfont = pygame.font.Font('../assets/font/Minecraft.ttf', 15)
         self.all_enemy = None
         self.all_environment = None
@@ -76,9 +75,9 @@ class Game:
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
         self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
-        self.map = TileMap(self, '../maps/map2.csv', self.ss)
-        # self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', ss)
-        #self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', ss)
+        #self.map = TileMap(self, '../maps/map2.csv', self.ss)
+        self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
+        self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', self.ss)
         self.enemy_list = []
         for _ in range(1):
             self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
@@ -218,6 +217,7 @@ class Game:
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
             self.map.draw_map(self.screen)
+            self.map2.draw_map(self.screen)
             #self.map2.draw_map(self.screen)
             # Get the input from the player
             self.input()
@@ -254,17 +254,19 @@ class Game:
             self.counter += 1
 
             #self.screen.blit(self.bg, (0, 0))
-            # Screen shake
-            x = random.randint(0, 6)
-            y = random.randint(0, 6)
-            # przechodzenie z mapy do mapy
-            for wall in self.entrance:
-                if self.player.hitbox.colliderect(wall.rect):
-                    self.entrance.pop()
-                    self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
-                    self.player.rect.y = 500
 
-            self.display.blit(self.screen, (0, 0))
+            # przechodzenie z mapy do mapy
+            # for wall in self.entrance:
+            #     if self.player.hitbox.colliderect(wall.rect):
+            #         self.entrance.pop()
+            #         self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
+            #         self.player.rect.y = 500
+            # Screen shake
+            x, y = 0, 0
+            if (self.player.attacking):
+                x = random.randint(-6, 6)
+                y = random.randint(-6, 6)
+            self.display.blit(self.screen, (x, y))
             pygame.display.update()
 
         pygame.quit()
