@@ -86,9 +86,12 @@ class TileMap():
             x = -32
             for tile in row:
                 tiles.append(Tile((*self.location(int(tile)), 16, 16), x, y, self.spritesheet))
-                if int(tile) in (135, 15, 17, 60, 61, 62, 63, 1):
+                if int(tile) == 75:
+                    self.game.entrance.append(tiles[-1])
+                if int(tile) in (135, 15, 17, 60, 61, 62, 63, 1, 18, 3, 46, 45, 40, 42, 47):
                     self.game.wall_list.append(tiles[-1])
                 # Move to next tile in current row
+
                 x += 64
 
             # Move to next row

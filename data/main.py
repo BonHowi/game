@@ -54,6 +54,7 @@ class Game:
         self.particle_surface = None
         self.running = True
         self.zoom_level = 1.0
+        self.entrance = []
 
     def init_all(self):
         self.wall_list = []
@@ -74,8 +75,10 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-        ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
-        self.map = TileMap(self, '../maps/map2.csv', ss)
+        self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
+        self.map = TileMap(self, '../maps/map2.csv', self.ss)
+        # self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', ss)
+        #self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', ss)
         self.enemy_list = []
         for _ in range(1):
             self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
@@ -87,7 +90,6 @@ class Game:
         self.items_menu = Items_bar(self)
         self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
         self.bg.fill((0, 0, 0, 100))
-
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -176,10 +178,8 @@ class Game:
             self.game_over()
         if pressed[pygame.K_q]:
             self.zoom_level += 0.01
-            print(self.zoom_level)
         if pressed[pygame.K_e]:
             self.zoom_level -= 0.01
-            print(self.zoom_level)
 
         if pressed[pygame.K_1]:
             if self.player.weapon.name != 'katana':
@@ -197,27 +197,14 @@ class Game:
         for particle in self.particles:
             particle.draw()
 
-    def entity_wall_collision(self):
-        pass
-        # collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
-        # for _ in collided_sprites_player:
-        #     pass
-
-        # velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
-        # self.player.velocity = velocity
-        # self.player.update()
-        # self.player.velocity = [0, 0]
-
-        # for enemy in self.all_enemy:
-        #     collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
-        #     for _ in collided_sprites_enemy:
-        #         velocity_en = [i * (-1) for i in enemy.old_velocity]
-        #         enemy.velocity = velocity_en
-        #         enemy.update()
-        #         enemy.velocity = [0, 0]
-
     def main_menu(self):
         pass
+    def next_level(self):
+        for wall in self.wall_list:
+            if wall.rect.collidepoint(self.player.rect.midbottom) or wall.rect.collidepoint(
+                    self.player.rect.bottomleft) or wall.rect.collidepoint(self.player.rect.bottomright):
+                pass
+
 
     def run_game(self):
         self.init_all()
@@ -231,6 +218,7 @@ class Game:
             self.particle_surface.fill((0, 0, 0, 0))
             self.player.old_velocity = self.player.velocity
             self.map.draw_map(self.screen)
+            #self.map2.draw_map(self.screen)
             # Get the input from the player
             self.input()
 
@@ -267,8 +255,15 @@ class Game:
 
             #self.screen.blit(self.bg, (0, 0))
             # Screen shake
-            # x = random.randint(0, 6)
-            # y = random.randint(0, 6)
+            x = random.randint(0, 6)
+            y = random.randint(0, 6)
+            # przechodzenie z mapy do mapy
+            for wall in self.entrance:
+                if self.player.hitbox.colliderect(wall.rect):
+                    self.entrance.pop()
+                    self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
+                    self.player.rect.y = 500
+
             self.display.blit(self.screen, (0, 0))
             pygame.display.update()
 
