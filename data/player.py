@@ -70,7 +70,7 @@ class Player(pygame.sprite.Sprite):
                 animation_image = pygame.transform.scale(animation_image, self.image_size)
                 self.animation_database[key].append(animation_image)
 
-    def moving(self):
+    def moving(self) -> bool:
         """Player movement detection
 
         :return:
@@ -155,15 +155,18 @@ class Player(pygame.sprite.Sprite):
     def player_size(self):
         self.image_size = (64, 64)
         self.image_size = tuple(int(self.game.zoom_level * x) for x in self.image_size)
+        self.image = pygame.transform.scale(self.image, self.image_size)
 
     def wall_collision(self):
+        """Sets player's velocity to zero if it would collide with walls
+           In other words, prevents player to collide with walls"""
         for wall in self.game.wall_list:
             test_rect = self.hitbox.move(*self.velocity)
             if wall.rect.collidepoint(test_rect.midbottom) or wall.rect.collidepoint(
                     test_rect.bottomleft) or wall.rect.collidepoint(test_rect.bottomright):
                 self.velocity = [0, 0]
 
-    def update(self):
+    def update(self) -> None:
         """Update state of the player
 
         :return:
@@ -173,9 +176,11 @@ class Player(pygame.sprite.Sprite):
         self.animation()
         # Code below: Demonstrating zooming
         self.player_size()
-
-        self.mask = pygame.mask.from_surface(self.image)
-        # If players velocity will result in collision, change velocity to zero
+        c = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = c
+        #self.mask = pygame.mask.from_surface(self.image)
+        self.rect_mask = get_mask_rect(self.image, *self.rect.topleft)
         self.wall_collision()
         self.rect.move_ip(*self.velocity)
         self.rect_mask.move_ip(*self.velocity)

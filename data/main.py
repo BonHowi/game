@@ -9,6 +9,7 @@ from particles import DeathParticle, Fire
 from math import sqrt, pow
 import sys
 from map import Spritesheet, Tile, TileMap
+import random
 
 sys.path.insert(0, 'C:/Users/Adam/Documents/GitHub/game/data/assets')
 successes, failures = pygame.init()
@@ -63,7 +64,9 @@ class Game:
         self.bullet_list = pygame.sprite.Group()
         self.weapon_group = pygame.sprite.Group()
 
-        self.screen = pygame.display.set_mode(self.SIZE, pygame.RESIZABLE)
+        # self.screen = pygame.display.set_mode(self.SIZE, pygame.RESIZABLE)
+        self.display = pygame.display.set_mode(self.SIZE)
+        self.screen = pygame.Surface((1200, 600))
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
@@ -83,7 +86,8 @@ class Game:
 
         self.items_menu = Items_bar(self)
         self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
-        self.bg.fill((0, 0, 0, 50))
+        self.bg.fill((0, 0, 0, 100))
+
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -194,25 +198,15 @@ class Game:
             particle.draw()
 
     def entity_wall_collision(self):
-        for wall in self.wall_list:
-            if self.player.hitbox.colliderect(wall.rect):
-                self.player.velocity = [0, 0]
-                self.player.update()
-                #self.player.velocity = [-1 * i for i in self.player.velocity]
-                #self.player.rect.move_ip(*self.player.velocity)
-                #self.player.hitbox.y = wall.rect.y - 64
-            # if self.player.rect.collidepoint(wall.rect.midbottom):
-            #     self.player.rect.y = wall.rect.y + 64
-            #     print(self.counter)
-
+        pass
         # collided_sprites_player = pygame.sprite.spritecollide(self.player, self.wall_list, False, self.collided)
         # for _ in collided_sprites_player:
         #     pass
 
-            # velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
-            # self.player.velocity = velocity
-            # self.player.update()
-            # self.player.velocity = [0, 0]
+        # velocity = [i * (-1) for i in self.player.old_velocity]  # how far from wall will you bounce
+        # self.player.velocity = velocity
+        # self.player.update()
+        # self.player.velocity = [0, 0]
 
         # for enemy in self.all_enemy:
         #     collided_sprites_enemy = pygame.sprite.spritecollide(enemy, self.wall_list, False, self.collided)
@@ -252,12 +246,8 @@ class Game:
                     self.particles.append(DeathParticle(self, *tuple(ti / 4 for ti in enemy.rect.center)))
 
             # Updates elements in groups, see function
-
-
             self.update_groups()
-            #self.entity_wall_collision()
             # Detects collision of enemies and player with walls
-
 
             for enemy in self.enemy_list:
                 if pygame.sprite.collide_mask(enemy, self.player):
@@ -274,8 +264,12 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.particle_surface, (1200, 600)), (0, 0))
 
             self.counter += 1
-            self.screen.blit(self.bg, (0,0))
 
+            #self.screen.blit(self.bg, (0, 0))
+            # Screen shake
+            # x = random.randint(0, 6)
+            # y = random.randint(0, 6)
+            self.display.blit(self.screen, (0, 0))
             pygame.display.update()
 
         pygame.quit()

@@ -57,8 +57,8 @@ class TileMap():
 
     def draw_map(self, surface):
         surface.blit(self.map_surface, (0, 0))
-        for tile in self.tiles:
-            pygame.draw.rect(self.game.screen, (255, 0, 0), tile.rect, 1)
+        # for tile in self.tiles:
+        #     pygame.draw.rect(self.game.screen, (255, 0, 0), tile.rect, 1)
 
     def load_map(self):
         for tile in self.tiles:
