@@ -33,7 +33,7 @@ def draw_health_bar(surf, pos, size, border_c, back_c, health_c, progress):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, speed, max_hp, color, name, *groups):
+    def __init__(self, game, speed, max_hp, name, *groups):
         super().__init__(*groups)
         self.name = name
         self.animation_database = {"IDLE_LEFT": [],
@@ -47,7 +47,6 @@ class Enemy(pygame.sprite.Sprite):
         self.game = game
         self.max_hp = max_hp
         self.hp = self.max_hp
-        self.color = color
         enemy_side = int(self.set_side())
         self.image_size = (15 * enemy_side, 15 * enemy_side)
         self.image = pygame.image.load("../assets/goblin/idle/right_idle0.png").convert_alpha()
@@ -283,8 +282,8 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class EnemySlow(Enemy):
-    def __init__(self, game, speed, max_hp, color, name, *groups):
-        super().__init__(game, speed, max_hp, color, name, *groups)
+    def __init__(self, game, speed, max_hp , name, *groups):
+        super().__init__(game, speed, max_hp, name, *groups)
 
     def move(self, dtick):
         """

@@ -5,13 +5,12 @@ import math
 
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, game, damage, name, width, color, *groups):
+    def __init__(self, game, damage, name, width, *groups):
         super().__init__(*groups)
         self.width = width
         self.damage = damage
         self.name = name
         self.blade_length = int(width)
-        self.color = color
         self.original_image = None
         self.image = None
         self.mask = None

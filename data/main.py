@@ -5,10 +5,10 @@ from player import Player
 from utils import PlayerInfo, FPSCounter
 from bullet import Bullet
 from item_bar import Items_bar
-from particles import DeathParticle, Fire
+from particles import DeathParticle
 from math import sqrt, pow
 import sys
-from map import Spritesheet, Tile, TileMap
+from map import Spritesheet, TileMap
 import random
 
 sys.path.insert(0, 'C:/Users/Adam/Documents/GitHub/game/data/assets')
@@ -23,10 +23,6 @@ class Game:
         self.SIZE = (1200, 600)
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
-        self.RED = (255, 0, 0)
-        self.GREEN = (0, 255, 0)
-        self.BLUE = (0, 0, 255)
-        self.BROWN = (185, 100, 0)
         self.myfont = pygame.font.Font('../assets/font/Minecraft.ttf', 15)
         self.all_enemy = None
         self.all_environment = None
@@ -72,7 +68,7 @@ class Game:
         self.screen_rect = self.screen.get_rect()
         self.particle_surface = pygame.Surface((1200 // 4, 600 // 4), pygame.SRCALPHA).convert_alpha()
 
-        self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, self.GREEN, (150, 10))
+        self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
         self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
         #self.map = TileMap(self, '../maps/map2.csv', self.ss)
@@ -80,11 +76,11 @@ class Game:
         self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', self.ss)
         self.enemy_list = []
         for _ in range(1):
-            self.enemy_list.append(Enemy(self, 20, 50, self.BLUE, "Ryszard", self.all_enemy))
+            self.enemy_list.append(Enemy(self, 20, 50, "Ryszard", self.all_enemy))
         for _ in range(0):
-            self.enemy_list.append(Enemy(self, 50, 50, self.RED, "Zbigniew", self.all_enemy))
+            self.enemy_list.append(Enemy(self, 50, 50, "Zbigniew", self.all_enemy))
         for _ in range(0):
-            self.enemy_list.append(EnemySlow(self, 5, 1000, self.RED, "Janusz", self.all_enemy))
+            self.enemy_list.append(EnemySlow(self, 5, 1000, "Janusz", self.all_enemy))
 
         self.items_menu = Items_bar(self)
         self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
@@ -179,6 +175,13 @@ class Game:
             self.zoom_level += 0.01
         if pressed[pygame.K_e]:
             self.zoom_level -= 0.01
+        if pressed[pygame.K_F5]:
+            for i in range(100):
+                self.enemy_list.append(Enemy(self, 20, 50, "Ryszard", self.all_enemy))
+                pos = [(random.randrange(100, 1500), random.randrange(100, 500)) for i in range(1)]
+                print(pos)
+                self.enemy_list[-1].rect.center = tuple(pos)
+
 
         if pressed[pygame.K_1]:
             if self.player.weapon.name != 'katana':

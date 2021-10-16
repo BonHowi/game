@@ -36,8 +36,7 @@ class Player(pygame.sprite.Sprite):
         # Player Attacking
         self.attacking = False
         self.hasWeapon = True
-        self.weapon = Weapon(self.game, 10, 'sword', 2, self.game.RED,
-                             self.game.weapon_group)  # usuniete groups z self.game
+        self.weapon = Weapon(self.game, 10, 'sword', 2, self.game.weapon_group)  # usuniete groups z self.game
         self.hp = 100
         self.max_stamina = 1000
         self.current_stamina = self.max_stamina
@@ -188,8 +187,8 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = self.rect_mask
         self.hitbox.midbottom = self.rect.midbottom
 
-        pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
-        pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
+        # pygame.draw.rect(self.game.screen, (0, 255, 0), self.rect, 1)
+        # pygame.draw.rect(self.game.screen, (255, 0, 0), self.hitbox, 1)
 
     def render(self):  # Render weapon
         """Render player's gun

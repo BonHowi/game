@@ -86,14 +86,13 @@ class PlayerInfo:
 
 
 class FPSCounter:
-    def __init__(self, game, surface, font, cock, color, pos):
+    def __init__(self, game, surface, font, cock, pos):
         self.game = game
         self.surface = surface
         self.font = font
         self.clock = cock
         self.pos = pos
-        self.color = color
-        self.fps_text = self.font.render(str(self.game.clock.get_fps()) + "FPS", False, self.color)
+        self.fps_text = self.font.render(str(self.game.clock.get_fps()) + "FPS", False, (0, 0, 0))
         self.fps_text_rect = self.fps_text.get_rect(center=(self.pos[0], self.pos[1]))
 
     def render(self):
