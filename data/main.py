@@ -8,8 +8,10 @@ from item_bar import Items_bar
 from particles import DeathParticle
 from math import sqrt, pow
 import sys
-from map import Spritesheet, TileMap
+from map import Spritesheet, TileMap, generator
 import random
+import csv
+import copy
 
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
@@ -19,7 +21,7 @@ class Game:
     def __init__(self):
         self.counter = 0
         self.FPS = 60
-        self.SIZE = (1312, 600)
+        self.SIZE = (1312, 720)
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
         self.myfont = pygame.font.Font('../assets/font/Minecraft.ttf', 15)
@@ -69,15 +71,49 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
-        self.map_list = []
+        # MAP CODE BELOW ############################
         self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
-        # self.map = TileMap(self, '../maps/map2.csv', self.ss)
-        self.map_list.append(TileMap(self, '../maps/map1.csv', self.ss))
-        self.map_list.append(TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss))
-        #self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
-        #self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', self.ss)
-        self.map_num = 0
-        self.map = self.map_list[self.map_num]
+        self.map_list = []
+        self.map_info = generator()
+
+        start_dict = {'left': 'left',
+                      'right': 'right',
+                      'down': 'down',
+                      'up': 'up'
+                      }
+
+        with open('../maps/test_map.csv', newline='') as f:
+            reader = csv.reader(f)
+            basic_map = list(reader)
+
+        def get_direction(num_room):
+            start_b = [k for k, v in self.map_info[num_room][1].items() if v]
+            start_b = start_b[0]
+            direction = start_dict[start_b]
+            print(direction)
+            return direction
+
+        def get_map(num):
+            direction = get_direction(num)
+            map = copy.deepcopy(basic_map)
+            if direction == 'left':
+                map[5][0] = -1
+            elif direction == 'right':
+                map[5][20] = -1
+            elif direction == 'up':
+                map[0][10] = -1
+                map[1][10] = -1
+            elif direction == 'down':
+                map[10][10] = -1
+
+            return map
+
+        for i in range(3):
+            self.map_list.append(TileMap(self, get_map(i), self.ss))
+
+        self.current_map = 0
+        self.map = self.map_list[self.current_map]
+        ## MAP CODE ABOVE ############################
         self.wall_list = self.map.wall_list
         self.entrance = self.map.entrance
         self.enemy_list = []
@@ -211,10 +247,11 @@ class Game:
         for wall in self.entrance:
             if wall.rect.collidepoint(self.player.rect.midbottom) or wall.rect.collidepoint(
                     self.player.rect.bottomleft) or wall.rect.collidepoint(self.player.rect.bottomright):
-                        self.map = self.map_list[self.map_num+1]
-                        self.wall_list = self.map.wall_list
-                        self.entrance = self.map.entrance
-                        self.player.rect.center = (650, 550)
+                self.current_map += 1
+                self.map = self.map_list[self.current_map]
+                self.wall_list = self.map.wall_list
+                self.entrance = self.map.entrance
+                self.player.rect.center = (600, 300)
 
     def run_game(self):
         self.init_all()

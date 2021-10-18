@@ -1,57 +1,63 @@
-import pygame, sys
-from pygame.math import Vector2
 import random
-pygame.init()
-# Create the window, saving it to a variable.
-surface = pygame.display.set_mode((1200, 600))
-clock = pygame.time.Clock()
-bg = pygame.Surface((400, 200)).convert_alpha()
-zoom_factor = 1.0
-class Player:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.velocity = [0, 0]
-        self.speed = 100
-        self.v = Vector2(self.x, self.y)
 
 
-    def move(self):
-        self.v += self.velocity
-        self.x = self.v[0]
-        self.y = self.v[1]
+# random map layout generator
+def generator():
+    w, h = 4, 4  # world size
+    world = [[0 for x in range(w)] for y in range(h)]
+    start_x, start_y = random.randint(0, w - 1), random.randint(0, h - 1)
+    world[start_x][start_y] = 1  # starting position
+    i = 0
+    num_of_rooms = 3
+    current_room_x = start_x
+    current_room_y = start_y
 
-    def draw(self):
-        pygame.draw.circle(surface, (255, 35, 120), self.v, 30 * zoom_factor)
+    my_dict = {"left": False,
+               "right": False,
+               "up": False,
+               "down": False}
+    map_info = []
+    while i != num_of_rooms:
+        c = random.choice(["up", 'down', 'left', 'right'])
+        if c == 'up' and current_room_x - 1 > 0:
+            if world[current_room_x - 1][current_room_y] != 1:
+                world[current_room_x - 1][current_room_y] = 1
+                current_room_x -= 1
+                i += 1
+                room_dict = my_dict.copy()
+                room_dict['up'] = True
+                map_info.append([i, room_dict])
+        elif c == 'down' and current_room_x + 1 < 3:
+            if world[current_room_x + 1][current_room_y] != 1:
+                world[current_room_x + 1][current_room_y] = 1
+                current_room_x += 1
+                i += 1
+                room_dict = my_dict.copy()
+                room_dict['down'] = True
+                map_info.append([i, room_dict])
+        elif c == 'right' and current_room_y + 1 < 3:
+            if world[current_room_x][current_room_y + 1] != 1:
+                world[current_room_x][current_room_y + 1] = 1
+                current_room_y += 1
+                i += 1
+                room_dict = my_dict.copy()
+                room_dict['right'] = True
+                map_info.append([i, room_dict])
+        elif c == 'left' and current_room_y - 1 > 0:
+            if world[current_room_x][current_room_y - 1] != 1:
+                world[current_room_x][current_room_y - 1] = 1
+                current_room_y -= 1
+                i += 1
+                room_dict = my_dict.copy()
+                room_dict['left'] = True
+                map_info.append([i, room_dict])
+
+    for row in world:
+        print(row)
+    return map_info
 
 
-player = Player(100, 100)
-while True:
-    dt = clock.tick(60)
-    dt = dt / 400
-    surface.fill((255,255,255))
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-            if event.key == pygame.K_w:
-                player.velocity[1] = -player.speed * dt
-
-            if event.key == pygame.K_s:
-                player.velocity[1] = player.speed * dt
-
-            if event.key == pygame.K_a:
-                player.velocity[0] = -player.speed * dt
-
-            if event.key == pygame.K_d:
-                player.velocity[0] = player.speed * dt
-            if event.key == pygame.K_z:
-                zoom_factor += 0.25
-        player.move()
-        player.draw()
-        pygame.display.update()
+my_map = generator()
+for row in my_map:
+    print(row)
