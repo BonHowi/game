@@ -56,6 +56,12 @@ class Tile(pygame.sprite.Sprite):
 
 
 def generator():
+    '''Add condition that if no new room can be created, start again with new starting position. Why?
+        0 0 0 0
+        0 0 0 0
+        1 1 0 0
+        1 1 0 0  in this situation, starting from [3][1] going up and left, we cannot make fifth room'''
+
     w, h = 4, 4  # world size
     world = [[0 for x in range(w)] for y in range(h)]
     start_x, start_y = random.randint(0, w - 1), random.randint(0, h - 1)
@@ -69,7 +75,16 @@ def generator():
                "right": False,
                "up": False,
                "down": False}
+    def get_map_info(num_of_rooms, starting_x, starting_y):
+        current_room_x = starting_x
+        current_room_y = starting_y
+        map_info = []
+
     map_info = []
+    def get_position():
+        if map_info[-1]:
+            pass
+    previous_choice = None
     while i != num_of_rooms:
         c = random.choice(["up", 'down', 'left', 'right'])
         if c == 'up' and current_room_x - 1 > 0:
@@ -78,7 +93,8 @@ def generator():
                 current_room_x -= 1
                 i += 1
                 room_dict = my_dict.copy()
-                room_dict['up'] = True
+                room_dict['up'] = True # == room_dict[c]
+                room_dict[previous_choice] = True
                 map_info.append([i -1, room_dict])
         elif c == 'down' and current_room_x + 1 < 3:
             if world[current_room_x + 1][current_room_y] != 1:
@@ -87,6 +103,7 @@ def generator():
                 i += 1
                 room_dict = my_dict.copy()
                 room_dict['down'] = True
+                room_dict[previous_choice] = True
                 map_info.append([i -1, room_dict])
         elif c == 'right' and current_room_y + 1 < 3:
             if world[current_room_x][current_room_y + 1] != 1:
@@ -95,6 +112,7 @@ def generator():
                 i += 1
                 room_dict = my_dict.copy()
                 room_dict['right'] = True
+                room_dict[previous_choice] = True
                 map_info.append([i -1, room_dict])
         elif c == 'left' and current_room_y - 1 > 0:
             if world[current_room_x][current_room_y - 1] != 1:
@@ -103,7 +121,15 @@ def generator():
                 i += 1
                 room_dict = my_dict.copy()
                 room_dict['left'] = True
+                room_dict[previous_choice] = True
                 map_info.append([i -1, room_dict])
+        if c == 'up':
+            previous_choice = 'down'
+        if c =='down':
+            previous_choice ='up'
+
+    for row in world:
+        print(row)
     return map_info
 
 

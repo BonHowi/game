@@ -69,7 +69,7 @@ class Game:
         self.screen_rect = self.screen.get_rect()
         self.particle_surface = pygame.Surface((1200 // 4, 600 // 4), pygame.SRCALPHA).convert_alpha()
 
-        self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, (150, 10))
+        self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, (150, 200))
         self.player_info = PlayerInfo(self, (800, 10))
         # MAP CODE BELOW ############################
         self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
@@ -89,8 +89,8 @@ class Game:
         def get_direction(num_room):
             start_b = [k for k, v in self.map_info[num_room][1].items() if v]
             start_b = start_b[0]
+            #Tu zmienic zeby mapa sie dobrze ladowala
             direction = start_dict[start_b]
-            print(direction)
             return direction
 
         def get_map(num):
@@ -98,12 +98,12 @@ class Game:
             map = copy.deepcopy(basic_map)
             if direction == 'left':
                 map[5][0] = -1
-            elif direction == 'right':
+            if direction == 'right':
                 map[5][20] = -1
-            elif direction == 'up':
+            if direction == 'up':
                 map[0][10] = -1
                 map[1][10] = -1
-            elif direction == 'down':
+            if direction == 'down':
                 map[10][10] = -1
 
             return map
@@ -308,6 +308,7 @@ class Game:
             #         self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
             #         self.player.rect.y = 500
             # Screen shake
+            self.fps_counter.render()
             x, y = 0, 0
             if (self.player.attacking):
                 x = random.randint(-6, 6)
