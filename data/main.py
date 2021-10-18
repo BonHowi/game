@@ -11,7 +11,6 @@ import sys
 from map import Spritesheet, TileMap
 import random
 
-sys.path.insert(0, 'C:/Users/Adam/Documents/GitHub/game/data/assets')
 successes, failures = pygame.init()
 print(f"Initializing pygame: {successes} successes and {failures} failures.")
 
@@ -20,7 +19,7 @@ class Game:
     def __init__(self):
         self.counter = 0
         self.FPS = 60
-        self.SIZE = (1200, 600)
+        self.SIZE = (1312, 600)
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
         self.myfont = pygame.font.Font('../assets/font/Minecraft.ttf', 15)
@@ -62,7 +61,7 @@ class Game:
 
         # self.screen = pygame.display.set_mode(self.SIZE, pygame.RESIZABLE)
         self.display = pygame.display.set_mode(self.SIZE)
-        self.screen = pygame.Surface((1200, 600))
+        self.screen = pygame.Surface((self.SIZE))
         self.player = Player(self, self.all_player)
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
@@ -70,11 +69,19 @@ class Game:
 
         self.fps_counter = FPSCounter(self, self.screen, self.myfont, self.clock, (150, 10))
         self.player_info = PlayerInfo(self, (800, 10))
+        self.map_list = []
         self.ss = Spritesheet('../assets/spritesheet/dungeon_.png.')
-        #self.map = TileMap(self, '../maps/map2.csv', self.ss)
-        self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
-        self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', self.ss)
+        # self.map = TileMap(self, '../maps/map2.csv', self.ss)
+        self.map_list.append(TileMap(self, '../maps/map1.csv', self.ss))
+        self.map_list.append(TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss))
+        #self.map = TileMap(self, '../maps/map3_Tile Layer 1.csv', self.ss)
+        #self.map2 = TileMap(self, '../maps/map3_Tile Layer 2.csv', self.ss)
+        self.map_num = 0
+        self.map = self.map_list[self.map_num]
+        self.wall_list = self.map.wall_list
+        self.entrance = self.map.entrance
         self.enemy_list = []
+
         for _ in range(1):
             self.enemy_list.append(Enemy(self, 20, 50, "Ryszard", self.all_enemy))
         for _ in range(0):
@@ -85,6 +92,7 @@ class Game:
         self.items_menu = Items_bar(self)
         self.bg = pygame.Surface((1200, 600), pygame.SRCALPHA).convert_alpha()
         self.bg.fill((0, 0, 0, 100))
+
     def draw_text(self, text, size, x, y):
 
         font = pygame.font.SysFont('Comic Sans MS', size)
@@ -107,7 +115,6 @@ class Game:
         self.all_environment.update()
         self.all_player.update()
         self.all_wall.update()
-
         self.bullet_list.update()
         self.weapon_group.update()
 
@@ -115,7 +122,6 @@ class Game:
 
         self.all_environment.draw(self.screen)
         self.all_enemy.draw(self.screen)
-
         self.all_player.draw(self.screen)
         self.weapon_group.draw(self.screen)
         self.all_wall.draw(self.screen)
@@ -182,7 +188,6 @@ class Game:
                 print(pos)
                 self.enemy_list[-1].rect.center = tuple(pos)
 
-
         if pressed[pygame.K_1]:
             if self.player.weapon.name != 'katana':
                 self.items_menu.weapon = 'katana'
@@ -201,12 +206,15 @@ class Game:
 
     def main_menu(self):
         pass
+
     def next_level(self):
-        for wall in self.wall_list:
+        for wall in self.entrance:
             if wall.rect.collidepoint(self.player.rect.midbottom) or wall.rect.collidepoint(
                     self.player.rect.bottomleft) or wall.rect.collidepoint(self.player.rect.bottomright):
-                pass
-
+                        self.map = self.map_list[self.map_num+1]
+                        self.wall_list = self.map.wall_list
+                        self.entrance = self.map.entrance
+                        self.player.rect.center = (650, 550)
 
     def run_game(self):
         self.init_all()
@@ -218,10 +226,8 @@ class Game:
             self.screen.fill(self.BLACK)  # Fill the screen with background color.
             self.screen.fill((0, 0, 0))
             self.particle_surface.fill((0, 0, 0, 0))
-            self.player.old_velocity = self.player.velocity
             self.map.draw_map(self.screen)
-            self.map2.draw_map(self.screen)
-            #self.map2.draw_map(self.screen)
+            # self.map2.draw_map(self.screen)
             # Get the input from the player
             self.input()
 
@@ -252,11 +258,11 @@ class Game:
             # Update and draw particles,
             self.update_particles()
             self.draw_particles()
-            self.screen.blit(pygame.transform.scale(self.particle_surface, (1200, 600)), (0, 0))
-
+            self.screen.blit(pygame.transform.scale(self.particle_surface, self.SIZE), (0, 0))
+            self.next_level()
             self.counter += 1
 
-            #self.screen.blit(self.bg, (0, 0))
+            # self.screen.blit(self.bg, (0, 0))
 
             # przechodzenie z mapy do mapy
             # for wall in self.entrance:

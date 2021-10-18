@@ -1,7 +1,6 @@
 import pygame, csv, os
 
 
-
 class Spritesheet(object):
     def __init__(self, filename):
         self.sheet = pygame.image.load(filename).convert_alpha()
@@ -43,22 +42,45 @@ class Tile(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
+    def map_size(self, game):
+        self.image_size = (64, 64)
+        self.image_size = tuple(int(game.zoom_level * x) for x in self.image_size)
+        self.image = pygame.transform.scale(self.image, self.image_size)
+
+    def update(self, game):
+        self.map_size(game)
+        c = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = c
+
+
 
 class TileMap():
     def __init__(self, game, filename, spritesheet):
         self.game = game
         self.tile_size = 64
         self.spritesheet = spritesheet
+        self.wall_list = []
+        self.entrance = []
         self.start_x, self.start_y = 0, 0
         self.tiles = self.load_tiles(filename)
-        self.map_surface = pygame.Surface((1200, 11*64))
+        self.map_surface = pygame.Surface(self.game.SIZE)
         self.map_surface.set_colorkey((0, 0, 0))
         self.load_map()
 
     def draw_map(self, surface):
+        if self.game.zoom_level != 1.0:
+            self.update_tiles()
+            self.map_surface.fill((0, 0, 0))
+            self.load_map()
+
         surface.blit(self.map_surface, (0, 0))
         # for tile in self.tiles:
         #     pygame.draw.rect(self.game.screen, (255, 0, 0), tile.rect, 1)
+
+    def update_tiles(self):
+        for tile in self.tiles:
+            tile.update(self.game)
 
     def load_map(self):
         for tile in self.tiles:
@@ -83,13 +105,13 @@ class TileMap():
         map = self.read_csv(filename)
         x, y = 0, -64
         for row in map:
-            x = -32
+            x = -0
             for tile in row:
                 tiles.append(Tile((*self.location(int(tile)), 16, 16), x, y, self.spritesheet))
                 if int(tile) == 75:
-                    self.game.entrance.append(tiles[-1])
+                    self.entrance.append(tiles[-1])
                 if int(tile) in (135, 15, 17, 60, 61, 62, 63, 1, 18, 3, 46, 45, 40, 42, 47):
-                    self.game.wall_list.append(tiles[-1])
+                    self.wall_list.append(tiles[-1])
                 # Move to next tile in current row
 
                 x += 64
@@ -98,3 +120,10 @@ class TileMap():
             y += 64
             # Store the size of the tile map
         return tiles
+
+def generator():
+    # 4x4 map
+    # 1000
+    # 1110
+    # 0110
+    # 0111
